@@ -6,17 +6,22 @@ import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import { LogoMark } from "./logo-mark";
 import { RollLabel } from "./roll-label";
+import { SoundToggle } from "./sound-toggle";
 import { getSmoother } from "./smooth-scroll";
 import { divisions, events, home, site } from "@/content/site";
 
 const apparel = divisions.find((d) => d.id === "apparel")!;
 
 // Anchor -> scroll position. Pinned scenes need an offset into the pin.
-const targets: Record<string, { el: string; vh: { desktop: number; mobile: number } }> = {
+const targets: Record<
+  string,
+  { el: string; vh: { desktop: number; mobile: number } }
+> = {
   "#top": { el: "body", vh: { desktop: 0, mobile: 0 } },
   // Inside the HeroStack pin: 1 timeline unit = 1vh of scroll (see hero-stack.tsx).
-  "#about": { el: "#top", vh: { desktop: 4.2, mobile: 4.2 } },
-  "#films": { el: "#top", vh: { desktop: 5.5, mobile: 5.5 } },
+  "#about": { el: "#top", vh: { desktop: 4.5, mobile: 4.5 } },
+  "#films": { el: "#top", vh: { desktop: 8.8, mobile: 8.8 } },
+  "#entertainment": { el: "#top", vh: { desktop: 8.8, mobile: 8.8 } },
   "#cafe": { el: "#cafe", vh: { desktop: 0, mobile: 0 } },
   "#contact": { el: "#contact", vh: { desktop: 0, mobile: 0 } },
 };
@@ -25,24 +30,80 @@ export function scrollToAnchor(hash: string) {
   const t = targets[hash];
   const el = document.querySelector(t?.el ?? hash) as HTMLElement | null;
   if (!el) return;
-  const extra = innerHeight * (t ? (innerWidth >= 992 ? t.vh.desktop : t.vh.mobile) : 0);
+  const extra =
+    innerHeight * (t ? (innerWidth >= 992 ? t.vh.desktop : t.vh.mobile) : 0);
   const s = getSmoother();
-  if (s) gsap.to(s, { scrollTop: s.offset(el, "top top") + extra, duration: 2, ease: "expo.inOut", overwrite: true });
-  else gsap.to(window, { scrollTo: el.getBoundingClientRect().top + scrollY + extra, duration: 2, ease: "expo.inOut", overwrite: true });
+  if (s)
+    gsap.to(s, {
+      scrollTop: s.offset(el, "top top") + extra,
+      duration: 2,
+      ease: "expo.inOut",
+      overwrite: true,
+    });
+  else
+    gsap.to(window, {
+      scrollTo: el.getBoundingClientRect().top + scrollY + extra,
+      duration: 2,
+      ease: "expo.inOut",
+      overwrite: true,
+    });
 }
 
 const links = [
-  { label: "Home", alt: "Back to top", href: "#top", image: home.hero.image.src },
-  { label: "About", alt: "Who we are", href: "#about", image: home.about.image.src },
-  { label: "What we do", alt: "Four ways", href: "#films", image: divisions[0].image.src },
-  { label: "What's on", alt: "Big nights", href: "#whats-on", image: events[1].image.src },
-  { label: "Who's been", alt: "Big names", href: "#guests", image: "/images/guests/chumbak.jpg" },
-  { label: "Apparel", alt: "Wear it", href: "#apparel", image: "/images/apparel/ch01-navy.jpg" },
-  { label: "Cafe", alt: "Pull up a seat", href: "#cafe", image: "/images/cafe/matcha-latte.jpg" },
-  { label: "Contact", alt: "Say hi", href: "#contact", image: home.hero.image.src },
+  {
+    label: "Home",
+    alt: "Back to top",
+    href: "#top",
+    image: home.hero.image.src,
+  },
+  {
+    label: "About",
+    alt: "Who we are",
+    href: "#about",
+    image: home.about.image.src,
+  },
+  {
+    label: "Entertainment",
+    alt: "Games",
+    href: "#entertainment",
+    image: divisions[1].image.src,
+  },
+  {
+    label: "Events",
+    alt: "Big nights",
+    href: "/events",
+    image: events[1].image.src,
+  },
+  {
+    label: "Who's been",
+    alt: "Big names",
+    href: "#guests",
+    image: "/images/guests/chumbak.jpg",
+  },
+  {
+    label: "Apparel",
+    alt: "Wear it",
+    href: "/apparel",
+    image: "/images/apparel/ch01-navy.jpg",
+  },
+  {
+    label: "Cafe",
+    alt: "Pull up a seat",
+    href: "#cafe",
+    image: "/images/cafe/matcha-latte.jpg",
+  },
+  {
+    label: "Contact",
+    alt: "Say hi",
+    href: "#contact",
+    image: home.hero.image.src,
+  },
 ];
 
-export function Nav() {
+// page="sub": not the home page, so "#section" links route to "/#section" and the logo goes home.
+export function Nav({ page = "home" }: { page?: "home" | "sub" }) {
+  const sub = page === "sub";
+  const to = (h: string) => (sub && h.startsWith("#") ? `/${h === "#top" ? "" : h}` : h);
   const panel = useRef<HTMLDivElement>(null);
   const tl = useRef<gsap.core.Timeline>(null);
   const [open, setOpen] = useState(false);
@@ -53,12 +114,35 @@ export function Nav() {
     () => {
       // Clip the whole panel (bg + content) so nothing shows outside the dropping sheet.
       tl.current = gsap
-        .timeline({ paused: true, defaults: { ease: "power4.inOut", duration: 0.8 } })
+        .timeline({
+          paused: true,
+          defaults: { ease: "power4.inOut", duration: 0.8 },
+        })
         .set(panel.current, { visibility: "visible" })
-        .fromTo(panel.current, { clipPath: "inset(0% 0% 100% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)" }, 0)
-        .fromTo(".o-link", { yPercent: 105 }, { yPercent: 0, stagger: 0.04, duration: 0.7 }, 0.3)
-        .fromTo(".o-photo", { clipPath: "inset(0 0 100% 0)" }, { clipPath: "inset(0 0 0% 0)", duration: 0.9 }, 0.35)
-        .fromTo(".o-foot", { opacity: 0, y: 12 }, { opacity: 1, y: 0, stagger: 0.05, duration: 0.6 }, 0.5);
+        .fromTo(
+          panel.current,
+          { clipPath: "inset(0% 0% 100% 0%)" },
+          { clipPath: "inset(0% 0% 0% 0%)" },
+          0,
+        )
+        .fromTo(
+          ".o-link",
+          { yPercent: 105 },
+          { yPercent: 0, stagger: 0.04, duration: 0.7 },
+          0.3,
+        )
+        .fromTo(
+          ".o-photo",
+          { clipPath: "inset(0 0 100% 0)" },
+          { clipPath: "inset(0 0 0% 0)", duration: 0.9 },
+          0.35,
+        )
+        .fromTo(
+          ".o-foot",
+          { opacity: 0, y: 12 },
+          { opacity: 1, y: 0, stagger: 0.05, duration: 0.6 },
+          0.5,
+        );
     },
     { scope: panel },
   );
@@ -80,7 +164,7 @@ export function Nav() {
 
   const go = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const href = e.currentTarget.getAttribute("href")!;
-    if (!href.startsWith("#")) return;
+    if (sub || !href.startsWith("#")) return;
     e.preventDefault();
     setOpen(false);
     // Wait for the panel to lift before gliding.
@@ -91,8 +175,18 @@ export function Nav() {
     <header className="fixed inset-x-0 top-0 z-50 text-bone">
       {/* Bar sits above the overlay so the logo never moves. data-nav lives here, not on <header>:
           a transform on header would trap the fixed overlay inside the bar's box. */}
-      <div data-nav className="relative z-[2] flex items-center justify-between px-4 py-3 lg:px-6">
-        <a href="#top" onClick={go} aria-label="Farakchu home" className="[filter:drop-shadow(0_0_1px_var(--color-teal-deep))_drop-shadow(0_0_1px_var(--color-teal-deep))_drop-shadow(0_0_6px_rgb(0_31_31/0.5))]">
+      <div
+        data-nav
+        className="relative z-[2] grid grid-cols-[1fr_auto_1fr] items-center px-4 py-3 lg:px-6"
+      >
+        <SoundToggle />
+        <a
+          href={to("#top")}
+          onClick={go}
+          aria-label="Farakchu home"
+          data-nav-logo
+          className="[filter:drop-shadow(0_0_1px_var(--color-teal-deep))_drop-shadow(0_0_1px_var(--color-teal-deep))_drop-shadow(0_0_6px_rgb(0_31_31/0.5))]"
+        >
           <LogoMark className="size-16 lg:size-20" />
         </a>
         <button
@@ -100,17 +194,29 @@ export function Nav() {
           onClick={() => setOpen((o) => !o)}
           aria-expanded={open}
           aria-controls="fc-menu"
-          className="group flex min-h-11 items-center justify-center gap-3 rounded-[50%] bg-lime px-8 py-3 font-wide text-[0.625rem] leading-none text-teal transition-colors hover:bg-bone focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lime"
+          className="group flex min-h-11 items-center justify-center gap-3 justify-self-end rounded-[50%] bg-lime px-8 py-3 font-wide text-[0.625rem] leading-none text-ink transition-colors hover:bg-bone focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lime"
         >
           <span>{open ? "Close" : "Menu"}</span>
           <span aria-hidden="true" className="relative block size-3 shrink-0">
-            <span className={`absolute left-0 top-1/2 h-0.5 w-full -translate-y-1/2 bg-teal transition-transform duration-500 ease-out-expo ${open ? "rotate-45" : ""}`} />
-            <span className={`absolute left-0 top-1/2 h-0.5 w-full -translate-y-1/2 bg-teal transition-transform duration-500 ease-out-expo ${open ? "-rotate-45" : "rotate-90"}`} />
+            <span
+              className={`absolute left-0 top-1/2 h-0.5 w-full -translate-y-1/2 bg-teal transition-transform duration-500 ease-out-expo ${open ? "rotate-45" : ""}`}
+            />
+            <span
+              className={`absolute left-0 top-1/2 h-0.5 w-full -translate-y-1/2 bg-teal transition-transform duration-500 ease-out-expo ${open ? "-rotate-45" : "rotate-90"}`}
+            />
           </span>
         </button>
       </div>
 
-      <div ref={panel} id="fc-menu" role="dialog" aria-modal="true" aria-label="Menu" inert={!open} className="invisible fixed inset-0 z-[1]">
+      <div
+        ref={panel}
+        id="fc-menu"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Menu"
+        inert={!open}
+        className="invisible fixed inset-0 z-[1]"
+      >
         <div className="absolute inset-0 bg-teal-deep" />
         <div className="relative flex h-full flex-col px-4 pb-6 pt-28 lg:px-6 lg:pb-8 lg:pt-32">
           <div className="grid flex-1 items-center gap-10 lg:grid-cols-12">
@@ -119,15 +225,20 @@ export function Nav() {
                 {links.map((l, i) => (
                   <li key={l.href} className="overflow-hidden">
                     <a
-                      href={l.href}
+                      href={to(l.href)}
                       onClick={go}
                       onMouseEnter={() => (setHover(i), setRoll(i))}
                       onMouseLeave={() => setRoll(null)}
-                      onFocus={(e) => (setHover(i), e.currentTarget.matches(":focus-visible") && setRoll(i))}
+                      onFocus={(e) => (
+                        setHover(i),
+                        e.currentTarget.matches(":focus-visible") && setRoll(i)
+                      )}
                       onBlur={() => setRoll(null)}
                       className="o-link group flex items-baseline gap-4 py-1 outline-none"
                     >
-                      <span className="w-8 font-wide text-[0.625rem] text-bone/50">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="w-8 font-wide text-[0.625rem] text-bone/50">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
                       <RollLabel
                         text={l.label}
                         alt={l.alt}
@@ -160,15 +271,22 @@ export function Nav() {
               <br />
               {site.address.line2}
             </p>
-            <a className="o-foot w-fit hover:text-lime" href={site.instagram} target="_blank" rel="noreferrer">
+            <a
+              className="o-foot w-fit hover:text-lime"
+              href={site.instagram}
+              target="_blank"
+              rel="noreferrer"
+            >
               Instagram
             </a>
-            <p className="o-foot font-serif text-2xl italic max-lg:hidden">Limited drop.</p>
+            <p className="o-foot font-serif text-2xl max-lg:hidden">
+              Limited drop.
+            </p>
             <a
               href={apparel.href}
               target="_blank"
               rel="noreferrer"
-              className="o-foot w-fit justify-self-end rounded-[50%] bg-lime px-8 py-3 font-wide text-[0.625rem] text-teal transition-colors hover:bg-bone"
+              className="o-foot w-fit justify-self-end rounded-[50%] bg-lime px-8 py-3 font-wide text-[0.625rem] text-ink transition-colors hover:bg-bone"
             >
               Shop apparel
             </a>

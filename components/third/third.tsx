@@ -169,7 +169,7 @@ export function Columns() {
   );
 
   return (
-    <section ref={root} id="films" className="relative h-[260svh] bg-bone text-teal">
+    <section ref={root} id="films" className="relative h-[260svh] bg-bone text-ink">
       <div className="cl-stage relative h-svh overflow-hidden">
         <div className="absolute inset-x-4 top-[30svh] flex flex-col items-center gap-6 lg:inset-x-8 lg:flex-row lg:items-start lg:justify-center lg:gap-10">
           <h2 className="font-wide text-[15vw] leading-[0.85] lg:text-[13vw]">

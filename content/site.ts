@@ -135,9 +135,24 @@ export const home = {
     { id: "cafe", title: ["Pour, sit,", "Stay"], name: "Cafe", blurb: "Espresso, strawberry matcha, cold beer and long tables. A cafe, and a bar too.", no: "04", href: "https://www.instagram.com/farakchu.cafe/", logo: "/images/logo/logo-cafe.jpg", focus: "50% 35%", image: { src: img("domain-cafe"), alt: "Guest with a drink inside the Farakchu cafe, brick wall and sign behind" } },
   ],
   about: {
-    heading: "Farakchu is a lifestyle and hospitality brand based in Kathmandu, Nepal.",
+    heading: "Farakchu is a lifestyle and hospitality brand based in Kathmandu, Nepal. A place to come as you are, meet your people, and stay a little longer than you planned. Coffee in the morning, games at night, music in between, and a crowd that starts to feel like family.",
     body: "We bring together a specialty coffee shop, an apparel line, entertainment and a local community space in Samakhusi.",
     image: { src: img("apparel-kid"), alt: "Kid flashing a peace sign at the Farakchu bar" },
+  },
+  believe: {
+    title: "What we believe",
+    statement: ["There's no one way to be you.", "And that's the beauty of it."],
+    // Little body texts under the title (believe.tsx).
+    stages: [
+      "Some find themselves in music. Some in conversations. Some in the things they create, the games they play, or the way they express themselves.",
+      "You don't have to fit in. You don't have to be like everyone else. You don't have to explain what makes you, you.",
+      "We believe everyone deserves a space to be themselves, explore what they love, and connect with people who appreciate them for it.",
+    ],
+    closing: ["Because different isn't a distance between us.", "It's what brings us together."],
+    sign: "That's what Farakchu believes.",
+    // Photos that swap in the wall tiles (believe.tsx): 12 portraits + venue shots.
+    people: Array.from({ length: 12 }, (_, i) => `/images/people/p${String(i + 1).padStart(2, "0")}.jpg`),
+    places: ["domain-entertainment", "domain-gaming", "domain-cafe", "crowd-watch", "acoustic", "band", "gaming-player", "apparel-kid"].map(img),
   },
   pillarWords: ["Energy", "Play", "Create", "Together"],
   house: {

@@ -5,11 +5,12 @@ import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { useGSAP } from "@gsap/react";
 import { LogoMark } from "../logo-mark";
 import { home } from "@/content/site";
 
-gsap.registerPlugin(ScrollTrigger, SplitText);
+gsap.registerPlugin(ScrollTrigger, SplitText, ScrollToPlugin);
 
 // Rect clip anchored top/bottom. Width in % so panels can resize (hover split) after the reveal.
 function rect(bh: number, h: number, anchor: "top" | "bottom") {
@@ -32,13 +33,20 @@ function diamond(bw: number, bh: number, t: number, r: number) {
 }
 
 // Logo artboard: outer diamond points span ~96% of the 1080 box.
+// Timeline layout of the tail of the scene (1 unit = 100vh): About copy rises in until ~6.5, films wipe in at FILMS_AT.
+const FILMS_AT = 7.7;
+// About copy rolls up like end credits from CREDITS_AT over CREDITS_LEN timeline units (slow on purpose: text moves ~1.6 screens over ~4 screens of scroll).
+const CREDITS_AT = 3.3;
+const CREDITS_LEN = 4.2;
+const FILMS_END = FILMS_AT + 3 * 0.08 + 0.8;
+
 const markSize = (r: number) => (r * 2) / 0.963;
 
 /**
  * One pinned scene (1 timeline unit = 100vh of scroll):
- * 0 hero folds into the Farakchu diamond -> 1 shrinks to the logo, lettering lands, Farak/Chu close in ->
+ * 0 hero folds into the Farakchu diamond (Farak/Chu spread out from centre) -> 1 shrinks to the logo, lettering lands, Farak/Chu close in beside it ->
  * 2 About photo fades in inside the diamond -> 2.5 diamond opens to full bleed, logo flies to the About heading ->
- * 3.5 About statement fills in -> 4.5 film panels wipe in -> 5.5 pin releases (films then scroll away normally).
+ * 3.3 About copy rolls up like end credits with the logo riding on top; the logo keeps climbing to the navbar and hands off to the fixed nav logo, the text rolls off the top -> 7.5 done -> 7.7 film panels wipe in -> 8.74 pin releases (films then scroll away normally).
  * Nav offsets in components/nav.tsx depend on these positions.
  */
 export function HeroStack() {
@@ -52,13 +60,41 @@ export function HeroStack() {
       const films = q(".hs-film") as HTMLElement[];
       const [mark] = q(".hs-mark") as HTMLElement[];
       const [slot] = q(".hs-slot") as HTMLElement[];
+      const [credits] = q(".hs-credits") as HTMLElement[];
+      const navLogo = document.querySelector<HTMLElement>("[data-nav-logo]");
       const [vv1, vv2] = q(".hs-vv") as HTMLElement[];
 
       // Toggle-played reveals, fired from timeline progress.
-      const filmSplit = SplitText.create(q(".hs-film-heading"), { type: "lines", mask: "lines", linesClass: "line" });
-      const filmHead = gsap.fromTo(filmSplit.lines, { yPercent: 100, opacity: 0 }, { yPercent: 0, opacity: 1, ease: "power4.inOut", duration: 0.8, stagger: 0.05, paused: true });
-      const filmBody = gsap.fromTo(q(".hs-film-body"), { opacity: 0 }, { opacity: 1, ease: "power4.inOut", duration: 1.5, delay: 0.5, paused: true });
-      const toggle = (anim: gsap.core.Animation[], on: boolean) => anim.forEach((a) => (on ? a.play() : a.reverse()));
+      const filmSplit = SplitText.create(q(".hs-film-heading"), {
+        type: "lines",
+        mask: "lines",
+        linesClass: "line",
+      });
+      const filmHead = gsap.fromTo(
+        filmSplit.lines,
+        { yPercent: 100, opacity: 0 },
+        {
+          yPercent: 0,
+          opacity: 1,
+          ease: "power4.inOut",
+          duration: 0.8,
+          stagger: 0.05,
+          paused: true,
+        },
+      );
+      const filmBody = gsap.fromTo(
+        q(".hs-film-body"),
+        { opacity: 0 },
+        {
+          opacity: 1,
+          ease: "power4.inOut",
+          duration: 1.5,
+          delay: 0.5,
+          paused: true,
+        },
+      );
+      const toggle = (anim: gsap.core.Animation[], on: boolean) =>
+        anim.forEach((a) => (on ? a.play() : a.reverse()));
       let filmsOn = false;
 
       gsap.set(q(".hs-bg"), { scale: 1.05 });
@@ -66,109 +102,227 @@ export function HeroStack() {
       gsap.set(mark, { xPercent: -50, yPercent: -50 });
 
       const mm = gsap.matchMedia();
-      mm.add({ desktop: "(min-width: 992px)", mobile: "(max-width: 991px)" }, (ctx) => {
-        const desktop = ctx.conditions!.desktop;
-        const box = { w: 0, h: 0, fh: [] as number[], slotY: 0, slotS: 80 };
-        const measure = () => {
-          box.w = hero.offsetWidth;
-          box.h = hero.offsetHeight;
-          box.fh = films.map((f) => f.offsetHeight);
-          // Where the logo lands above the About heading (offset from centre; both live in the same pinned box).
-          const s = slot.getBoundingClientRect();
-          const h = hero.getBoundingClientRect();
-          box.slotY = s.top + s.height / 2 - (h.top + h.height / 2);
-          box.slotS = markSize(s.width / 2);
-        };
-        measure();
+      mm.add(
+        { desktop: "(min-width: 992px)", mobile: "(max-width: 991px)" },
+        (ctx) => {
+          const desktop = ctx.conditions!.desktop;
+          const box = { w: 0, h: 0, fh: [] as number[], cH: 0, slotC: 40, navY: 0, navS: 64 };
+          const measure = () => {
+            box.w = hero.offsetWidth;
+            box.h = hero.offsetHeight;
+            box.fh = films.map((f) => f.offsetHeight);
+            // Credits block height, and where the logo's slot sits inside it (the logo rides on this slot).
+            box.cH = credits.offsetHeight;
+            box.slotC = slot.offsetTop + slot.offsetHeight / 2;
+            // Navbar logo (fixed, viewport coords). The hero is pinned at the viewport top, so its centre sits at box.h / 2.
+            if (navLogo) {
+              const n = navLogo.getBoundingClientRect();
+              box.navY = n.top + n.height / 2 - box.h / 2;
+              box.navS = n.width;
+            } else box.navY = 50 - box.h / 2;
+          };
+          measure();
+          // Fixed nav logo stays hidden until the flying logo reaches it (visibility toggled in paint()).
+          if (navLogo) navLogo.style.visibility = "hidden";
 
-        const rFull = () => Math.min(box.h, box.w) * 0.5;
-        const rLogo = () => Math.min(box.h * 0.34, box.w * 0.36);
-        const m: Record<string, number> = { t: 0, r: rFull(), ms: markSize(rFull()) };
-        films.forEach((_, i) => (m[`f${i}`] = 0));
-        // Perf: only touch the DOM when a value actually changed (each clip change repaints a full-screen layer).
-        const last: Record<string, string | number> = {};
-        const setIf = (key: string, v: string | number, apply: () => void) => {
-          if (last[key] === v) return;
-          last[key] = v;
-          apply();
-        };
-        // Mark renders once at its largest size and is scaled on the GPU (resizing the traced SVG each frame was the main jank).
-        const paint = () => {
-          const base = Math.round(markSize(Math.max(box.h, box.w) * 0.5));
-          setIf("base", base, () => (mark.style.width = mark.style.height = `${base}px`));
-          const d = diamond(box.w, box.h, m.t, m.r);
-          setIf("hero", d, () => (hero.style.clipPath = d));
-          const sc = +(m.ms / base).toFixed(4);
-          setIf("mark", sc, () => gsap.set(mark, { scale: sc }));
-          // Panels wipe in alternately from the top and from the bottom.
-          films.forEach((f, i) => {
-            const c = rect(box.fh[i], m[`f${i}`], i % 2 ? "bottom" : "top");
-            setIf(`f${i}`, c, () => (f.style.clipPath = c));
-          });
-        };
-        ScrollTrigger.addEventListener("refreshInit", measure);
-        paint();
+          const rFull = () => Math.min(box.h, box.w) * 0.5;
+          const rLogo = () => Math.min(box.h * 0.34, box.w * 0.36);
+          const m: Record<string, number> = {
+            t: 0,
+            r: rFull(),
+            ms: markSize(rFull()),
+            cy: box.h,
+          };
+          films.forEach((_, i) => (m[`f${i}`] = 0));
+          // Perf: only touch the DOM when a value actually changed (each clip change repaints a full-screen layer).
+          const last: Record<string, string | number> = {};
+          const setIf = (
+            key: string,
+            v: string | number,
+            apply: () => void,
+          ) => {
+            if (last[key] === v) return;
+            last[key] = v;
+            apply();
+          };
+          // Mark renders once at its largest size and is scaled on the GPU (resizing the traced SVG each frame was the main jank).
+          const paint = () => {
+            const base = Math.round(markSize(Math.max(box.h, box.w) * 0.5));
+            setIf(
+              "base",
+              base,
+              () => (mark.style.width = mark.style.height = `${base}px`),
+            );
+            const d = diamond(box.w, box.h, m.t, m.r);
+            setIf("hero", d, () => (hero.style.clipPath = d));
+            const sc = +(m.ms / base).toFixed(4);
+            setIf("mark", sc, () => gsap.set(mark, { scale: sc }));
+            // Credits roll; the logo sits at the screen centre until the slot reaches it, rides up with it, and stops at the navbar.
+            setIf("cy", Math.round(m.cy), () => gsap.set(credits, { y: Math.round(m.cy) }));
+            const rideY = m.cy + box.slotC - box.h / 2;
+            const my = Math.round(Math.max(box.navY, Math.min(0, rideY)));
+            setIf("my", my, () => gsap.set(mark, { y: my }));
+            // Hand off to the fixed nav logo the moment the flying one reaches it.
+            const docked = rideY <= box.navY ? 1 : 0;
+            setIf("dock", docked, () => {
+              mark.style.visibility = docked ? "hidden" : "visible";
+              if (navLogo) navLogo.style.visibility = docked ? "visible" : "hidden";
+            });
+            // Panels wipe in alternately from the top and from the bottom.
+            films.forEach((f, i) => {
+              const c = rect(box.fh[i], m[`f${i}`], i % 2 ? "bottom" : "top");
+              setIf(`f${i}`, c, () => (f.style.clipPath = c));
+            });
+          };
+          ScrollTrigger.addEventListener("refreshInit", measure);
+          paint();
 
-        const rem = () => parseFloat(getComputedStyle(document.documentElement).fontSize);
-        const close = (el: HTMLElement) => (box.w - 8 * rem()) / 2 - el.getBoundingClientRect().width;
+          const rem = () =>
+            parseFloat(getComputedStyle(document.documentElement).fontSize);
+          // x offsets for a Farak/Chu column (layout position via offsetLeft, so current transforms don't skew it).
+          const middle = (el: HTMLElement) =>
+            box.w / 2 - el.offsetWidth / 2 - el.offsetLeft;
+          const beside = (el: HTMLElement, side: 1 | -1) =>
+            side === 1
+              ? box.w / 2 - rLogo() - 3 * rem() - (el.offsetLeft + el.offsetWidth)
+              : box.w / 2 + rLogo() + 3 * rem() - el.offsetLeft;
 
-        const tl = gsap.timeline({
-          defaults: { ease: "none" },
-          onUpdate: () => {
-            paint();
-            const time = tl.time();
-            if (time > 4.9 !== filmsOn) toggle([filmHead, filmBody], (filmsOn = time > 4.9));
-          },
-          scrollTrigger: {
-            trigger: root.current,
-            start: "top top",
-            end: "+=550%",
-            pin: true,
-            scrub: true,
-            invalidateOnRefresh: true,
-            anticipatePin: 1,
-            onRefresh: (self) => {
-              self.animation?.progress(self.progress);
+          // Panel wipe (timeline FILMS_AT-FILMS_END): once scrolling goes idle mid-wipe, glide to its end (or back to its start when scrolling up).
+          // Own idle detector instead of ScrollTrigger snap: snap fires too early under ScrollSmoother's wheel lag and never finishes.
+          let idle = 0;
+          let glide: gsap.core.Tween | undefined;
+          const settle = (self: ScrollTrigger) => {
+            if (glide?.isActive()) return;
+            clearTimeout(idle);
+            idle = window.setTimeout(() => {
+              const d = tl.duration();
+              const [a, b] = [FILMS_AT / d, FILMS_END / d];
+              const p = self.progress;
+              if (p <= a + 0.002 || p >= b - 0.002) return;
+              const y = self.start + (self.direction === -1 ? a : b) * (self.end - self.start);
+              glide = gsap.to(window, {
+                scrollTo: { y },
+                duration: 0.9 + (1.2 * Math.abs(y - scrollY)) / innerHeight,
+                ease: "power2.inOut",
+                overwrite: true,
+              });
+            }, 160);
+          };
+
+          const tl = gsap.timeline({
+            defaults: { ease: "none" },
+            onUpdate: () => {
               paint();
+              const time = tl.time();
+              if (time > FILMS_AT + 0.4 !== filmsOn)
+                toggle([filmHead, filmBody], (filmsOn = time > FILMS_AT + 0.4));
             },
-          },
-        });
+            scrollTrigger: {
+              trigger: root.current,
+              start: "top top",
+              end: `+=${FILMS_END * 100}%`,
+              pin: true,
+              scrub: true,
+              invalidateOnRefresh: true,
+              anticipatePin: 1,
+              onUpdate: (self) => settle(self),
+              onRefresh: (self) => {
+                self.animation?.progress(self.progress);
+                paint();
+              },
+            },
+          });
 
-        // 0-1: fold into the diamond
-        tl.fromTo(m, { t: 0, r: () => rFull() }, { duration: 1, t: 1, ease: "power2.inOut" }, 0)
-          .to(q(".hs-bg"), { duration: 1, scale: 1 }, 0)
-          .to(q(".hs-heading"), { duration: 0.98, opacity: 0 }, 0.02)
-          .to(q(".hs-first"), { duration: 0.98, x: desktop ? 100 : 10 }, 0.02)
-          .to(q(".hs-third"), { duration: 0.98, x: desktop ? -100 : -10 }, 0.02)
-          // 1-2: shrink to the logo, lettering lands
-          .fromTo(m, { r: () => rFull(), ms: () => markSize(rFull()) }, { duration: 1, r: () => rLogo(), ms: () => markSize(rLogo()), ease: "power2.inOut" }, 1)
-          .fromTo(mark, { opacity: 0 }, { duration: 0.5, opacity: 1 }, 1.5);
-        if (desktop) tl.to(vv1, { duration: 1, x: () => close(vv1) }, 1).to(vv2, { duration: 1, x: () => -close(vv2) }, 1);
+          // 0-1: fold into the diamond
+          tl.fromTo(
+            m,
+            { t: 0, r: () => rFull() },
+            { duration: 1, t: 1, ease: "power2.inOut" },
+            0,
+          )
+            .to(q(".hs-bg"), { duration: 1, scale: 1 }, 0)
+            // Heading holds until the logo arrives, then cross-fades with it (1.5-2).
+            .to(q(".hs-heading"), { duration: 0.5, opacity: 0 }, 1.5)
+            .to(q(".hs-first"), { duration: 0.98, x: desktop ? 100 : 10 }, 0.02)
+            .to(
+              q(".hs-third"),
+              { duration: 0.98, x: desktop ? -100 : -10 },
+              0.02,
+            )
+            // 1-2: shrink to the logo, lettering lands
+            .fromTo(
+              m,
+              { r: () => rFull(), ms: () => markSize(rFull()) },
+              {
+                duration: 1,
+                r: () => rLogo(),
+                ms: () => markSize(rLogo()),
+                ease: "power2.inOut",
+              },
+              1,
+            )
+            .fromTo(mark, { opacity: 0 }, { duration: 0.5, opacity: 1 }, 1.5);
+          // Farak / Chu: start at the centre, spread out as the diamond forms (0-1),
+          // then close in beside the logo (1-2): (Farak) (logo) (Chu).
+          if (desktop)
+            ([[vv1, 1], [vv2, -1]] as [HTMLElement, 1 | -1][]).forEach(([el, side]) =>
+              tl
+                .fromTo(el, { x: () => middle(el) }, { duration: 1, x: 0, ease: "power2.inOut" }, 0)
+                .to(el, { duration: 1, x: () => beside(el, side), ease: "power2.inOut" }, 1),
+            );
 
-        // 2-2.5: About photo inside the diamond
-        tl.to(q(".hs-about-bg"), { duration: 0.5, opacity: 1 }, 2)
-          // 2.5-3.5: open to full bleed, logo flies to the heading
-          .to(m, { duration: 1, t: 0, ms: () => box.slotS, ease: "power2.inOut" }, 2.5)
-          .to(mark, { duration: 1, y: () => box.slotY, ease: "power2.inOut" }, 2.5)
-          .to(q(".hs-about-tint"), { duration: 1, opacity: 0.55 }, 2.5)
-          .fromTo(q(".hs-about-photo"), { scale: 1.15 }, { duration: 2, scale: 1 }, 2.5)
-          // 3.5-4.5: statement fills in
-          .fromTo(q(".hs-aw"), { opacity: 0 }, { opacity: 1, stagger: 0.06, duration: 0.3 }, 3.3)
-          .fromTo(q(".hs-about-body"), { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.4 }, 4.1);
-        // 4.5-5.3: the four domain panels wipe in over About, staggered
-        films.forEach((_, i) =>
-          tl.fromTo(m, { [`f${i}`]: 0 }, { duration: 0.8, [`f${i}`]: () => box.fh[i] + 1, immediateRender: false }, 4.5 + i * 0.08),
-        );
-        tl
-          .fromTo(films, { pointerEvents: "none" }, { pointerEvents: "auto", duration: 0 }, 5.3)
-          .to({}, { duration: 0.2 }, 5.3);
+          // 2-2.5: About photo inside the diamond
+          tl.to(q(".hs-about-bg"), { duration: 0.5, opacity: 1 }, 2)
+            // 2.5-3.5: open to full bleed, logo flies to the heading
+            .to(
+              m,
+              { duration: 1, t: 0, ms: () => box.navS, ease: "power2.inOut" },
+              2.5,
+            )
+            .to(q(".hs-about-tint"), { duration: 1, opacity: 0.55 }, 2.5)
+            // Photo drifts up slowly with the credits (scale leaves margin so the bottom edge never shows).
+            .fromTo(
+              q(".hs-about-photo"),
+              { scale: 1.25, yPercent: 0 },
+              { duration: CREDITS_AT + CREDITS_LEN - 2.5, scale: 1.14, yPercent: -6 },
+              2.5,
+            )
+            // Credits roll: from below the screen to off the top, linear so it reads as a slow crawl.
+            .fromTo(
+              m,
+              { cy: () => box.h },
+              { duration: CREDITS_LEN, cy: () => -box.cH, ease: "none" },
+              CREDITS_AT,
+            );
+          // FILMS_AT: the four domain panels wipe in over About, staggered
+          films.forEach((_, i) =>
+            tl.fromTo(
+              m,
+              { [`f${i}`]: 0 },
+              {
+                duration: 0.8,
+                [`f${i}`]: () => box.fh[i] + 1,
+                immediateRender: false,
+              },
+              FILMS_AT + i * 0.08,
+            ),
+          );
+          tl.fromTo(
+            films,
+            { pointerEvents: "none" },
+            { pointerEvents: "auto", duration: 0 },
+            FILMS_AT + 0.8,
+          ).to({}, { duration: 0.2 }, FILMS_AT + 0.8);
 
-        return () => {
-          ScrollTrigger.removeEventListener("refreshInit", measure);
-          gsap.set([hero, ...films], { clearProps: "clipPath" });
-        };
-      });
-
+          return () => {
+            if (navLogo) navLogo.style.visibility = "";
+            clearTimeout(idle);
+            glide?.kill();
+            ScrollTrigger.removeEventListener("refreshInit", measure);
+            gsap.set([hero, ...films], { clearProps: "clipPath" });
+          };
+        },
+      );
 
       // Lime "Explore" badge follows the pointer inside each panel (desktop).
       const offs: (() => void)[] = [];
@@ -176,8 +330,14 @@ export function HeroStack() {
         const badge = film.querySelector<HTMLElement>(".hs-cursor");
         if (!badge) return;
         gsap.set(badge, { xPercent: -50, yPercent: -50, scale: 0 });
-        const x = gsap.quickTo(badge, "x", { duration: 0.3, ease: "power3.out" });
-        const y = gsap.quickTo(badge, "y", { duration: 0.3, ease: "power3.out" });
+        const x = gsap.quickTo(badge, "x", {
+          duration: 0.3,
+          ease: "power3.out",
+        });
+        const y = gsap.quickTo(badge, "y", {
+          duration: 0.3,
+          ease: "power3.out",
+        });
         const move = (e: PointerEvent) => {
           const r = film.getBoundingClientRect();
           x(e.clientX - r.left);
@@ -188,17 +348,29 @@ export function HeroStack() {
           gsap.set(badge, { x: e.clientX - r.left, y: e.clientY - r.top });
           gsap.to(badge, { scale: 1, duration: 0.5, ease: "back.out(2)" });
         };
-        const leave = () => gsap.to(badge, { scale: 0, duration: 0.3, ease: "power2.in" });
+        const leave = () =>
+          gsap.to(badge, { scale: 0, duration: 0.3, ease: "power2.in" });
         film.addEventListener("pointermove", move);
         film.addEventListener("pointerenter", enter);
         film.addEventListener("pointerleave", leave);
-        offs.push(() => (film.removeEventListener("pointermove", move), film.removeEventListener("pointerenter", enter), film.removeEventListener("pointerleave", leave)));
+        offs.push(
+          () => (
+            film.removeEventListener("pointermove", move),
+            film.removeEventListener("pointerenter", enter),
+            film.removeEventListener("pointerleave", leave)
+          ),
+        );
       });
       gsap.set(films, { pointerEvents: "none" });
 
       // After the pin: films darken + drift as the next section scrolls in.
-      gsap.to(q(".hs-films-overlay"), { opacity: 0.85, ease: "none", scrollTrigger: { trigger: "#whats-on", start: "top bottom", end: "top top", scrub: true } });
-      gsap.to(q(".hs-film-img"), { yPercent: 15, ease: "none", scrollTrigger: { trigger: "#whats-on", start: "top bottom", end: "top top", scrub: true } });
+      // Trigger is whatever section follows (not a hard-coded id): a missing trigger makes the tween run at once and tints the whole hero.
+      const next = root.current?.nextElementSibling;
+      if (next) {
+        const trigger = { trigger: next, start: "top bottom", end: "top top", scrub: true };
+        gsap.to(q(".hs-films-overlay"), { opacity: 0.85, ease: "none", scrollTrigger: trigger });
+        gsap.to(q(".hs-film-img"), { yPercent: 15, ease: "none", scrollTrigger: trigger });
+      }
 
       return () => {
         offs.forEach((off) => off());
@@ -214,11 +386,27 @@ export function HeroStack() {
   return (
     <div ref={root} id="top" className="relative grid h-svh overflow-hidden">
       {/* Layer 0: meaning */}
-      <section id="vv" className="relative flex h-svh items-center justify-between bg-teal px-4 text-bone [grid-area:1/1] md:px-8 max-lg:flex-col max-lg:py-24">
+      <section
+        id="vv"
+        className="relative flex h-svh items-center justify-between bg-teal px-4 text-bone [grid-area:1/1] md:px-8 max-lg:flex-col max-lg:py-24"
+      >
         {[m1, m2].map((m, i) => (
-          <div key={m.word} className={`hs-vv flex w-[11.75rem] flex-col gap-4 lg:w-[17.625rem] ${i ? "max-lg:ml-auto" : "max-lg:mr-auto"}`}>
-            <h2 data-heading className="font-serif text-[4rem] leading-none lg:text-[6rem]">{m.word}</h2>
-            <p data-body className="text-justify text-xs uppercase leading-[1.2] tracking-[0.025rem]">{m.body}</p>
+          <div
+            key={m.word}
+            className={`hs-vv flex w-[11.75rem] flex-col gap-4 lg:w-[17.625rem] ${i ? "max-lg:ml-auto" : "max-lg:mr-auto"}`}
+          >
+            <h2
+              data-heading
+              className="font-azonix text-[3rem] leading-none lg:text-[5rem]"
+            >
+              {m.word}
+            </h2>
+            <p
+              data-body
+              className="text-justify text-xs uppercase leading-[1.2] tracking-[0.025rem]"
+            >
+              {m.body}
+            </p>
           </div>
         ))}
       </section>
@@ -234,42 +422,49 @@ export function HeroStack() {
           aria-hidden="true"
           className="hs-bg absolute inset-0 h-full w-full object-cover"
         >
-          <source src="/videos/hero_video" type="video/mp4" />
+          <source src="/videos/hero_video.mp4" type="video/mp4" />
         </video>
 
-        <div id="about" className="hs-about-bg absolute inset-0 z-[1] opacity-0">
+        <div
+          id="about"
+          className="hs-about-bg absolute inset-0 z-[1] opacity-0"
+        >
           <div className="hs-about-photo absolute inset-0">
-            <Image src={home.about.image.src} alt={home.about.image.alt} fill sizes="100vw" className="object-cover object-top" />
+            <Image
+              src={home.about.image.src}
+              alt={home.about.image.alt}
+              fill
+              sizes="100vw"
+              className="object-cover object-top"
+            />
           </div>
           <div className="hs-about-tint absolute inset-0 bg-teal-deep opacity-0" />
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-8 px-4 text-bone lg:px-8">
-            {/* The flying logo lands on this slot. */}
+          <div className="hs-credits absolute inset-x-0 top-0 flex flex-col items-center gap-8 px-4 text-bone will-change-transform lg:px-8">
+            {/* The flying logo rides on this slot. */}
             <div className="hs-slot size-16 lg:size-20" aria-hidden />
-            <h2 className="font-wide max-w-[22ch] text-center text-[1.375rem] leading-[0.95] md:text-[3rem] lg:text-[4rem]">
+            <h2 className="font-wide max-w-[30ch] text-center text-base leading-[1.05] md:text-[1.75rem] lg:text-[2.25rem]">
               {words.map((w, i) => {
                 const hl = /^(lifestyle|hospitality)$/i.test(w);
                 return (
-                  <span key={i} className="hs-aw">
+                  <span key={i}>
                     {hl ? <span className="hl">{w}</span> : w}{" "}
                   </span>
                 );
               })}
             </h2>
-            <p className="hs-about-body w-[9.5rem] text-justify text-xs uppercase leading-[1.2] tracking-[0.025rem] md:w-[15.9375rem] lg:w-[21.5rem]">
-              {home.about.body}
-            </p>
           </div>
         </div>
 
         <LogoMark className="hs-mark pointer-events-none absolute left-1/2 top-1/2 z-[3] text-bone opacity-0 will-change-transform" />
 
-        <div className="relative z-[2] flex h-full flex-col justify-end px-4 py-4 text-bone lg:px-8 lg:py-8">
-          <h1 data-hero className="hs-heading flex flex-col gap-[0.06em] font-wide text-[9.2vw] leading-[0.92] lg:text-[9.5vw]">
-            <span className="flex justify-between">
-              <span className="hs-first">The</span>
-              <span>Art</span>
-              <span className="hs-third">Of</span>
-            </span>
+        {/* data-hero lives on this wrapper, not the h1: the scroll timeline owns the h1's opacity and would overwrite the preloader's reveal on refresh. */}
+        <div
+          data-hero
+          className="relative z-[2] flex h-full flex-col items-center justify-center px-4 py-4 text-bone lg:px-8 lg:py-8"
+        >
+          <h1 className="hs-heading flex flex-col items-center gap-[0.06em] text-center font-wide text-[8vw] leading-[0.95] lg:text-[4.5rem]">
+            <span>The</span>
+            <span>Art Of</span>
             <span className="block whitespace-nowrap text-center">
               <span className="hl">Difference</span>
             </span>
@@ -278,7 +473,10 @@ export function HeroStack() {
       </section>
 
       {/* Layer 2: film panels */}
-      <section id="films" className="hs-films relative z-[2] flex h-svh [grid-area:1/1] max-lg:flex-col">
+      <section
+        id="films"
+        className="hs-films relative z-[2] flex h-svh [grid-area:1/1] max-lg:flex-col"
+      >
         <div className="hs-films-overlay pointer-events-none absolute inset-0 z-[6] bg-teal-deep opacity-0" />
         {home.films.map((f, i) => {
           const on = hover === i;
@@ -308,9 +506,13 @@ export function HeroStack() {
                   className={`hs-film-img origin-top object-cover transition-[filter,scale] duration-[900ms] ease-out-expo ${on ? "scale-[1.04]" : ""} ${off ? "grayscale brightness-[0.45]" : ""}`}
                 />
               </div>
-              <div className={`absolute inset-0 z-[2] bg-teal/20 mix-blend-multiply transition-opacity duration-700 ${on ? "opacity-0" : ""}`} />
+              <div
+                className={`absolute inset-0 z-[2] bg-teal/20 mix-blend-multiply transition-opacity duration-700 ${on ? "opacity-0" : ""}`}
+              />
               <div className="absolute inset-0 z-[2] bg-gradient-to-t from-teal-deep/95 via-teal-deep/40 via-35% to-transparent to-60%" />
-              {i < home.films.length - 1 && <span className="absolute inset-y-0 right-0 z-[5] hidden w-px bg-bone/20 lg:block" />}
+              {i < home.films.length - 1 && (
+                <span className="absolute inset-y-0 right-0 z-[5] hidden w-px bg-bone/20 lg:block" />
+              )}
 
               {/* Collapsed state: name runs up the spine */}
               <span
@@ -321,27 +523,45 @@ export function HeroStack() {
                 {f.name}
               </span>
 
-              <div className={`relative z-[3] flex h-full flex-col justify-end transition-opacity duration-300 ${off ? "lg:opacity-0" : ""}`}>
+              <div
+                className={`relative z-[3] flex h-full flex-col justify-end transition-opacity duration-300 ${off ? "lg:opacity-0" : ""}`}
+              >
                 {/* Division badge + number, kept clear of the fixed nav */}
                 <div className="mb-4 flex items-center gap-3 lg:mb-6">
-                  <Image src={f.logo} alt="" width={56} height={56} className="size-9 rounded-full object-cover ring-1 ring-bone/30 lg:size-12" />
-                  <span className="font-wide text-[0.625rem] text-bone/70">{f.no}</span>
+                  <Image
+                    src={f.logo}
+                    alt=""
+                    width={56}
+                    height={56}
+                    className="size-9 rounded-full object-cover ring-1 ring-bone/30 lg:size-12"
+                  />
+                  <span className="font-wide text-[0.625rem] text-bone/70">
+                    {f.no}
+                  </span>
                 </div>
                 <h3 className="hs-film-heading whitespace-nowrap font-serif text-[2rem] leading-[1] lg:text-[clamp(2.4rem,3.4vw,4.5rem)]">
                   <span className="block">{f.title[0]}</span>
                   <span className="mt-1.5 block">
-                    <span className="hl font-wide text-[0.82em]">{f.title[1]}</span>
+                    <span className="hl font-wide text-[0.82em]">
+                      {f.title[1]}
+                    </span>
                   </span>
                 </h3>
-                <div className={`hs-film-body mt-4 flex items-end justify-between gap-4 border-t border-bone/20 pt-4 lg:mt-6 lg:pt-5`}>
-                  <p className={`max-w-[19rem] text-justify text-[0.6875rem] uppercase leading-[1.25] tracking-[0.025rem] text-bone/80 transition-[opacity,max-height] duration-500 max-lg:line-clamp-2 lg:text-xs ${hover === null || on ? "" : "lg:opacity-0"}`}>
+                <div
+                  className={`hs-film-body mt-4 flex items-end justify-between gap-4 border-t border-bone/20 pt-4 lg:mt-6 lg:pt-5`}
+                >
+                  <p
+                    className={`max-w-[19rem] text-justify text-[0.6875rem] uppercase leading-[1.25] tracking-[0.025rem] text-bone/80 transition-[opacity,max-height] duration-500 max-lg:line-clamp-2 lg:text-xs ${hover === null || on ? "" : "lg:opacity-0"}`}
+                  >
                     {f.blurb}
                   </p>
-                  <span className="shrink-0 rounded-[50%] bg-lime px-5 py-2.5 font-wide text-[0.625rem] text-teal lg:hidden">Explore</span>
+                  <span className="shrink-0 rounded-[50%] bg-lime px-5 py-2.5 font-wide text-[0.625rem] text-ink lg:hidden">
+                    Explore
+                  </span>
                 </div>
               </div>
 
-              <span className="hs-cursor pointer-events-none absolute left-0 top-0 z-[7] hidden size-28 place-items-center rounded-full bg-lime text-center font-wide text-[0.625rem] leading-tight text-teal lg:grid">
+              <span className="hs-cursor pointer-events-none absolute left-0 top-0 z-[7] hidden size-28 place-items-center rounded-full bg-lime text-center font-wide text-[0.625rem] leading-tight text-ink lg:grid">
                 {f.name}
                 <br />↗
               </span>
@@ -349,7 +569,6 @@ export function HeroStack() {
           );
         })}
       </section>
-
     </div>
   );
 }

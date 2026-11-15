@@ -53,7 +53,7 @@ export function RollLabel({ text, alt, on, className = "" }: { text: string; alt
   }, [on]);
 
   return (
-    <span ref={root} className={`inline-block px-[0.08em] transition-colors duration-200 ${on ? "bg-lime text-teal" : ""} ${className}`}>
+    <span ref={root} className={`inline-block px-[0.08em] transition-colors duration-200 ${on ? "rounded-[0.16em] bg-lime text-ink" : ""} ${className}`}>
       <span className="sr-only">{text}</span>
       <span ref={clip} aria-hidden className="relative inline-grid overflow-hidden align-bottom [perspective:480px]">
         <span ref={rowA} className="inline-flex w-max whitespace-pre [grid-area:1/1]">

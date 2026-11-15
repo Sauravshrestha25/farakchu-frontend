@@ -12,7 +12,9 @@ gsap.registerPlugin(ScrollTrigger);
 // Deterministic barcode bar widths (no Math.random: SSR must match the client).
 const BARS = "3121412213114231121341221312411321231431".split("").map(Number);
 
-const Rule = () => <div aria-hidden className="my-3 border-t border-dashed border-teal/40" />;
+const Rule = () => (
+  <div aria-hidden className="my-3 border-t border-dashed border-teal/40" />
+);
 
 // The cafe as a thermal receipt that feeds out of a printer slot as you scroll (scrubbed, no pin).
 export function Cafe() {
@@ -28,10 +30,34 @@ export function Cafe() {
         gsap.fromTo(
           q(".rc-paper"),
           { yPercent: -100 },
-          { yPercent: 0, ease: "none", scrollTrigger: { trigger: q(".rc-feed")[0], start: "top 95%", end: "top 30%", scrub: 0.6 } },
+          {
+            yPercent: 0,
+            ease: "none",
+            scrollTrigger: {
+              trigger: q(".rc-feed")[0],
+              start: "top 95%",
+              end: "top 30%",
+              scrub: 0.6,
+            },
+          },
         );
         // Slight paper wobble while printing.
-        gsap.fromTo(q(".rc-paper"), { rotation: -0.6 }, { rotation: 0.6, ease: "sine.inOut", repeat: 5, yoyo: true, scrollTrigger: { trigger: q(".rc-feed")[0], start: "top 95%", end: "top 30%", scrub: 0.6 } });
+        gsap.fromTo(
+          q(".rc-paper"),
+          { rotation: -0.6 },
+          {
+            rotation: 0.6,
+            ease: "sine.inOut",
+            repeat: 5,
+            yoyo: true,
+            scrollTrigger: {
+              trigger: q(".rc-feed")[0],
+              start: "top 95%",
+              end: "top 30%",
+              scrub: 0.6,
+            },
+          },
+        );
       });
       gsap.from(q(".rc-head-line"), {
         yPercent: 100,
@@ -40,13 +66,24 @@ export function Cafe() {
         ease: "power4.out",
         scrollTrigger: { trigger: root.current, start: "top 70%" },
       });
-      gsap.from(q(".rc-fade"), { opacity: 0, y: 20, stagger: 0.08, duration: 0.9, ease: "power3.out", scrollTrigger: { trigger: root.current, start: "top 60%" } });
+      gsap.from(q(".rc-fade"), {
+        opacity: 0,
+        y: 20,
+        stagger: 0.08,
+        duration: 0.9,
+        ease: "power3.out",
+        scrollTrigger: { trigger: root.current, start: "top 60%" },
+      });
     },
     { scope: root },
   );
 
   return (
-    <section ref={root} id="cafe" className="relative overflow-hidden bg-teal-deep px-4 py-24 text-bone lg:px-8 lg:py-28">
+    <section
+      ref={root}
+      id="cafe"
+      className="relative overflow-hidden bg-teal-deep px-4 py-24 text-bone lg:px-8 lg:py-28"
+    >
       <div className="grid items-center gap-14 lg:min-h-[calc(100svh-14rem)] lg:grid-cols-12 lg:gap-8">
         {/* Copy + actions */}
         <div className="lg:col-span-4 lg:self-center">
@@ -61,24 +98,31 @@ export function Cafe() {
             </span>
           </h2>
           <p className="rc-fade mt-6 max-w-[22rem] text-justify text-xs uppercase leading-[1.25] tracking-[0.025rem] text-bone/70">
-            Coffee by day, a bar by night, every big game on the big screen. Here&apos;s what a usual evening at the cafe adds up to.
+            Coffee by day, a bar by night, every big game on the big screen.
+            Here&apos;s what a usual evening at the cafe adds up to.
           </p>
           <div className="rc-fade mt-8 flex flex-wrap items-center gap-3">
-            <a href={visit.directions} target="_blank" rel="noreferrer" className="rounded-[50%] bg-lime px-7 py-3 font-wide text-[0.625rem] text-teal transition-colors hover:bg-bone">
+            <a
+              href={visit.directions}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-[50%] bg-lime px-7 py-3 font-wide text-[0.625rem] text-ink transition-colors hover:bg-bone"
+            >
               Get directions
             </a>
-            <a href={site.phoneHref} className="rounded-[50%] border border-bone/40 px-7 py-3 font-wide text-[0.625rem] transition-colors hover:border-lime hover:bg-lime hover:text-teal">
-              Book a table
-            </a>
-            <a href="https://ig.me/m/farakchu.cafe" target="_blank" rel="noreferrer" className="text-sm underline-offset-4 hover:text-lime hover:underline">
+
+            <a
+              href="https://ig.me/m/farakchu.cafe"
+              target="_blank"
+              rel="noreferrer"
+              className="text-sm underline-offset-4 hover:text-lime hover:underline"
+            >
               DM the cafe →
             </a>
           </div>
-
         </div>
 
-
-          {/* Fanned photo deck. Hovering a receipt line shuffles that photo to the front. */}
+        {/* Fanned photo deck. Hovering a receipt line shuffles that photo to the front. */}
         <div className="relative mx-auto h-[46svh] max-h-[460px] w-full max-w-[420px] lg:col-span-4 lg:h-[56svh] lg:max-h-[520px] lg:self-center">
           {cafe.items.map((it, i) => {
             const n = cafe.items.length;
@@ -103,9 +147,17 @@ export function Cafe() {
                 }}
               >
                 <div className="relative size-full overflow-hidden bg-teal">
-                  <Image src={it.image.src} alt={it.image.alt} fill sizes="320px" className="object-cover" />
+                  <Image
+                    src={it.image.src}
+                    alt={it.image.alt}
+                    fill
+                    sizes="320px"
+                    className="object-cover"
+                  />
                 </div>
-                <figcaption className="absolute inset-x-2 bottom-2 font-mono text-[0.625rem] uppercase text-teal">1x {it.name}</figcaption>
+                <figcaption className="absolute inset-x-2 bottom-2 font-mono text-[0.625rem] uppercase text-ink">
+                  1x {it.name}
+                </figcaption>
               </figure>
             );
           })}
@@ -113,17 +165,23 @@ export function Cafe() {
 
         {/* Printer + receipt */}
         <div className="rc-feed relative mx-auto w-full max-w-[400px] lg:col-span-4">
-          <div className="relative z-10 h-5 rounded-full bg-black shadow-[inset_0_-3px_0_rgb(255_255_255/0.08)]" aria-hidden />
+          <div
+            className="relative z-10 h-5 rounded-full bg-black shadow-[inset_0_-3px_0_rgb(255_255_255/0.08)]"
+            aria-hidden
+          />
           <div className="-mt-2.5 overflow-hidden px-3 pt-2.5">
             <div
-              className="rc-paper relative bg-[#f6f1e6] px-6 pb-10 pt-6 font-mono text-[0.75rem] uppercase leading-relaxed text-teal shadow-[0_30px_60px_-20px_rgb(0_0_0/0.7)]"
+              className="rc-paper relative bg-[#f6f1e6] px-6 pb-10 pt-6 font-mono text-[0.75rem] uppercase leading-relaxed text-ink shadow-[0_30px_60px_-20px_rgb(0_0_0/0.7)]"
               style={{
                 // Zigzag tear along the bottom edge.
                 mask: "conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) 50% / 14px 100%",
-                WebkitMask: "conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) 50% / 14px 100%",
+                WebkitMask:
+                  "conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) 50% / 14px 100%",
               }}
             >
-              <p className="text-center text-base font-bold tracking-widest">Farak Chu</p>
+              <p className="text-center text-base font-bold tracking-widest">
+                Farak Chu
+              </p>
               <p className="text-center">Cafe &amp; Bar</p>
               <p className="mt-2 text-center text-[0.6875rem] normal-case">
                 {visit.lines[0]}, {visit.lines[1]}
@@ -148,11 +206,14 @@ export function Cafe() {
                       onPointerEnter={() => setPeek(i)}
                       onFocus={() => setPeek(i)}
                       onBlur={() => setPeek(null)}
-                      className={`flex w-full items-baseline gap-2 py-0.5 text-left uppercase transition-colors ${peek === i ? "bg-lime" : ""}`}
+                      className={`flex w-full items-baseline gap-2 py-0.5 text-left uppercase transition-colors ${(peek ?? cafe.items.length - 1) === i ? "rounded-[0.16em] bg-lime" : ""}`}
                     >
                       <span>1x</span>
                       <span className="shrink-0">{it.name}</span>
-                      <span aria-hidden className="mx-1 flex-1 translate-y-[-0.2em] border-b border-dotted border-teal/50" />
+                      <span
+                        aria-hidden
+                        className="mx-1 flex-1 translate-y-[-0.2em] border-b border-dotted border-teal/50"
+                      />
                       <span className="font-bold">{it.price}</span>
                     </button>
                   </li>
@@ -168,15 +229,29 @@ export function Cafe() {
                 <span>Good vibes</span>
               </div>
               <Rule />
-              <a href={visit.directions} target="_blank" rel="noreferrer" aria-label="Get directions to Farak Chu" className="group mx-auto mt-2 block w-fit">
+              <a
+                href={visit.directions}
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Get directions to Farak Chu"
+                className="group mx-auto mt-2 block w-fit"
+              >
                 <span className="flex h-14 items-stretch gap-[2px]" aria-hidden>
                   {BARS.map((w, i) => (
-                    <span key={i} className={`${i % 2 ? "bg-transparent" : "bg-teal group-hover:bg-teal-soft"}`} style={{ width: w * 1.6 }} />
+                    <span
+                      key={i}
+                      className={`${i % 2 ? "bg-transparent" : "bg-teal group-hover:bg-teal-soft"}`}
+                      style={{ width: w * 1.6 }}
+                    />
                   ))}
                 </span>
-                <span className="mt-1 block text-center text-[0.625rem] tracking-[0.3em]">scan · directions</span>
+                <span className="mt-1 block text-center text-[0.625rem] tracking-[0.3em]">
+                  scan · directions
+                </span>
               </a>
-              <p className="mt-5 text-center font-bold tracking-widest">Thank you · Come different</p>
+              <p className="mt-5 text-center font-bold tracking-widest">
+                Thank you · Come different
+              </p>
             </div>
           </div>
         </div>

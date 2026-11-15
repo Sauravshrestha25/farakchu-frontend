@@ -6,11 +6,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { smootherReady } from "./smooth-scroll";
 
-// Frame polygon: outer rect + inner hole. Hole collapsed at centre -> hole = full screen.
-const closed = "polygon(0% 0%, 0% 100%, 50% 100%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 100%, 100% 100%, 100% 0%)";
-const opened =
-  "polygon(0% 0%, 0% 100%, calc(0% - 0.001px) 100%, calc(0% - 0.001px) calc(0% - 0.001px), calc(100% + 0.001px) calc(0% - 0.001px), calc(100% + 0.001px) calc(100% + 0.001px), calc(0% - 0.001px) calc(100% + 0.001px), calc(0% - 0.001px) 100%, 100% 100%, 100% 0%)";
-
 export function Preloader() {
   const root = useRef<HTMLDivElement>(null);
 
@@ -25,7 +20,6 @@ export function Preloader() {
       };
 
       // Transforms set via GSAP (Tailwind's rotate/translate props would stack with GSAP's transform).
-      gsap.set(q(".pl-bg"), { xPercent: -16.67, yPercent: -16.67, rotation: -10 });
       gsap.set(q(".pl-bar"), { xPercent: -50, yPercent: -50, rotation: -10 });
 
       smootherReady.then((smoother) => {
@@ -45,13 +39,11 @@ export function Preloader() {
             onComplete: release,
           })
           .to(n, { v: 100, duration: 1.5, onUpdate: () => (counter.textContent = String(Math.round(n.v)).padStart(3, "0")) }, 0)
-          .to([q(".pl-text"), q(".pl-bar")], { opacity: 1, duration: 1 }, 0)
-          .set(q(".pl-helper"), { opacity: 0 }, ">")
+          .to(q(".pl-text"), { opacity: 1, duration: 1 }, 0)
           .to(q(".pl-fill"), { width: "100%", duration: 1.5 }, 0)
-          .to(q(".pl-text"), { autoAlpha: 0, duration: 0.5 })
-          .to(q(".pl-bar"), { autoAlpha: 0, width: "100vw", height: () => innerHeight, rotation: 0, duration: 1 }, "<")
-          .to(q(".pl-bg"), { width: "100vw", height: () => innerHeight, x: 0, y: 0, xPercent: 0, yPercent: 0, rotation: 0, clipPath: opened, duration: 1 }, "<")
-          // Hero type + nav arrive with the opening frame, not after it (otherwise the bare photo shows first).
+          .to([q(".pl-text"), q(".pl-track"), q(".pl-fill")], { autoAlpha: 0, duration: 0.4 })
+          // The bar is a window: its huge teal box-shadow covers the page, so growing it reveals the hero inside it.
+          .to(q(".pl-bar"), { width: "100vw", height: () => innerHeight, rotation: 0, duration: 1 }, "<")
           .fromTo(reveal, { autoAlpha: 0, y: 40 }, { autoAlpha: 1, y: 0, duration: 0.9, stagger: 0.05, ease: "power3.out", clearProps: "transform" }, "<0.2");
       });
     },
@@ -60,12 +52,8 @@ export function Preloader() {
 
   return (
     <div ref={root} aria-hidden className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden">
-      <div className="pl-helper absolute inset-0 z-[1] bg-teal" />
-      <div
-        className="pl-bg absolute left-0 top-0 z-[1] h-[150%] w-[150%] bg-teal"
-        style={{ clipPath: closed }}
-      />
-      <div className="pl-bar absolute left-1/2 top-1/2 z-[3] h-4 w-[212px] overflow-hidden bg-teal-soft opacity-0 max-md:h-3 max-md:w-40">
+      <div className="pl-bar absolute left-1/2 top-1/2 z-[1] h-4 w-[212px] shadow-[0_0_0_200vmax_var(--color-teal)] max-md:h-3 max-md:w-40">
+        <div className="pl-track absolute inset-0 bg-teal-soft" />
         <div className="pl-fill absolute inset-y-0 left-0 w-0 bg-lime" />
       </div>
       <div className="pl-text absolute inset-x-0 bottom-0 z-[3] flex justify-center pb-8 opacity-0 md:pb-16">

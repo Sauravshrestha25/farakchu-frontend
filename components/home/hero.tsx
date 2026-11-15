@@ -105,7 +105,7 @@ export function Hero() {
   );
 
   return (
-    <section ref={root} id="top" className="relative h-svh min-h-[600px] overflow-hidden bg-bone text-teal">
+    <section ref={root} id="top" className="relative h-svh min-h-[600px] overflow-hidden bg-bone text-ink">
       <svg className="absolute size-0" aria-hidden>
         <filter id="fc-warp" x="-5%" y="-30%" width="110%" height="160%">
           <feTurbulence type="fractalNoise" baseFrequency="0.008 0.02" numOctaves="2" seed="7" />
@@ -116,7 +116,7 @@ export function Hero() {
       <div className="hx-window absolute inset-0" style={{ clipPath: "polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%)" }}>
         <Image src={site.hero.src} alt={site.hero.alt} fill priority sizes="100vw" className="hx-img object-cover" />
         <div className="hx-tint absolute inset-0 bg-teal-deep opacity-0" />
-        <p className="absolute inset-x-0 bottom-[12vh] px-5 text-center font-serif text-[clamp(2.5rem,6vw,6.5rem)] italic leading-[0.95] text-bone">
+        <p className="absolute inset-x-0 bottom-[12vh] px-5 text-center font-serif text-[clamp(2.5rem,6vw,6.5rem)] leading-[0.95] text-bone">
           <span className="block overflow-hidden pb-[0.1em]">
             <span className="hx-cap block">Not a concert. Not just a café.</span>
           </span>
@@ -137,7 +137,7 @@ export function Hero() {
       </h1>
 
       <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-6 px-5 pb-6 md:px-8 md:pb-8">
-        <p className="hx-foot font-serif text-4xl italic leading-none md:text-6xl">I am different.</p>
+        <p className="hx-foot font-serif text-4xl leading-none md:text-6xl">I am different.</p>
         <p className="hx-foot max-w-[17rem] text-right text-sm leading-snug md:text-base">
           Events, gaming, apparel and coffee under one diamond. {site.address.line1}, Kathmandu.
         </p>

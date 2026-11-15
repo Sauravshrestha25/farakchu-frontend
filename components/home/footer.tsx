@@ -81,7 +81,9 @@ export function Footer() {
     const href = e.currentTarget.getAttribute("href")!;
     if (!href.startsWith("#")) return;
     e.preventDefault();
-    scrollToAnchor(href);
+    // Off the homepage (e.g. /apparel) the sections don't exist, so go home first.
+    if (window.location.pathname !== "/" && href !== "#top") window.location.href = `/${href}`;
+    else scrollToAnchor(href);
   };
 
   return (
@@ -122,7 +124,7 @@ export function Footer() {
             </label>
           </div>
           <div className="flex items-center gap-5">
-            <button type="submit" disabled={!email.trim()} className="rounded-[50%] bg-lime px-8 py-3 font-wide text-[0.625rem] text-teal transition-[background-color,opacity] hover:bg-bone disabled:opacity-40">
+            <button type="submit" disabled={!email.trim()} className="rounded-[50%] bg-lime px-8 py-3 font-wide text-[0.625rem] text-ink transition-[background-color,opacity] hover:bg-bone disabled:opacity-40">
               Send
             </button>
             <p aria-live="polite" className="text-xs text-bone/60">
@@ -173,7 +175,7 @@ export function Footer() {
           <a className={linkCls} href={apparelDrop.merch} target="_blank" rel="noreferrer">
             Official Nepal merch ↗
           </a>
-          <a className={`${linkCls} mt-2 w-fit rounded-[50%] bg-lime px-6 py-2.5 font-wide text-[0.625rem] text-teal hover:bg-bone hover:text-teal`} href={divisions[2].href} target="_blank" rel="noreferrer">
+          <a className={`${linkCls} mt-2 w-fit rounded-[50%] bg-lime px-6 py-2.5 font-wide text-[0.625rem] text-ink hover:bg-bone hover:text-ink`} href={divisions[2].href} target="_blank" rel="noreferrer">
             Limited drop
           </a>
         </Col>

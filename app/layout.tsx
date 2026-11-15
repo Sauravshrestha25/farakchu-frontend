@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import { Mona_Sans, Arizonia, Space_Mono } from "next/font/google";
+import { Mona_Sans, Space_Mono } from "next/font/google";
 import "./globals.css";
 
 const mona = Mona_Sans({ variable: "--font-mona", subsets: ["latin"], axes: ["wdth"] });
 const mono = Space_Mono({ variable: "--font-spacemono", subsets: ["latin"], weight: ["400", "700"] });
-const serif = Arizonia({ variable: "--font-arizonia", subsets: ["latin"], weight: "400" });
 
 export const metadata: Metadata = {
   title: "Farakchu — Farak Chu. I am different.",
@@ -15,7 +14,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${mona.variable} ${serif.variable} ${mono.variable}`}>
+    <html lang="en" className={`${mona.variable} ${mono.variable}`}>
       <body>
         {children}
       </body>

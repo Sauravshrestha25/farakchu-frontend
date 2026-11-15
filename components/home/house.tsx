@@ -34,7 +34,7 @@ export function House() {
   );
 
   return (
-    <section ref={root} id="house" className="relative z-10 bg-bone px-5 py-28 text-teal md:px-8 md:py-40">
+    <section ref={root} id="house" className="relative z-10 bg-bone px-5 py-28 text-ink md:px-8 md:py-40">
       <h2 className="font-wide max-w-[14ch] text-[clamp(2.6rem,6.5vw,7rem)] leading-[0.88]">{heading}</h2>
 
       <div className="mt-20 grid gap-10 md:mt-32 md:grid-cols-2 md:gap-8">

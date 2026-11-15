@@ -1,3 +1,5 @@
+import { readdirSync } from "node:fs";
+import { join } from "node:path";
 import { Nav } from "@/components/nav";
 import { Preloader } from "@/components/preloader";
 import { SmoothScroll } from "@/components/smooth-scroll";
@@ -8,9 +10,15 @@ import { Guests } from "@/components/home/guests";
 import { ApparelDrop } from "@/components/home/apparel-drop";
 import { Cafe } from "@/components/home/cafe";
 import { Footer } from "@/components/home/footer";
-import { LogoMark } from "@/components/logo-mark";
+import { Believe } from "@/components/home/believe";
 
 export default function Home() {
+  // The "What we believe" wall uses the numbered photos in public/images/people2 (11.jpg, 22.jpg, 111.jpg ...); drop more in and they join automatically.
+  const featured = readdirSync(join(process.cwd(), "public/images/people2"))
+    .filter((f) => /^\d+\.(jpe?g|png|webp)$/i.test(f))
+    .sort()
+    .map((f) => `/images/people2/${f}`);
+
   return (
     <>
       <Preloader />
@@ -18,18 +26,8 @@ export default function Home() {
       <SmoothScroll>
         <main>
           <HeroStack />
-          <section aria-label="Together at Farakchu" className="relative flex min-h-[36svh] flex-col items-center justify-center gap-6 overflow-hidden bg-lime px-6 py-16 text-center text-teal lg:py-20">
-            <div aria-hidden="true" className="flex w-full max-w-64 items-center gap-5">
-              <span className="h-px flex-1 bg-teal/25" />
-              <LogoMark className="size-10 shrink-0" title="" />
-              <span className="h-px flex-1 bg-teal/25" />
-            </div>
-            <p className="max-w-[24ch] font-serif text-[clamp(2.75rem,5.5vw,5rem)] leading-[1.15]">
-              Come for the game.<br />Stay for the people.
-            </p>
-            <p className="text-xs tracking-wide text-teal/75">Farakchu · Samakhusi, Kathmandu</p>
-          </section>
-          <WhatsOn />
+          <Believe featured={featured} />
+          {/* <WhatsOn /> */}
           <Guests />
           <ApparelDrop />
           <Cafe />

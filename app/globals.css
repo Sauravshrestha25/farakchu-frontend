@@ -2,16 +2,21 @@
 
 @theme {
   /* Main logo colours only. Teal sampled from public/images/logo/logo.jpg */
-  --color-teal: #003636;
-  --color-teal-deep: #001f1f;
-  --color-teal-soft: #0c4a48;
+  --color-teal: #003638;
+  /* --color-teal-deep: #001f1f; */
+  --color-teal-deep: #003638;
+  /* --color-teal-soft: #0c4a48; */
+  --color-teal-soft: #003638;
+  /* Dark text on light grounds: a notch lighter than the teal background colour. */
+  --color-ink: #1d4d4a;
   --color-bone: #f1ece1;
   --color-bone-dim: #d9d2c3;
-  --color-lime: #d6e0d5; /* highlight accent, from client-shared poster ref */
-  /* --color-lime: #d6ff50; */
+  /* --color-lime: #d6e0d5; highlight accent, from client-shared poster ref */
+  --color-lime: #d6ff50;
 
   --font-sans: var(--font-mona), system-ui, sans-serif;
-  --font-serif: var(--font-arizonia), cursive;
+  /* No serif for now: font-serif utilities render in Mona Sans. */
+  --font-serif: var(--font-sans);
   --font-mono: var(--font-spacemono), ui-monospace, monospace;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -31,6 +36,17 @@ body {
   color: var(--color-bone);
 }
 
+/* Azonix: Farak / Chu words only. File: public/fonts/azonix/Azonix.otf. */
+@font-face {
+  font-family: "Azonix";
+  src: url("/fonts/azonix/Azonix.otf") format("opentype");
+  font-display: swap;
+}
+.font-azonix {
+  font-family: "Azonix", var(--font-sans);
+  text-transform: uppercase;
+}
+
 /* Headline voice: Mona Sans stretched wide + heavy. */
 .font-wide {
   font-family: var(--font-sans);
@@ -48,16 +64,17 @@ button:not(:disabled),
 
 ::selection {
   background: var(--color-lime);
-  color: var(--color-teal);
+  color: var(--color-ink);
 }
 
 /* Lime highlight block behind a word (poster style). */
 .hl {
   display: inline-block;
   background: var(--color-lime);
-  color: var(--color-teal);
+  color: var(--color-ink);
   line-height: 0.9;
   padding: 0.04em 0.08em 0.02em;
+  border-radius: 0.16em;
 }
 
 /* Lenis */
@@ -103,4 +120,38 @@ html.lenis body {
   .marquee {
     animation: none;
   }
+}
+
+/* Sound toggle equaliser bars. */
+@keyframes fc-eq {
+  0%,
+  100% {
+    transform: scaleY(0.25);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+.fc-eq {
+  animation: fc-eq 0.9s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .fc-eq {
+    animation: none;
+    transform: scaleY(0.6);
+  }
+}
+
+/* Nav over a light section: dark ink, no halo. Toggled by the section (see believe.tsx). */
+.nav-ink {
+  color: var(--color-ink);
+}
+.nav-ink [data-nav-logo] {
+  filter: none;
+}
+.nav-ink .nav-sound {
+  color: var(--color-ink);
+  border-color: rgb(0 54 54 / 0.4);
+  background: transparent;
+  backdrop-filter: none;
 }

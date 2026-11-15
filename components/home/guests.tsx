@@ -95,7 +95,7 @@ export function Guests() {
   return (
     <section ref={root} id="guests" className="relative overflow-hidden bg-teal-deep px-4 py-24 text-bone lg:h-svh lg:min-h-[680px] lg:px-8 lg:py-0">
       <div className="relative z-20 lg:absolute lg:left-8 lg:top-28 lg:w-[30vw]">
-        <h2 className="font-wide text-[clamp(2.6rem,5.2vw,5.5rem)] leading-[0.92]">
+        <h2 className="font-wide text-[clamp(2.4rem,4.6vw,5rem)] leading-[0.92]">
           <span className="block overflow-hidden">
             <span className="gw-head-line block">Who&apos;s been</span>
           </span>
@@ -117,7 +117,7 @@ export function Guests() {
           return (
             <li
               key={g.name}
-              className="gw-card group relative w-full cursor-grab touch-pan-y bg-bone p-2 pb-3 text-teal shadow-[0_18px_40px_-12px_rgb(0_0_0/0.6)] active:cursor-grabbing max-lg:odd:rotate-[-3deg] max-lg:even:rotate-[3deg] lg:absolute lg:w-[15vw] lg:max-w-[240px] lg:p-2.5 lg:pb-4"
+              className="gw-card group relative w-full cursor-grab touch-pan-y bg-bone p-2 pb-3 text-ink shadow-[0_18px_40px_-12px_rgb(0_0_0/0.6)] active:cursor-grabbing max-lg:odd:rotate-[-3deg] max-lg:even:rotate-[3deg] lg:absolute lg:w-[15vw] lg:max-w-[240px] lg:p-2.5 lg:pb-4"
               style={{ left: `${s.l}%`, top: `${s.t}%` }}
             >
               <div className="relative aspect-[4/5] overflow-hidden bg-teal">
@@ -126,7 +126,7 @@ export function Guests() {
               <div className="mt-2.5 flex items-start justify-between gap-2">
                 <div className="min-w-0">
                   <h3 className="font-serif text-lg leading-none lg:text-xl">{g.name}</h3>
-                  <p className="mt-1 text-[0.625rem] uppercase leading-[1.25] tracking-[0.025rem] text-teal/60 lg:max-h-0 lg:overflow-hidden lg:opacity-0 lg:transition-all lg:duration-500 lg:group-hover:max-h-12 lg:group-hover:opacity-100">
+                  <p className="mt-1 text-[0.625rem] uppercase leading-[1.25] tracking-[0.025rem] text-ink/60 lg:max-h-0 lg:overflow-hidden lg:opacity-0 lg:transition-all lg:duration-500 lg:group-hover:max-h-12 lg:group-hover:opacity-100">
                     {g.note}
                   </p>
                 </div>
@@ -135,13 +135,13 @@ export function Guests() {
                   target="_blank"
                   rel="noreferrer"
                   aria-label={`${g.name} on Instagram`}
-                  className="grid size-7 shrink-0 place-items-center rounded-full bg-teal text-xs text-lime transition-colors hover:bg-lime hover:text-teal"
+                  className="grid size-7 shrink-0 place-items-center rounded-full bg-teal text-xs text-lime transition-colors hover:bg-lime hover:text-ink"
                 >
                   ↗
                 </a>
               </div>
               {/* Tape strip */}
-              <span aria-hidden className="absolute -top-2.5 left-1/2 h-5 w-16 -translate-x-1/2 rotate-[-4deg] bg-lime/80" />
+              <span aria-hidden className="absolute -top-2.5 left-1/2 h-5 w-16 -translate-x-1/2 rotate-[-4deg] rounded-sm bg-lime/80" />
             </li>
           );
         })}

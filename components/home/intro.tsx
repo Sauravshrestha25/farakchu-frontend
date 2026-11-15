@@ -69,7 +69,7 @@ export function Intro() {
   const [m1, m2] = home.meaning;
 
   return (
-    <section ref={root} id="top" className="relative h-svh overflow-hidden bg-bone text-teal">
+    <section ref={root} id="top" className="relative h-svh overflow-hidden bg-bone text-ink">
       <div className="i-p absolute overflow-hidden will-change-transform">
         <Image src={home.hero.image.src} alt={home.hero.image.alt} fill priority sizes="40vw" className="i-p-img object-cover" />
       </div>
@@ -92,7 +92,7 @@ export function Intro() {
             ))}
           </span>
           <span className="i-f absolute bottom-8 left-6 font-wide text-sm text-bone md:left-10">{f.no}</span>
-          <span className="i-f absolute bottom-6 right-6 rounded-full bg-bone px-6 py-3 font-wide text-xs text-teal transition-colors group-hover:bg-teal group-hover:text-bone md:right-10">
+          <span className="i-f absolute bottom-6 right-6 rounded-full bg-bone px-6 py-3 font-wide text-xs text-ink transition-colors group-hover:bg-teal group-hover:text-bone md:right-10">
             Explore
           </span>
         </a>
