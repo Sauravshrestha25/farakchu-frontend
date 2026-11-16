@@ -97,7 +97,7 @@ export function Cafe() {
               </span>
             </span>
           </h2>
-          <p className="rc-fade mt-6 max-w-[22rem] text-justify text-xs uppercase leading-[1.25] tracking-[0.025rem] text-bone/70">
+          <p className="rc-fade mt-6 max-w-[22rem] text-justify text-[0.8125rem] uppercase leading-[1.25] [0.025rem] text-bone/95">
             Coffee by day, a bar by night, every big game on the big screen.
             Here&apos;s what a usual evening at the cafe adds up to.
           </p>
@@ -109,15 +109,6 @@ export function Cafe() {
               className="rounded-[50%] bg-lime px-7 py-3 font-wide text-[0.625rem] text-ink transition-colors hover:bg-bone"
             >
               Get directions
-            </a>
-
-            <a
-              href="https://ig.me/m/farakchu.cafe"
-              target="_blank"
-              rel="noreferrer"
-              className="text-sm underline-offset-4 hover:text-lime hover:underline"
-            >
-              DM the cafe →
             </a>
           </div>
         </div>
@@ -179,7 +170,7 @@ export function Cafe() {
                   "conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) 50% / 14px 100%",
               }}
             >
-              <p className="text-center text-base font-bold tracking-widest">
+              <p className="text-center text-base font-bold widest">
                 Farak Chu
               </p>
               <p className="text-center">Cafe &amp; Bar</p>
@@ -245,11 +236,11 @@ export function Cafe() {
                     />
                   ))}
                 </span>
-                <span className="mt-1 block text-center text-[0.625rem] tracking-[0.3em]">
+                <span className="mt-1 block text-center text-[0.625rem] [0.3em]">
                   scan · directions
                 </span>
               </a>
-              <p className="mt-5 text-center font-bold tracking-widest">
+              <p className="mt-5 text-center font-bold widest">
                 Thank you · Come different
               </p>
             </div>

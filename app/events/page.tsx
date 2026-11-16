@@ -1,11 +1,6 @@
-import type { Metadata } from "next";
-import { EventsPage } from "@/features/events/components/events-page";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "Events — Farakchu",
-  description: "Live nights, watch parties and tournaments at Farakchu, Samakhusi, Kathmandu.",
-};
-
+// Events and Entertainment are the same page now.
 export default function EventsRoute() {
-  return <EventsPage />;
+  redirect("/entertainment");
 }

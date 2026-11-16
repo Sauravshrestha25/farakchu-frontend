@@ -9,11 +9,9 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import { useGSAP } from "@gsap/react";
 import { eventsPage as d } from "@/features/events/data";
-import { body, display } from "@/features/events/fonts";
 import { Carousel } from "./carousel";
 import { CircledMark, Crosshair, CornerArrow, Scribble } from "./icons";
 import { Nav } from "@/components/nav";
-import { Preloader } from "@/components/preloader";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { LogoMark } from "@/components/logo-mark";
 
@@ -41,14 +39,13 @@ export function EventsPage() {
       addEventListener("resize", fitAll);
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // Hero title chars + chrome start hidden until the preloader lifts.
+        // Hero title chars + chrome start hidden, then animate in.
         fitAll();
         const heroSplit = SplitText.create(q(".ev-hero-title"), { type: "chars", mask: "chars", charsClass: "ev-red-grad" });
         gsap.set(heroSplit.chars, { yPercent: 110 });
         gsap.set(q(".ev-cross"), { autoAlpha: 0, y: 14 });
-        // Starts as the home preloader bar opens onto the hero.
         gsap
-          .timeline({ delay: 2.3, defaults: { ease: "power4.out" } })
+          .timeline({ delay: 0.3, defaults: { ease: "power4.out" } })
           .to(heroSplit.chars, { yPercent: 0, duration: 1.4, stagger: 0.05 })
           .to(q(".ev-cross"), { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.1 }, 0.5);
 
@@ -119,10 +116,9 @@ export function EventsPage() {
   );
 
   return (
-    <main ref={root} className={`ev ${display.variable} ${body.variable} overflow-x-clip`}>
+    <main ref={root} className="ev overflow-x-clip">
       <div className="ev-noise" aria-hidden />
       <div className="ev-cursor" aria-hidden>View</div>
-      <Preloader />
       <Nav page="sub" />
       <SmoothScroll>
 

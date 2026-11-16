@@ -8,7 +8,7 @@ import { LogoMark } from "./logo-mark";
 import { RollLabel } from "./roll-label";
 import { SoundToggle } from "./sound-toggle";
 import { getSmoother } from "./smooth-scroll";
-import { divisions, events, home, site } from "@/content/site";
+import { divisions, site } from "@/content/site";
 
 const apparel = divisions.find((d) => d.id === "apparel")!;
 
@@ -20,8 +20,8 @@ const targets: Record<
   "#top": { el: "body", vh: { desktop: 0, mobile: 0 } },
   // Inside the HeroStack pin: 1 timeline unit = 1vh of scroll (see hero-stack.tsx).
   "#about": { el: "#top", vh: { desktop: 4.5, mobile: 4.5 } },
-  "#films": { el: "#top", vh: { desktop: 8.8, mobile: 8.8 } },
-  "#entertainment": { el: "#top", vh: { desktop: 8.8, mobile: 8.8 } },
+  "#films": { el: "#top", vh: { desktop: 8.6, mobile: 8.6 } },
+  "#entertainment": { el: "#top", vh: { desktop: 8.6, mobile: 8.6 } },
   "#cafe": { el: "#cafe", vh: { desktop: 0, mobile: 0 } },
   "#contact": { el: "#contact", vh: { desktop: 0, mobile: 0 } },
 };
@@ -54,31 +54,25 @@ const links = [
     label: "Home",
     alt: "Back to top",
     href: "#top",
-    image: home.hero.image.src,
+    image: "/images/home/storefront-day.jpg",
   },
   {
     label: "About",
     alt: "Who we are",
-    href: "#about",
-    image: home.about.image.src,
+    href: "/about",
+    image: "/images/home/apparel-kid.jpg",
   },
   {
     label: "Entertainment",
-    alt: "Games",
-    href: "#entertainment",
-    image: divisions[1].image.src,
-  },
-  {
-    label: "Events",
     alt: "Big nights",
-    href: "/events",
-    image: events[1].image.src,
+    href: "/entertainment",
+    image: divisions[0].image.src,
   },
   {
-    label: "Who's been",
-    alt: "Big names",
-    href: "#guests",
-    image: "/images/guests/chumbak.jpg",
+    label: "Gaming Zone",
+    alt: "Play + compete",
+    href: "/gaming",
+    image: divisions[1].image.src,
   },
   {
     label: "Apparel",
@@ -89,14 +83,14 @@ const links = [
   {
     label: "Cafe",
     alt: "Pull up a seat",
-    href: "#cafe",
+    href: "/cafe",
     image: "/images/cafe/matcha-latte.jpg",
   },
   {
     label: "Contact",
     alt: "Say hi",
-    href: "#contact",
-    image: home.hero.image.src,
+    href: "/contact",
+    image: "/images/home/storefront-day.jpg",
   },
 ];
 
@@ -236,7 +230,7 @@ export function Nav({ page = "home" }: { page?: "home" | "sub" }) {
                       onBlur={() => setRoll(null)}
                       className="o-link group flex items-baseline gap-4 py-1 outline-none"
                     >
-                      <span className="w-8 font-wide text-[0.625rem] text-bone/50">
+                      <span className="w-8 font-wide text-[0.625rem] text-bone/85">
                         {String(i + 1).padStart(2, "0")}
                       </span>
                       <RollLabel
@@ -266,7 +260,7 @@ export function Nav({ page = "home" }: { page?: "home" | "sub" }) {
           </div>
 
           <div className="mt-8 grid grid-cols-2 items-end gap-6 border-t border-bone/15 pt-6 text-sm lg:grid-cols-4">
-            <p className="o-foot text-bone/70">
+            <p className="o-foot text-bone/95">
               {site.address.line1}
               <br />
               {site.address.line2}

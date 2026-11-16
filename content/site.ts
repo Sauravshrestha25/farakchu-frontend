@@ -1,4 +1,5 @@
-// All home-page copy + image picks live here. Components stay untouched when copy changes.
+// Data shared across pages (site info, divisions, events, guests, apparel, cafe, visit).
+// Copy that belongs to one section lives in that section's component, not here.
 // Photos: client's own posts from @farakchu, curated into /public/images/home.
 // TODO(client): anything marked TODO needs real info from Farakchu.
 
@@ -116,59 +117,6 @@ export const lately: { title: string; meta: string; division: string; image: Pho
   { title: "One Year of Farakchu", meta: "Shree 3 on the anniversary", division: "Entertainment", image: { src: img("band"), alt: "Band posing at Farakchu" } },
   { title: "Nepal Merch Drop", meta: "Limited stock", division: "Apparel", image: { src: img("apparel-merch"), alt: "Official Nepal merch tees" } },
 ];
-
-// Home page copy (ported from the preview script, cleaned up).
-export const home = {
-  hero: {
-    lines: ["The art of", "difference"],
-    image: { src: img("storefront-day"), alt: "The Farakchu crew outside the Samakhusi storefront" },
-  },
-  meaning: [
-    { word: "Farak", body: "Different. A name for our own way of living, creating and coming together." },
-    { word: "Chu", body: "I am. Together, Farak Chu means I am different." },
-  ],
-  // The four domains. Shown as the hover split at the end of the hero scene.
-  films: [
-    { id: "entertainment", title: ["The rhythm of", "Music"], name: "Entertainment", blurb: "Live sessions, watch parties and nights people talk about the morning after.", no: "01", href: "https://www.instagram.com/farakchu.entertaiment/", logo: "/images/logo/logo-entertainment.jpg", focus: "50% 30%", image: { src: img("domain-entertainment"), alt: "Guitarist on a double-neck guitar under red stage lights" } },
-    { id: "gamingzone", title: ["One more", "Game"], name: "Gaming Zone", blurb: "PS5s, big screens and brackets that get loud. One more game, always.", no: "02", href: "https://www.instagram.com/farakchu.gamezone/", logo: "/images/logo/logo-gamezone.jpg", focus: "50% 50%", image: { src: img("domain-gaming"), alt: "Players on the sofa in the neon-lit Farakchu gaming room" } },
-    { id: "apparel", title: ["Wear the", "Difference"], name: "Apparel", blurb: "Limited drops in small runs, gone when they're gone. Including the official Nepal merch.", no: "03", href: "https://www.instagram.com/farakchu.apparel/", logo: "/images/logo/logo-apparel.jpg", focus: "50% 8%", image: { src: img("domain-apparel"), alt: "Two models in Farakchu hoodies and caps" } },
-    { id: "cafe", title: ["Pour, sit,", "Stay"], name: "Cafe", blurb: "Espresso, strawberry matcha, cold beer and long tables. A cafe, and a bar too.", no: "04", href: "https://www.instagram.com/farakchu.cafe/", logo: "/images/logo/logo-cafe.jpg", focus: "50% 35%", image: { src: img("domain-cafe"), alt: "Guest with a drink inside the Farakchu cafe, brick wall and sign behind" } },
-  ],
-  about: {
-    heading: "Farakchu is a lifestyle and hospitality brand based in Kathmandu, Nepal. A place to come as you are, meet your people, and stay a little longer than you planned. Coffee in the morning, games at night, music in between, and a crowd that starts to feel like family.",
-    body: "We bring together a specialty coffee shop, an apparel line, entertainment and a local community space in Samakhusi.",
-    image: { src: img("apparel-kid"), alt: "Kid flashing a peace sign at the Farakchu bar" },
-  },
-  believe: {
-    title: "What we believe",
-    statement: ["There's no one way to be you.", "And that's the beauty of it."],
-    // Little body texts under the title (believe.tsx).
-    stages: [
-      "Some find themselves in music. Some in conversations. Some in the things they create, the games they play, or the way they express themselves.",
-      "You don't have to fit in. You don't have to be like everyone else. You don't have to explain what makes you, you.",
-      "We believe everyone deserves a space to be themselves, explore what they love, and connect with people who appreciate them for it.",
-    ],
-    closing: ["Because different isn't a distance between us.", "It's what brings us together."],
-    sign: "That's what Farakchu believes.",
-    // Photos that swap in the wall tiles (believe.tsx): 12 portraits + venue shots.
-    people: Array.from({ length: 12 }, (_, i) => `/images/people/p${String(i + 1).padStart(2, "0")}.jpg`),
-    places: ["domain-entertainment", "domain-gaming", "domain-cafe", "crowd-watch", "acoustic", "band", "gaming-player", "apparel-kid"].map(img),
-  },
-  pillarWords: ["Energy", "Play", "Create", "Together"],
-  house: {
-    heading: "A place for everyday life in Kathmandu",
-    steps: [
-      { title: "Specialty coffee", body: "A specialty coffee shop in Samakhusi. A place to pause, meet a friend and settle into the day.", image: img("cafe-matcha") },
-      { title: "Apparel", body: "An apparel line for carrying a little of this place into everyday life.", image: img("apparel-storefront") },
-      { title: "Entertainment", body: "Music, watch parties and shared nights bring another side of Farakchu to life.", image: img("acoustic") },
-      { title: "Gaming", body: "PS5s, big screens and tournaments that get loud.", image: img("gaming-winners") },
-      { title: "Community", body: "A local space to spend time together, meet familiar faces and make new ones.", image: img("cafe-crowd") },
-      { title: "Come through", body: "Find us in Samakhusi, Kathmandu. Questions about the cafe, apparel or events? Message @farakchu.", image: img("storefront-night") },
-    ],
-    conclusion: ["Coffee.", "Apparel.", "Entertainment.", "Community."],
-    conclusionBody: "A lifestyle and hospitality brand, rooted in Kathmandu, Nepal.",
-  },
-};
 
 // Recent nights, from @farakchu posts (dates as posted). Shown as "recently", not as upcoming.
 const ev = (name: string) => `/images/events/${name}.jpg`;

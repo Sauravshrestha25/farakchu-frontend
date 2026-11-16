@@ -5,7 +5,7 @@ import { Preloader } from "@/components/preloader";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { Reveals } from "@/components/reveals";
 import { HeroStack } from "@/components/home/hero-stack";
-import { WhatsOn } from "@/components/home/whats-on";
+// import { WhatsOn } from "@/components/home/whats-on";
 import { Guests } from "@/components/home/guests";
 import { ApparelDrop } from "@/components/home/apparel-drop";
 import { Cafe } from "@/components/home/cafe";
@@ -13,9 +13,9 @@ import { Footer } from "@/components/home/footer";
 import { Believe } from "@/components/home/believe";
 
 export default function Home() {
-  // The "What we believe" wall uses the numbered photos in public/images/people2 (11.jpg, 22.jpg, 111.jpg ...); drop more in and they join automatically.
+  // The "What we believe" gallery uses every photo in public/images/people2; drop more in and they join automatically.
   const featured = readdirSync(join(process.cwd(), "public/images/people2"))
-    .filter((f) => /^\d+\.(jpe?g|png|webp)$/i.test(f))
+    .filter((f) => /\.(jpe?g|png|webp)$/i.test(f))
     .sort()
     .map((f) => `/images/people2/${f}`);
 

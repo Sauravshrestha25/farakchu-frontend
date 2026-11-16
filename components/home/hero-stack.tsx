@@ -8,9 +8,97 @@ import { SplitText } from "gsap/SplitText";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { useGSAP } from "@gsap/react";
 import { LogoMark } from "../logo-mark";
-import { home } from "@/content/site";
 
 gsap.registerPlugin(ScrollTrigger, SplitText, ScrollToPlugin);
+
+const img = (name: string) => `/images/home/${name}.jpg`;
+
+// Hero poster + copy for this scene lives here (not in content/site.ts).
+const heroPoster = img("storefront-day");
+
+// Layer 0: what the name means.
+const meaning = [
+  {
+    word: "Farak",
+    body: "Different. A name for our own way of living, creating and coming together.",
+  },
+  { word: "Chu", body: "I am. Together, Farak Chu means I am different." },
+];
+
+// The four domains, shown as the card wipe at the end of the scene.
+const films = [
+  {
+    id: "entertainment",
+    title: ["The rhythm of", "Music"],
+    name: "Entertainment",
+    blurb:
+      "Live sessions, watch parties and nights people talk about the morning after.",
+    no: "01",
+    href: "https://www.instagram.com/farakchu.entertaiment/",
+    logo: "/images/logo/logo-entertainment.jpg",
+    focus: "50% 30%",
+    image: {
+      src: img("domain-entertainment"),
+      alt: "Guitarist on a double-neck guitar under red stage lights",
+    },
+  },
+  {
+    id: "gamingzone",
+    title: ["One more", "Game"],
+    name: "Gaming Zone",
+    blurb:
+      "PS5s, big screens and brackets that get loud. One more game, always.",
+    no: "02",
+    href: "https://www.instagram.com/farakchu.gamezone/",
+    logo: "/images/logo/logo-gamezone.jpg",
+    focus: "50% 50%",
+    image: {
+      src: img("domain-gaming"),
+      alt: "Players on the sofa in the neon-lit Farakchu gaming room",
+    },
+  },
+  {
+    id: "apparel",
+    title: ["Wear the", "Difference"],
+    name: "Apparel",
+    blurb:
+      "Limited drops in small runs, gone when they're gone. Including the official Nepal merch.",
+    no: "03",
+    href: "https://www.instagram.com/farakchu.apparel/",
+    logo: "/images/logo/logo-apparel.jpg",
+    focus: "50% 8%",
+    image: {
+      src: img("domain-apparel"),
+      alt: "Two models in Farakchu hoodies and caps",
+    },
+  },
+  {
+    id: "cafe",
+    title: ["Pour, sit,", "Stay"],
+    name: "Cafe",
+    blurb:
+      "Espresso, strawberry matcha, cold beer and long tables. A cafe, and a bar too.",
+    no: "04",
+    href: "https://www.instagram.com/farakchu.cafe/",
+    logo: "/images/logo/logo-cafe.jpg",
+    focus: "50% 35%",
+    image: {
+      src: img("domain-cafe"),
+      alt: "Guest with a drink inside the Farakchu cafe, brick wall and sign behind",
+    },
+  },
+];
+
+// About: rolls up like end credits.
+const about = {
+  heading:
+    "We believe there's no single way to live, express, create or connect.",
+  body: "Your interests make you unique. Your experiences shape your story. Your individuality is what makes you, you.\n\nAt Farakchu, we celebrate all of it. Because the world becomes a more interesting place when everyone brings something different.",
+  image: {
+    src: img("cafe-crowd"),
+    alt: "Friends crowded together at a Farakchu night, cheering",
+  },
+};
 
 // Rect clip anchored top/bottom. Width in % so panels can resize (hover split) after the reveal.
 function rect(bh: number, h: number, anchor: "top" | "bottom") {
@@ -33,11 +121,12 @@ function diamond(bw: number, bh: number, t: number, r: number) {
 }
 
 // Logo artboard: outer diamond points span ~96% of the 1080 box.
-// Timeline layout of the tail of the scene (1 unit = 100vh): About copy rises in until ~6.5, films wipe in at FILMS_AT.
-const FILMS_AT = 7.7;
-// About copy rolls up like end credits from CREDITS_AT over CREDITS_LEN timeline units (slow on purpose: text moves ~1.6 screens over ~4 screens of scroll).
+// Timeline layout of the tail of the scene (1 unit = 100vh).
+// About copy rolls up like end credits from CREDITS_AT over CREDITS_LEN units (slow on purpose).
 const CREDITS_AT = 3.3;
 const CREDITS_LEN = 4.2;
+// The film panels start wiping in the moment the last line of the credits leaves the frame.
+const FILMS_AT = CREDITS_AT + CREDITS_LEN;
 const FILMS_END = FILMS_AT + 3 * 0.08 + 0.8;
 
 const markSize = (r: number) => (r * 2) / 0.963;
@@ -46,7 +135,7 @@ const markSize = (r: number) => (r * 2) / 0.963;
  * One pinned scene (1 timeline unit = 100vh of scroll):
  * 0 hero folds into the Farakchu diamond (Farak/Chu spread out from centre) -> 1 shrinks to the logo, lettering lands, Farak/Chu close in beside it ->
  * 2 About photo fades in inside the diamond -> 2.5 diamond opens to full bleed, logo flies to the About heading ->
- * 3.3 About copy rolls up like end credits with the logo riding on top; the logo keeps climbing to the navbar and hands off to the fixed nav logo, the text rolls off the top -> 7.5 done -> 7.7 film panels wipe in -> 8.74 pin releases (films then scroll away normally).
+ * 3.3 About copy rolls up like end credits with the logo riding on top; the logo keeps climbing to the navbar and hands off to the fixed nav logo, the text rolls off the top -> 7.5 last line leaves the frame and the film panels wipe in straight away -> 8.54 pin releases (films then scroll away normally).
  * Nav offsets in components/nav.tsx depend on these positions.
  */
 export function HeroStack() {
@@ -106,7 +195,15 @@ export function HeroStack() {
         { desktop: "(min-width: 992px)", mobile: "(max-width: 991px)" },
         (ctx) => {
           const desktop = ctx.conditions!.desktop;
-          const box = { w: 0, h: 0, fh: [] as number[], cH: 0, slotC: 40, navY: 0, navS: 64 };
+          const box = {
+            w: 0,
+            h: 0,
+            fh: [] as number[],
+            cH: 0,
+            slotC: 40,
+            navY: 0,
+            navS: 64,
+          };
           const measure = () => {
             box.w = hero.offsetWidth;
             box.h = hero.offsetHeight;
@@ -158,7 +255,9 @@ export function HeroStack() {
             const sc = +(m.ms / base).toFixed(4);
             setIf("mark", sc, () => gsap.set(mark, { scale: sc }));
             // Credits roll; the logo sits at the screen centre until the slot reaches it, rides up with it, and stops at the navbar.
-            setIf("cy", Math.round(m.cy), () => gsap.set(credits, { y: Math.round(m.cy) }));
+            setIf("cy", Math.round(m.cy), () =>
+              gsap.set(credits, { y: Math.round(m.cy) }),
+            );
             const rideY = m.cy + box.slotC - box.h / 2;
             const my = Math.round(Math.max(box.navY, Math.min(0, rideY)));
             setIf("my", my, () => gsap.set(mark, { y: my }));
@@ -166,7 +265,8 @@ export function HeroStack() {
             const docked = rideY <= box.navY ? 1 : 0;
             setIf("dock", docked, () => {
               mark.style.visibility = docked ? "hidden" : "visible";
-              if (navLogo) navLogo.style.visibility = docked ? "visible" : "hidden";
+              if (navLogo)
+                navLogo.style.visibility = docked ? "visible" : "hidden";
             });
             // Panels wipe in alternately from the top and from the bottom.
             films.forEach((f, i) => {
@@ -184,7 +284,10 @@ export function HeroStack() {
             box.w / 2 - el.offsetWidth / 2 - el.offsetLeft;
           const beside = (el: HTMLElement, side: 1 | -1) =>
             side === 1
-              ? box.w / 2 - rLogo() - 3 * rem() - (el.offsetLeft + el.offsetWidth)
+              ? box.w / 2 -
+                rLogo() -
+                3 * rem() -
+                (el.offsetLeft + el.offsetWidth)
               : box.w / 2 + rLogo() + 3 * rem() - el.offsetLeft;
 
           // Panel wipe (timeline FILMS_AT-FILMS_END): once scrolling goes idle mid-wipe, glide to its end (or back to its start when scrolling up).
@@ -199,7 +302,9 @@ export function HeroStack() {
               const [a, b] = [FILMS_AT / d, FILMS_END / d];
               const p = self.progress;
               if (p <= a + 0.002 || p >= b - 0.002) return;
-              const y = self.start + (self.direction === -1 ? a : b) * (self.end - self.start);
+              const y =
+                self.start +
+                (self.direction === -1 ? a : b) * (self.end - self.start);
               glide = gsap.to(window, {
                 scrollTo: { y },
                 duration: 0.9 + (1.2 * Math.abs(y - scrollY)) / innerHeight,
@@ -265,10 +370,28 @@ export function HeroStack() {
           // Farak / Chu: start at the centre, spread out as the diamond forms (0-1),
           // then close in beside the logo (1-2): (Farak) (logo) (Chu).
           if (desktop)
-            ([[vv1, 1], [vv2, -1]] as [HTMLElement, 1 | -1][]).forEach(([el, side]) =>
+            (
+              [
+                [vv1, 1],
+                [vv2, -1],
+              ] as [HTMLElement, 1 | -1][]
+            ).forEach(([el, side]) =>
               tl
-                .fromTo(el, { x: () => middle(el) }, { duration: 1, x: 0, ease: "power2.inOut" }, 0)
-                .to(el, { duration: 1, x: () => beside(el, side), ease: "power2.inOut" }, 1),
+                .fromTo(
+                  el,
+                  { x: () => middle(el) },
+                  { duration: 1, x: 0, ease: "power2.inOut" },
+                  0,
+                )
+                .to(
+                  el,
+                  {
+                    duration: 1,
+                    x: () => beside(el, side),
+                    ease: "power2.inOut",
+                  },
+                  1,
+                ),
             );
 
           // 2-2.5: About photo inside the diamond
@@ -279,12 +402,16 @@ export function HeroStack() {
               { duration: 1, t: 0, ms: () => box.navS, ease: "power2.inOut" },
               2.5,
             )
-            .to(q(".hs-about-tint"), { duration: 1, opacity: 0.55 }, 2.5)
+            .to(q(".hs-about-tint"), { duration: 1, opacity: 0.68 }, 2.5)
             // Photo drifts up slowly with the credits (scale leaves margin so the bottom edge never shows).
             .fromTo(
               q(".hs-about-photo"),
               { scale: 1.25, yPercent: 0 },
-              { duration: CREDITS_AT + CREDITS_LEN - 2.5, scale: 1.14, yPercent: -6 },
+              {
+                duration: CREDITS_AT + CREDITS_LEN - 2.5,
+                scale: 1.14,
+                yPercent: -6,
+              },
               2.5,
             )
             // Credits roll: from below the screen to off the top, linear so it reads as a slow crawl.
@@ -367,9 +494,22 @@ export function HeroStack() {
       // Trigger is whatever section follows (not a hard-coded id): a missing trigger makes the tween run at once and tints the whole hero.
       const next = root.current?.nextElementSibling;
       if (next) {
-        const trigger = { trigger: next, start: "top bottom", end: "top top", scrub: true };
-        gsap.to(q(".hs-films-overlay"), { opacity: 0.85, ease: "none", scrollTrigger: trigger });
-        gsap.to(q(".hs-film-img"), { yPercent: 15, ease: "none", scrollTrigger: trigger });
+        const trigger = {
+          trigger: next,
+          start: "top bottom",
+          end: "top top",
+          scrub: true,
+        };
+        gsap.to(q(".hs-films-overlay"), {
+          opacity: 0.85,
+          ease: "none",
+          scrollTrigger: trigger,
+        });
+        gsap.to(q(".hs-film-img"), {
+          yPercent: 15,
+          ease: "none",
+          scrollTrigger: trigger,
+        });
       }
 
       return () => {
@@ -380,8 +520,10 @@ export function HeroStack() {
     { scope: root },
   );
 
-  const [m1, m2] = home.meaning;
-  const words = home.about.heading.split(" ");
+  const [m1, m2] = meaning;
+  const words = about.heading.split(" ");
+  const aboutType =
+    "font-wide max-w-[30ch] text-center text-[1.3rem] leading-[1.05] md:text-[2.275rem] lg:text-[2.925rem]";
 
   return (
     <div ref={root} id="top" className="relative grid h-svh overflow-hidden">
@@ -403,7 +545,7 @@ export function HeroStack() {
             </h2>
             <p
               data-body
-              className="text-justify text-xs uppercase leading-[1.2] tracking-[0.025rem]"
+              className="text-justify text-[0.8125rem] uppercase leading-[1.2] [0.025rem]"
             >
               {m.body}
             </p>
@@ -418,7 +560,7 @@ export function HeroStack() {
           muted
           loop
           playsInline
-          poster={home.hero.image.src}
+          poster={heroPoster}
           aria-hidden="true"
           className="hs-bg absolute inset-0 h-full w-full object-cover"
         >
@@ -431,18 +573,18 @@ export function HeroStack() {
         >
           <div className="hs-about-photo absolute inset-0">
             <Image
-              src={home.about.image.src}
-              alt={home.about.image.alt}
+              src={about.image.src}
+              alt={about.image.alt}
               fill
               sizes="100vw"
-              className="object-cover object-top"
+              className="object-cover object-[50%_72%]"
             />
           </div>
           <div className="hs-about-tint absolute inset-0 bg-teal-deep opacity-0" />
           <div className="hs-credits absolute inset-x-0 top-0 flex flex-col items-center gap-8 px-4 text-bone will-change-transform lg:px-8">
             {/* The flying logo rides on this slot. */}
             <div className="hs-slot size-16 lg:size-20" aria-hidden />
-            <h2 className="font-wide max-w-[30ch] text-center text-base leading-[1.05] md:text-[1.75rem] lg:text-[2.25rem]">
+            <h2 className={aboutType}>
               {words.map((w, i) => {
                 const hl = /^(lifestyle|hospitality)$/i.test(w);
                 return (
@@ -452,6 +594,28 @@ export function HeroStack() {
                 );
               })}
             </h2>
+            {/* Body copy set at the same size as the heading, with its own highlighted words. */}
+            <div className="flex flex-col gap-8">
+              {about.body.split("\n\n").map((paragraph) => (
+                <p key={paragraph} className={aboutType}>
+                  {paragraph.split(" ").map((w, i) => {
+                    const m = w.match(/^(.*?)([.,;:!?]*)$/)!;
+                    return (
+                      <span key={i}>
+                        {/^(unique|individuality|different)$/i.test(m[1]) ? (
+                          <>
+                            <span className="hl">{m[1]}</span>
+                            {m[2]}
+                          </>
+                        ) : (
+                          w
+                        )}{" "}
+                      </span>
+                    );
+                  })}
+                </p>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -478,7 +642,7 @@ export function HeroStack() {
         className="hs-films relative z-[2] flex h-svh [grid-area:1/1] max-lg:flex-col"
       >
         <div className="hs-films-overlay pointer-events-none absolute inset-0 z-[6] bg-teal-deep opacity-0" />
-        {home.films.map((f, i) => {
+        {films.map((f, i) => {
           const on = hover === i;
           const off = hover !== null && !on;
           return (
@@ -510,7 +674,7 @@ export function HeroStack() {
                 className={`absolute inset-0 z-[2] bg-teal/20 mix-blend-multiply transition-opacity duration-700 ${on ? "opacity-0" : ""}`}
               />
               <div className="absolute inset-0 z-[2] bg-gradient-to-t from-teal-deep/95 via-teal-deep/40 via-35% to-transparent to-60%" />
-              {i < home.films.length - 1 && (
+              {i < films.length - 1 && (
                 <span className="absolute inset-y-0 right-0 z-[5] hidden w-px bg-bone/20 lg:block" />
               )}
 
@@ -535,7 +699,7 @@ export function HeroStack() {
                     height={56}
                     className="size-9 rounded-full object-cover ring-1 ring-bone/30 lg:size-12"
                   />
-                  <span className="font-wide text-[0.625rem] text-bone/70">
+                  <span className="font-wide text-[0.625rem] text-bone/95">
                     {f.no}
                   </span>
                 </div>
@@ -551,7 +715,7 @@ export function HeroStack() {
                   className={`hs-film-body mt-4 flex items-end justify-between gap-4 border-t border-bone/20 pt-4 lg:mt-6 lg:pt-5`}
                 >
                   <p
-                    className={`max-w-[19rem] text-justify text-[0.6875rem] uppercase leading-[1.25] tracking-[0.025rem] text-bone/80 transition-[opacity,max-height] duration-500 max-lg:line-clamp-2 lg:text-xs ${hover === null || on ? "" : "lg:opacity-0"}`}
+                    className={`max-w-[19rem] text-justify text-[0.8125rem] uppercase leading-[1.25] [0.025rem] text-bone/95 transition-[opacity,max-height] duration-500 max-lg:line-clamp-2 lg:text-xs ${hover === null || on ? "" : "lg:opacity-0"}`}
                   >
                     {f.blurb}
                   </p>

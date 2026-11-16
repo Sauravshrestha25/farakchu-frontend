@@ -155,3 +155,29 @@ html.lenis body {
   background: transparent;
   backdrop-filter: none;
 }
+
+/* Endless right-to-left gallery. The track holds the photo list twice; sliding by half its width loops without a seam. */
+@keyframes fc-marquee {
+  to { transform: translateX(-50%); }
+}
+.fc-marquee { animation: fc-marquee var(--marquee-dur, 120s) linear infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .fc-marquee { animation: none; }
+}
+
+/* Floating props (console icons, diamond photos) on the Gaming Zone page. */
+@keyframes fc-float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -14px; }
+}
+.fc-float { animation: fc-float 5s ease-in-out infinite; animation-delay: var(--d, 0s); }
+@media (prefers-reduced-motion: reduce) {
+  .fc-float { animation: none; }
+}
+
+/* Gaming Zone page: slow spin for the starburst sticker, blink for the "press start" prompt. */
+@keyframes fc-spin { to { rotate: 360deg; } }
+.fc-spin { animation: fc-spin 18s linear infinite; }
+@keyframes fc-blink { 0%, 55% { opacity: 1; } 56%, 100% { opacity: 0.15; } }
+.fc-blink { animation: fc-blink 1.1s steps(1) infinite; }
+@media (prefers-reduced-motion: reduce) { .fc-spin, .fc-blink { animation: none; } }

@@ -64,7 +64,7 @@ export function WhatsOn() {
           </span>
         </h2>
         <div className="flex flex-col gap-6">
-          <p className="max-w-[21.5rem] text-justify text-xs uppercase leading-[1.25] tracking-[0.025rem] text-bone/80">
+          <p className="max-w-[21.5rem] text-justify text-xs uppercase leading-[1.25] [0.025rem] text-bone/80">
             Watch parties, brackets and drops from the last few months at the
             house. The next one lands on Instagram first. Tables go fast.
           </p>
@@ -136,7 +136,7 @@ export function WhatsOn() {
                   <h3 className="font-serif text-2xl leading-none lg:text-3xl">
                     {e.title}
                   </h3>
-                  <p className="mt-2 max-w-[16rem] text-xs uppercase leading-[1.25] tracking-[0.025rem] text-bone/70">
+                  <p className="mt-2 max-w-[16rem] text-xs uppercase leading-[1.25] [0.025rem] text-bone/70">
                     {e.meta}
                   </p>
                 </div>

@@ -4,9 +4,37 @@ import { useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { home } from "@/content/site";
 
 gsap.registerPlugin(ScrollTrigger);
+
+// All copy for this section lives here (not in content/site.ts).
+const believe = {
+  title: "A few things we believe in",
+  statement: ["There's no one way to be you.", "And that's the beauty of it."],
+  stages: [
+    {
+      title: "Be uniquely you.",
+      body: "We believe you shouldn't have to fit into someone else's idea of who you should be. Your personality, passions and perspectives are what make you different. Own them.",
+    },
+    {
+      title: "Celebrate every difference.",
+      body: "Different tastes, different interests, different perspectives. We believe these differences make life more colourful, experiences more meaningful and the world more interesting.",
+    },
+    {
+      title: "Connection makes us stronger.",
+      body: "Being different doesn't mean being apart. We believe the best moments happen when different people, passions and stories come together.",
+    },
+    {
+      title: "Make room for experiences.",
+      body: "Life isn't meant to be experienced in just one way. Explore something new, follow your curiosity, create memories and make every moment your own.",
+    },
+  ],
+  closing: [
+    "Because different isn't a distance between us.",
+    "It's what brings us together.",
+  ],
+  sign: "That's what Farakchu believes.",
+};
 
 // Wall layout (the reference, flipped so the statement sits on top): outer columns carry two tiles beside the statement,
 // the four middle columns carry one tile beneath it. Even columns sit lower by a third of a tile.
@@ -22,28 +50,37 @@ const START = [
   "md:col-start-7",
   "md:col-start-8",
 ];
-// Where the face sits in photos that are mostly body (object-position y). Everything else uses FACE_DEFAULT.
-const FACE_DEFAULT = "50% 30%";
-const FACE: Record<string, string> = { "11": "50% 45%", "123123": "50% 42%", "111": "50% 32%", "22": "50% 28%" };
-const focusOf = (src: string) => FACE[src.split("/").pop()!.replace(/\.\w+$/, "")] ?? FACE_DEFAULT;
 const SLOTS = TWO.size * 2 + (COLS - TWO.size);
+// Where the face sits in photos that are mostly body (object-position). Everything else uses FACE_DEFAULT.
+const FACE_DEFAULT = "50% 30%";
+const FACE: Record<string, string> = {
+  "11": "50% 45%",
+  "123123": "50% 42%",
+  "111": "50% 32%",
+  "22": "50% 28%",
+};
+const focusOf = (src: string) =>
+  FACE[
+    src
+      .split("/")
+      .pop()!
+      .replace(/\.\w+$/, "")
+  ] ?? FACE_DEFAULT;
 
 /**
- * "What we believe": the title and its little body texts, then (same light background) the statement framed by a staggered wall of photos. Tiles crossfade to other photos one at a time.
+ * "A few things we believe in": the title, four beliefs hanging off a central line, a closing line that scrolls away to reveal
+ * the sign-off, then (same light background) the statement framed by a staggered wall of photos from people2.
+ * Tiles crossfade to other photos one at a time.
  */
 export function Believe({ featured = [] }: { featured?: string[] }) {
   const root = useRef<HTMLElement>(null);
-  const { believe } = home;
 
-  // The wall uses the people2 photos only. If there are too few to fill it, top up with the older portraits and venue shots.
-  const older = Array.from(
-    { length: Math.max(believe.people.length, believe.places.length) },
-    (_, i) => [believe.people[i], believe.places[i]],
-  )
-    .flat()
-    .filter(Boolean);
-  const pool = featured.length >= SLOTS ? featured : [...featured, ...older];
-  const initial = pool.slice(0, SLOTS);
+  // Every photo in people2. If there are fewer than the wall has tiles, the list repeats so no tile is empty.
+  const pool = featured;
+  const initial = Array.from(
+    { length: SLOTS },
+    (_, i) => pool[i % Math.max(pool.length, 1)],
+  );
 
   useGSAP(
     () => {
@@ -54,9 +91,10 @@ export function Believe({ featured = [] }: { featured?: string[] }) {
 
       // The closing text is sized so its first line is exactly as wide as the sign-off.
       const fit = () => {
-        const small = q(".bl-small")[0] as HTMLElement;
-        const line = small.querySelector<HTMLElement>(".bl-line")!;
-        const sign = q(".bl-sign .hl")[0] as HTMLElement;
+        const small = q(".bl-small")[0] as HTMLElement | undefined;
+        const line = small?.querySelector<HTMLElement>(".bl-line");
+        const sign = q(".bl-sign > span")[0] as HTMLElement | undefined;
+        if (!small || !line || !sign) return;
         small.style.fontSize = "100px";
         small.style.fontSize = `${(100 * sign.offsetWidth) / line.offsetWidth}px`;
       };
@@ -92,44 +130,40 @@ export function Believe({ featured = [] }: { featured?: string[] }) {
             ?.classList.toggle("nav-ink", s.isActive),
       });
 
-      if (reduce)
-        return () => (
-          ink.kill(),
-          ScrollTrigger.removeEventListener("refreshInit", fit)
+      // Every tile swaps on its own clock, every 2-3 seconds, to a random photo (never the one it already shows). Repeats across tiles are fine.
+      // Plain timers on purpose: no scroll flags, observers or image-decode steps that could stall. With reduced motion the swap is instant, not faded.
+      const timers = new Map<HTMLElement, number>();
+      console.log("BLDBG effect", tiles.length, pool.length);
+      const swapTile = (tile: HTMLElement) => {
+        const r = tile.getBoundingClientRect();
+        console.log(
+          "BLDBG swap",
+          pool.length,
+          !!tile.offsetParent,
+          Math.round(r.top),
+          innerHeight,
         );
-
-      // Swap: crossfade one random visible tile to a photo that isn't on screen.
-      const used = new Set(initial);
-      let active = false;
-      const view = ScrollTrigger.create({
-        trigger: root.current,
-        start: "top bottom",
-        end: "bottom top",
-        onToggle: (s) => (active = s.isActive),
-      });
-      const swap = () => {
-        const visible = tiles.filter(
-          (t) => t.offsetParent && t.dataset.busy !== "1",
-        );
-        // Prefer featured (people2) photos whenever one is off screen, so they keep coming back around.
-        const unused = pool.filter((s) => !used.has(s));
-        const free = unused.filter((s) => featured.includes(s)).length
-          ? unused.filter((s) => featured.includes(s))
-          : unused;
-        if (active && visible.length && free.length) {
-          const tile = visible[Math.floor(Math.random() * visible.length)];
+        // Only tiles near the screen do the work (offsetParent is null for the columns hidden on phones).
+        if (
+          pool.length > 1 &&
+          tile.offsetParent &&
+          r.bottom > -300 &&
+          r.top < innerHeight + 300
+        ) {
           const [a, b] = Array.from(tile.querySelectorAll("img"));
           const [front, back] = tile.dataset.front === "b" ? [b, a] : [a, b];
-          const next = free[Math.floor(Math.random() * free.length)];
-          tile.dataset.busy = "1";
-          used.delete(front.getAttribute("src")!);
-          used.add(next);
-          back.src = next;
-          back.style.objectPosition = focusOf(next);
-          back
-            .decode()
-            .catch(() => {})
-            .then(() => {
+          const current = front.getAttribute("src");
+          let next = current;
+          while (next === current)
+            next = pool[Math.floor(Math.random() * pool.length)];
+          let shown = false;
+          const show = () => {
+            if (shown) return;
+            shown = true;
+            if (reduce) {
+              gsap.set(back, { opacity: 1, scale: 1 });
+              gsap.set(front, { opacity: 0 });
+            } else {
               gsap.fromTo(
                 back,
                 { opacity: 0, scale: 1.12 },
@@ -139,17 +173,30 @@ export function Believe({ featured = [] }: { featured?: string[] }) {
                 opacity: 0,
                 duration: 1.2,
                 ease: "power2.inOut",
-                onComplete: () => (tile.dataset.busy = "0"),
               });
-              tile.dataset.front = back === b ? "b" : "a";
-            });
+            }
+            tile.dataset.front = back === b ? "b" : "a";
+          };
+          back.onload = show;
+          back.style.objectPosition = focusOf(next!);
+          back.src = next!;
+          if (back.complete && back.naturalWidth) show();
+          window.setTimeout(show, 1500); // fallback if the load event never fires
         }
-        call = gsap.delayedCall(0.8 + Math.random() * 0.8, swap);
+        timers.set(
+          tile,
+          window.setTimeout(() => swapTile(tile), 2000 + Math.random() * 1000),
+        );
       };
-      let call = gsap.delayedCall(1, swap);
+      // First swaps are spread out so the wall doesn't change all at once.
+      tiles.forEach((t) =>
+        timers.set(
+          t,
+          window.setTimeout(() => swapTile(t), 400 + Math.random() * 2600),
+        ),
+      );
       return () => {
-        call.kill();
-        view.kill();
+        timers.forEach((id) => window.clearTimeout(id));
         ink.kill();
         ScrollTrigger.removeEventListener("refreshInit", fit);
         document.querySelector("[data-nav]")?.classList.remove("nav-ink");
@@ -167,38 +214,76 @@ export function Believe({ featured = [] }: { featured?: string[] }) {
       className="relative overflow-hidden bg-bone pb-16 text-ink lg:pb-24"
     >
       <div className="mx-auto flex max-w-6xl flex-col items-center gap-14 px-5 py-28 text-center lg:gap-20 lg:py-40">
-        <h2 className="font-wide whitespace-nowrap text-[clamp(1.75rem,6vw,6rem)] leading-none">
-          {believe.title.split(" ").slice(0, -1).join(" ")}{" "}
-          <span className="hl">{believe.title.split(" ").at(-1)}</span>
+        {/* Two lines: "A few things" / "we believe in", with the lime block on "believe". */}
+        <h2
+          aria-label={believe.title}
+          className="font-wide text-[clamp(2rem,6.4vw,6.75rem)] leading-[0.98]"
+        >
+          <span aria-hidden className="block">
+            A few things
+          </span>
+          <span aria-hidden className="mt-[0.08em] block">
+            we <span className="hl">believe</span> in
+          </span>
         </h2>
-        <div className="grid w-full gap-4 text-left md:grid-cols-3 md:gap-6">
-          {believe.stages.map((t, i) => (
-            <div
-              key={t}
-              className="group flex min-h-[16rem] flex-col  gap-16 border border-ink/15 bg-bone-dim/40 p-6 transition-colors duration-500 ease-out-expo hover:bg-teal hover:text-bone lg:min-h-[22rem] lg:p-8"
-            >
-              <span className="font-wide text-[clamp(2.5rem,4vw,4.5rem)] leading-none text-ink/25 transition-colors duration-500 ease-out-expo group-hover:text-lime">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <p className="font-serif text-[clamp(1.25rem,1.7vw,1.625rem)] leading-[1.3]">
-                {t}
-              </p>
-            </div>
-          ))}
+
+        {/* The beliefs hang off one central line, alternating sides and staggered, each on a curved elbow connector. */}
+        <div className="relative w-full text-left md:w-[min(94vw,1300px)]">
+          <div
+            aria-hidden
+            className="absolute bottom-0 left-3 top-0 w-px bg-ink/20 md:left-1/2"
+          />
+          <span
+            aria-hidden
+            className="absolute left-3 top-0 size-3.5 -translate-x-1/2 -translate-y-1/2 rotate-45 bg-lime ring-1 ring-ink/40 md:left-1/2"
+          />
+          <ol className="pt-14 md:grid md:grid-cols-2 md:gap-y-20 md:pt-20">
+            {believe.stages.map((s, i) => {
+              const right = i % 2 === 1;
+              return (
+                <li
+                  key={s.title}
+                  className={`relative mb-14 pl-10 md:mb-0 md:pl-0 ${right ? "md:col-start-2 md:mt-32 md:pl-28" : "md:col-start-1 md:pr-28 md:text-right"}`}
+                >
+                  {/* Elbow: rises from the central line, curves, then runs out toward the text. */}
+                  <span
+                    aria-hidden
+                    className={`absolute top-3 hidden h-16 w-24 border-ink/30 md:block ${right ? "left-0 rounded-tl-[3rem] border-l border-t" : "right-0 rounded-tr-[3rem] border-r border-t"}`}
+                  />
+                  <div
+                    className={`flex items-center gap-3 ${right ? "" : "md:flex-row-reverse"}`}
+                  >
+                    <span
+                      aria-hidden
+                      className="size-2.5 shrink-0 rotate-45 border border-ink bg-lime"
+                    />
+                    <span className="font-wide text-[clamp(0.75rem,1vw,1rem)] leading-tight">
+                      {String(i + 1).padStart(2, "0")} &nbsp;&nbsp; · &nbsp;{" "}
+                      {s.title}
+                    </span>
+                  </div>
+                  <p
+                    className={`mt-5 max-w-[34ch] font-serif text-[clamp(1.05rem,1.5vw,1.55rem)] leading-[1.35] ${right ? "" : "md:ml-auto"}`}
+                  >
+                    {s.body}
+                  </p>
+                </li>
+              );
+            })}
+          </ol>
         </div>
 
         {/* Pinned: the small closing text scrolls away and reveals the sign-off. */}
         <div className="w-full">
           <div className="bl-end relative h-[50svh] w-full">
-            <p className="bl-small absolute inset-0 flex flex-col items-center justify-center font-serif leading-[1.25]">
-              {believe.closing.map((l) => (
-                <span key={l} className="bl-line block w-max">
-                  {l}
-                </span>
-              ))}
+            <p className="bl-small absolute inset-0 flex flex-col items-center justify-center font-wide leading-none">
+              <span className="bl-line block w-max">{believe.closing[0]}</span>
+              <span className="bl-line block w-max">
+                <span className="hl">{believe.closing[1]}</span>
+              </span>
             </p>
             <p className="bl-sign absolute inset-0 flex items-center justify-center font-wide whitespace-nowrap text-[clamp(0.65rem,3.2vw,4.5rem)] leading-none">
-              <span className="hl">{believe.sign}</span>
+              <span className="bl-line block w-max">{believe.sign}</span>
             </p>
           </div>
         </div>
@@ -212,7 +297,7 @@ export function Believe({ featured = [] }: { featured?: string[] }) {
           } as React.CSSProperties
         }
       >
-        <h2 className="col-span-4 row-start-1 px-2 pb-12 text-center font-serif text-[clamp(2rem,3.2vw,4rem)] leading-[1.1] md:whitespace-nowrap md:col-start-3 md:pb-6 md:pt-[calc(var(--tw)*0.33)]">
+        <h2 className="col-span-4 row-start-1 px-2 pb-12 text-center font-serif font-bold uppercase text-[clamp(1.75rem,2.7vw,3.5rem)] leading-[1.1] md:col-start-3 md:whitespace-nowrap md:pb-6 md:pt-[calc(var(--tw)*0.33)]">
           <span className="block overflow-hidden pb-[0.12em]">
             <span className="block">{believe.statement[0]}</span>
           </span>
@@ -235,7 +320,7 @@ export function Believe({ featured = [] }: { featured?: string[] }) {
               {(two ? [0, 1] : [0]).map((r) => (
                 <div
                   key={r}
-                  className="bl-tile relative aspect-[7/9] overflow-hidden bg-bone-dim"
+                  className="bl-tile relative aspect-[7/9] overflow-hidden rounded-2xl bg-bone-dim"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img

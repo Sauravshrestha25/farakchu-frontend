@@ -7,15 +7,15 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { LogoMark } from "@/components/logo-mark";
 import { WebxLogoSparkles } from "@/components/ui/webx-logo-sparkles";
-import { apparelDrop, cafe, divisions, home, site, visit } from "@/content/site";
+import { apparelDrop, cafe, divisions, site, visit } from "@/content/site";
 import "./after-dark.css";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const stops = [
   { id: "cafe", hour: "4", period: "PM", name: "Cafe & Bar", line: "Good coffee is an art.\nSharing it is a lifestyle.", action: "Come for a coffee", href: divisions[3].href, image: cafe.items[0].image, focus: "50% 45%" },
-  { id: "apparel", hour: "7", period: "PM", name: "Apparel", line: "Wear the difference.", action: "Find your next fit", href: apparelDrop.dm, image: home.films[2].image, focus: home.films[2].focus },
-  { id: "gaming", hour: "9", period: "PM", name: "Gaming Zone", line: "“Ek game matrai”\nturns into three hours.", action: "Bring your squad", href: divisions[1].href, image: home.films[1].image, focus: home.films[1].focus },
+  { id: "apparel", hour: "7", period: "PM", name: "Apparel", line: "Wear the difference.", action: "Find your next fit", href: apparelDrop.dm, image: { src: "/images/home/domain-apparel.jpg", alt: "Two models in Farakchu hoodies and caps" }, focus: "50% 8%" },
+  { id: "gaming", hour: "9", period: "PM", name: "Gaming Zone", line: "“Ek game matrai”\nturns into three hours.", action: "Bring your squad", href: divisions[1].href, image: { src: "/images/home/domain-gaming.jpg", alt: "Players on the sofa in the neon-lit Farakchu gaming room" }, focus: "50% 50%" },
   { id: "entertainment", hour: "11", period: "PM", name: "Entertainment", line: "Live sessions, watch parties\nand nights people talk about.", action: "Find the next night", href: divisions[0].href, image: divisions[0].image, focus: "50% 30%" },
   { id: "contact", hour: "2", period: "AM", name: "Samakhusi, Kathmandu", line: "See you tomorrow night.", action: "Find the house", href: visit.directions, image: visit.image, focus: "50% 50%" },
 ];
