@@ -334,7 +334,15 @@ export function Footer() {
         </a>
         <span className="flex items-center gap-4">
           <span className=" [0.025rem]">Designed &amp; Developed by</span>
-          <WebxLogoSparkles className="mb-1" width={96} particleDensity={420} />
+          <a
+            href="https://www.webxnepal.com"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="WebX Nepal"
+            className="block rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lime"
+          >
+            <WebxLogoSparkles className="mb-1" width={96} particleDensity={420} />
+          </a>
         </span>
       </div>
     </footer>

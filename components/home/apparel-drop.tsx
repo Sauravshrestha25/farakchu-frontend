@@ -46,6 +46,12 @@ export function ApparelDrop() {
           },
         },
       );
+
+      // Re-measure once fonts and images have settled, so the reveal can't be left waiting on a stale scroll position.
+      const refresh = () => ScrollTrigger.refresh();
+      document.fonts?.ready.then(refresh);
+      addEventListener("load", refresh);
+      return () => removeEventListener("load", refresh);
     },
     { scope: root },
   );
