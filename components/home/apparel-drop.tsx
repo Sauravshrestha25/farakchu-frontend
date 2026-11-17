@@ -1,11 +1,13 @@
 "use client";
 
 import { useRef } from "react";
-import Image from "next/image";
+import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { apparelDrop } from "@/content/site";
+import { pieces } from "@/features/apparel/data";
+import { PieceCard } from "@/features/apparel/components/piece-card";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -88,14 +90,12 @@ export function ApparelDrop() {
             numbered chapters, gone when they&apos;re gone.
           </p>
           <div className="flex flex-wrap items-center gap-4">
-            <a
-              href={apparelDrop.dm}
-              target="_blank"
-              rel="noreferrer"
+            <Link
+              href="/apparel"
               className="rounded-[50%] bg-teal px-7 py-3 font-wide text-[0.625rem] text-lime transition-colors hover:bg-lime hover:text-ink"
             >
-              DM to order
-            </a>
+              Shop apparel
+            </Link>
             <a
               href={apparelDrop.merch}
               target="_blank"
@@ -108,54 +108,10 @@ export function ApparelDrop() {
         </div>
       </div>
 
-      <ul className="relative grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-5">
-        {apparelDrop.items.map((it, i) => (
-          <li key={it.name} className={`ad-card ${i % 2 ? "lg:mt-16" : ""}`}>
-            <a
-              href={apparelDrop.dm}
-              target="_blank"
-              rel="noreferrer"
-              aria-label={`${it.name}, ${it.chapter}. DM to order`}
-              className="group block"
-            >
-              <div className="relative aspect-[4/5] overflow-hidden bg-bone-dim">
-                <Image
-                  src={it.image}
-                  alt={it.desc}
-                  fill
-                  sizes="(min-width: 992px) 24vw, 48vw"
-                  className="object-cover transition-[opacity,scale] duration-700 ease-out-expo group-hover:scale-105 group-hover:opacity-0"
-                />
-                <Image
-                  src={it.alt}
-                  alt=""
-                  fill
-                  sizes="(min-width: 992px) 24vw, 48vw"
-                  className="scale-110 object-cover opacity-0 transition-[opacity,scale] duration-700 ease-out-expo group-hover:scale-100 group-hover:opacity-100"
-                />
-                {it.tag && (
-                  <span className="absolute left-3 top-3 -rotate-6 rounded-md bg-lime px-2.5 py-1 font-wide text-[0.625rem] text-ink shadow-[3px_3px_0_var(--color-teal)] transition-transform duration-300 group-hover:rotate-0">
-                    {it.tag}
-                  </span>
-                )}
-                <span className="absolute bottom-3 right-3 grid size-10 translate-y-3 place-items-center rounded-full bg-teal text-lime opacity-0 transition-all duration-500 ease-out-expo group-hover:translate-y-0 group-hover:opacity-100">
-                  ↗
-                </span>
-              </div>
-              <div className="mt-3 flex items-start justify-between gap-3">
-                <div>
-                  <h3 className="font-serif font-bold text-xl leading-none lg:text-2xl">
-                    {it.name}
-                  </h3>
-                  <p className="mt-1.5 text-[0.8125rem] uppercase [0.025rem] text-ink/85">
-                    {it.chapter}
-                  </p>
-                </div>
-                <span className="font-wide text-[0.625rem] text-ink/70">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-              </div>
-            </a>
+      <ul className="relative grid grid-cols-2 gap-x-4 gap-y-14 lg:grid-cols-4">
+        {pieces.map((p) => (
+          <li key={p.id} className="ad-card group">
+            <PieceCard piece={p} />
           </li>
         ))}
       </ul>

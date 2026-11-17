@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import type { Piece } from "@/features/apparel/data";
+import { price, type Piece } from "@/features/apparel/data";
 import { AddControls } from "./add-controls";
 
 // One full-screen scene per piece. The colour of the garment becomes the colour of the room.
@@ -13,8 +13,9 @@ export function Scene({ piece, index, total }: { piece: Piece; index: number; to
   return (
     <section id={`piece-${piece.id}`} className="ap-scene relative min-h-svh overflow-hidden" style={{ background: piece.hex }}>
       <div className="ap-scene-in relative flex min-h-svh flex-col justify-end px-4 pb-8 pt-24 lg:px-6 lg:pb-8">
-        <span className="ap-outline pointer-events-none absolute -right-[2vw] top-[8%] select-none font-wide text-[34vw] leading-[0.8]" aria-hidden>{no}</span>
-        <span className="ap-outline ap-drift pointer-events-none absolute inset-x-0 bottom-[6%] select-none whitespace-nowrap font-wide text-[clamp(5rem,15vw,17rem)] leading-[0.85]" aria-hidden>{piece.name}</span>
+
+        <span className="ap-outline pointer-events-none absolute -right-[2vw] bottom-[2%] select-none font-wide text-[34vw] leading-[0.8]" aria-hidden>{no}</span>
+        <span className="ap-outline ap-drift pointer-events-none absolute inset-x-0 top-[14%] select-none whitespace-nowrap font-wide text-[clamp(5rem,15vw,17rem)] leading-[0.85]" aria-hidden>{piece.name}</span>
 
         <div className="relative grid items-end gap-8 lg:grid-cols-12">
           <div className="order-2 lg:order-1 lg:col-span-5">
@@ -26,7 +27,7 @@ export function Scene({ piece, index, total }: { piece: Piece; index: number; to
               {piece.tag && <span className="rounded-full bg-lime px-2.5 py-1 font-wide text-[0.55rem] leading-none text-ink">{piece.tag}</span>}
             </p>
             <p className="mt-4 max-w-[26rem] text-base leading-snug text-bone/90">{piece.desc}</p>
-            <p className="mt-3 font-mono text-xs uppercase text-bone/70">DM for price</p>
+            <p className="mt-3 font-mono text-xs uppercase text-bone/70">{price(piece)}</p>
             <div className="mt-5"><AddControls piece={piece} /></div>
           </div>
 

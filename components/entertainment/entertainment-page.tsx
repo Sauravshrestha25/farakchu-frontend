@@ -21,13 +21,6 @@ const ghost =
 const h2 = "font-wide text-[clamp(2.6rem,7vw,7.5rem)] leading-[0.9]";
 const outline = "text-transparent [-webkit-text-stroke:2px_var(--color-bone)]";
 
-// 16-point starburst for the "new high score" sticker.
-const burst = Array.from({ length: 32 }, (_, i) => {
-  const r = i % 2 ? 36 : 50;
-  const a = (i / 32) * Math.PI * 2;
-  return `${(50 + r * Math.cos(a)).toFixed(1)},${(50 + r * Math.sin(a)).toFixed(1)}`;
-}).join(" ");
-
 // Strip of buttons + words that scrolls forever.
 function Strip({ cls, dur, reverse }: { cls: string; dur: string; reverse?: boolean }) {
   return (
@@ -55,26 +48,12 @@ function Strip({ cls, dur, reverse }: { cls: string; dur: string; reverse?: bool
 export function EntertainmentPage({ page }: { page: keyof typeof pages }) {
   const d = pages[page];
   const root = useRef<HTMLDivElement>(null);
-  const score = useRef<HTMLSpanElement>(null);
-  const bar = useRef<HTMLSpanElement>(null);
-  const hud = useRef<HTMLDivElement>(null);
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
 
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
-
-      // Score HUD runs on every motion setting: it is just a readout of scroll progress.
-      ScrollTrigger.create({
-        start: 0,
-        end: "max",
-        onUpdate: (self) => {
-          if (score.current) score.current.textContent = String(Math.round(self.progress * 999999)).padStart(6, "0");
-          if (bar.current) bar.current.style.transform = `scaleX(${self.progress})`;
-          if (hud.current) hud.current.style.opacity = self.progress > 0.965 ? "0" : "1"; // clear of the footer links
-        },
-      });
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
         // Hero title: letters get mashed in from above like button presses.
@@ -99,15 +78,6 @@ export function EntertainmentPage({ page }: { page: keyof typeof pages }) {
         // Photo wall: every polaroid drifts at its own speed.
         gsap.utils.toArray<HTMLElement>(".pol").forEach((el, i) =>
           gsap.fromTo(el, { y: 50 + (i % 3) * 30 }, { y: -50 - (i % 3) * 30, ease: "none", scrollTrigger: { trigger: ".wall", start: "top bottom", end: "bottom top", scrub: true } }),
-        );
-
-        // High scores count up and their bars fill.
-        gsap.utils.toArray<HTMLElement>(".stat").forEach((el) => {
-          const o = { v: 0 };
-          gsap.to(o, { v: Number(el.dataset.to), duration: 2, ease: "power2.out", onUpdate: () => (el.textContent = String(Math.round(o.v))), scrollTrigger: { trigger: el, start: "top 90%", once: true } });
-        });
-        gsap.utils.toArray<HTMLElement>(".stat-bar").forEach((el) =>
-          gsap.from(el, { scaleX: 0, duration: 1.8, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 95%", once: true } }),
         );
       });
     },
@@ -160,17 +130,6 @@ export function EntertainmentPage({ page }: { page: keyof typeof pages }) {
     <div ref={root} className="min-h-svh bg-teal-deep text-bone">
       <Nav page="sub" />
 
-      {/* Score HUD */}
-      <div ref={hud} className="pointer-events-none fixed bottom-4 left-1/2 z-40 transition-opacity duration-300 flex -translate-x-1/2 items-center gap-3 rounded-full border border-bone/25 bg-ink/90 px-5 py-2.5 backdrop-blur-md">
-        <span className="font-azonix text-[0.6rem] text-lime">P1</span>
-        <span className="font-azonix text-[0.6rem] tabular-nums text-bone">
-          <span ref={score}>000000</span>
-        </span>
-        <span className="relative hidden h-1.5 w-24 overflow-hidden rounded-full bg-bone/20 sm:block">
-          <span ref={bar} className="absolute inset-0 origin-left rounded-full bg-lime" style={{ transform: "scaleX(0)" }} />
-        </span>
-      </div>
-
       {/* Hero */}
       <section className="hero relative flex min-h-svh items-center justify-center overflow-hidden px-4 text-center">
         <div className="h-bg absolute -inset-y-[10%] inset-x-0">
@@ -207,7 +166,6 @@ export function EntertainmentPage({ page }: { page: keyof typeof pages }) {
             </a>
             <a href={site.contactHref} target="_blank" rel="noreferrer" className={ghost}>Book a night</a>
           </div>
-          <p className="h-in fc-blink mt-8 font-azonix text-[0.7rem] text-lime">Press ✕ to start</p>
         </div>
       </section>
 
@@ -289,42 +247,12 @@ export function EntertainmentPage({ page }: { page: keyof typeof pages }) {
         </div>
       </section>
 
-      {/* High scores: the page flips to lime */}
-      <section className="relative mt-24 overflow-hidden rounded-t-[2.5rem] bg-lime px-4 py-24 text-ink lg:rounded-t-[5rem] lg:px-8 lg:py-36">
-        <p aria-hidden className="absolute -right-[4vw] top-6 whitespace-nowrap font-azonix text-[22vw] leading-none text-ink/[0.07]">1UP</p>
-        <h2 className={`rv relative text-center ${h2}`}>
-          High <span className="rounded-[0.16em] bg-ink px-[0.08em] pb-[0.02em] pt-[0.04em] text-lime">scores.</span>
-        </h2>
-        <div className="relative mx-auto mt-16 grid max-w-6xl gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {d.stats.map((st, i) => (
-            <div key={st.label} className="rv relative flex flex-col overflow-hidden rounded-3xl bg-ink p-6 text-bone">
-              <PSButton kind={PS_KINDS[i % 4]} className="absolute right-4 top-4 size-10" />
-              <p className="whitespace-nowrap font-azonix text-[clamp(2.8rem,5.4vw,4.6rem)] leading-none text-lime">
-                {st.pre && <span className="mr-1 text-[0.4em]">{st.pre}</span>}
-                <span className="stat" data-to={st.to}>0</span>
-                {st.post && <span className="ml-1 text-[0.4em]">{st.post}</span>}
-              </p>
-              <p className="mb-5 mt-3 font-wide text-sm leading-tight">{st.label}</p>
-              <div className="mt-auto h-2 overflow-hidden rounded-full bg-bone/20">
-                <div className="stat-bar h-full origin-left rounded-full bg-lime" style={{ width: `${st.bar}%` }} />
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* What's on offer: a pinned-up photo wall */}
       <section id="services" className="wall relative overflow-hidden px-4 py-28 lg:px-8 lg:py-44">
         <div className="relative mx-auto max-w-6xl">
           <h2 className={`rv pb-20 text-center ${h2}`}>
             What&apos;s <span className="hl">on offer.</span>
           </h2>
-          <div aria-hidden className="fc-spin absolute -left-6 -top-10 hidden size-40 lg:block">
-            <svg viewBox="0 0 100 100" className="size-full"><polygon points={burst} fill="#d6ff50" /></svg>
-          </div>
-          <p aria-hidden className="absolute -left-6 -top-10 hidden size-40 -rotate-12 place-items-center text-center font-wide text-[0.7rem] leading-[0.95] text-ink lg:grid">
-            New<br />high<br />score!
-          </p>
           <div className="columns-1 gap-8 sm:columns-2 lg:columns-3">
             {d.offers.map((o, i) => {
               const tilt = [-4, 3, -2, 4, -3.4, 2.4, -4.2, 3.2][i % 8];

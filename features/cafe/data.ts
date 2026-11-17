@@ -104,13 +104,17 @@ export const menuColumns: MenuGroup[][] = [
 const img = (n: string) => `/images/cafe/${n}.jpg`;
 
 export const cafePage = {
+  // w: width in vw (desktop), lift: how far the card sits above the wordmark (vh), rot: resting tilt, front: overlaps the letters.
   heroCards: [
-    { src: img("cold-brew-poster"), alt: "Cold brew, warm soul: poster of caramel cold brew being poured", w: 12, lift: 5, rot: 5 },
-    { src: img("blue-mojito"), alt: "Blue mocktail with lime, mint and ice", w: 15, lift: 11, rot: -4 },
-    { src: img("affogato"), alt: "Espresso affogato in a coupe glass with vanilla ice cream and mint", w: 21, lift: 0, rot: 0 },
-    { src: img("iced-caramel"), alt: "Iced caramel macchiato with a black straw", w: 15, lift: 12, rot: 4 },
-    { src: img("iced-tea"), alt: "Iced tea with a lime wheel and mint", w: 12, lift: 4, rot: -5 },
-  ],
+    { src: img("cold-brew-poster"), alt: "Cold brew, warm soul: poster of caramel cold brew being poured", name: "Cold brew", w: 13, lift: 9, rot: -6, front: false },
+    { src: img("blue-mojito"), alt: "Blue mocktail with lime, mint and ice", name: "Virgin Mojito", price: 250, w: 17, lift: 4, rot: 4, front: true },
+    // Centre card opens full-bleed on scroll: needs a high-res photo; px = source size, used to match the card crop exactly.
+    // affogato-bar: the affogato outpainted to 16:9 (Codex image gen) with a wine glass + pint added at the edges,
+    // outside the card's crop, so "and a bar, too" only shows on the reveal. keep = source px width that must stay on screen.
+    { src: img("affogato-bar"), alt: "Espresso affogato on the Farakchu bar between a glass of red wine and a pint of lager", name: "Espresso Affogato", price: 230, w: 24, lift: 0, rot: 0, front: false, px: [1672, 941], keep: 1400 },
+    { src: img("iced-caramel"), alt: "Iced caramel macchiato with a black straw", name: "Iced Caramel Macchiato", price: 300, w: 17, lift: 5, rot: -4, front: false },
+    { src: img("iced-tea"), alt: "Iced tea with a lime wheel and mint", name: "Lemon Iced Tea", price: 180, w: 13, lift: 11, rot: 6, front: false },
+  ] as { src: string; alt: string; name: string; price?: number; w: number; lift: number; rot: number; front: boolean; px?: [number, number]; keep?: number }[],
   // Pour sequence: 102 frames cut from a free Mixkit clip ("A barista preparing coffee with milk and ice", Mixkit Stock Video Free License).
   pour: { frames: 102, lines: ["Cold brew.", "Warm soul.", "Stay a while."] },
   headline: "A cafe. And a bar, too.",

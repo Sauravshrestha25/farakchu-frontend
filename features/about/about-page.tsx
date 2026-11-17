@@ -47,6 +47,7 @@ const Words = ({ text, cls = "", wc = "ab-w" }: { text: string; cls?: string; wc
 
 export function AboutPage() {
   const root = useRef<HTMLElement>(null);
+  const track = useRef<HTMLUListElement>(null);
 
   useGSAP(
     () => {
@@ -214,10 +215,10 @@ export function AboutPage() {
         </div>
       </section>
 
-      {/* Four rooms */}
+      {/* Four divisions */}
       <section className="px-5 pb-28 md:px-[6.5vw] md:pb-44">
-        <h2 className="ab-head font-sans text-[clamp(2rem,4.2vw,4.5rem)] font-semibold leading-[1.08] tracking-[-0.03em] md:max-w-[52rem]">
-          <Words text="Four rooms for [[four ways to be you.]]" />
+        <h2 className="ab-head font-sans text-[clamp(2rem,4.2vw,4.5rem)] font-semibold leading-[1.08] tracking-[-0.03em] text-center md:mx-auto md:max-w-[52rem]">
+          <Words text="One place, [[four ways to be different.]]" />
         </h2>
         <div className="ab-cards mt-24 grid gap-x-6 gap-y-14 md:grid-cols-4 md:gap-x-8">
           {divisions.map((d, i) => (
@@ -286,15 +287,29 @@ export function AboutPage() {
         <h2 className="ab-head font-sans text-[clamp(2rem,4.2vw,4.5rem)] font-semibold leading-[1.08] tracking-[-0.03em]">
           <Words text="[[Different people,]] one room." />
         </h2>
-        <ul className="mt-16 border-t border-bone/20">
+        <div className="ab-fade mt-12 flex justify-end gap-2">
+          {([-1, 1] as const).map((d) => (
+            <button
+              key={d}
+              type="button"
+              aria-label={d < 0 ? "Previous" : "Next"}
+              onClick={() => track.current?.scrollBy({ left: d * (track.current.firstElementChild as HTMLElement).offsetWidth * 1.05, behavior: "smooth" })}
+              className="grid size-12 place-items-center rounded-full border border-bone/30 text-lg transition-colors hover:border-lime hover:bg-lime hover:text-ink"
+            >
+              {d < 0 ? "←" : "→"}
+            </button>
+          ))}
+        </div>
+        {/* ponytail: native scroll-snap carousel, no library. Add autoplay/dots only if asked. */}
+        <ul ref={track} className="ab-fade -mx-5 mt-6 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-5 pb-4 [scrollbar-width:none] md:-mx-[6.5vw] md:gap-6 md:px-[6.5vw] [&::-webkit-scrollbar]:hidden">
           {guests.map((g) => (
-            <li key={g.name} className="ab-fade border-b border-bone/20">
-              <a href={g.href} target="_blank" rel="noreferrer" className="group relative flex flex-col justify-between gap-2 py-7 md:flex-row md:items-center md:gap-10 md:py-9">
-                <span className="font-sans text-[clamp(1.8rem,4vw,4.2rem)] font-semibold leading-none tracking-[-0.03em] transition-all duration-500 group-hover:translate-x-4 group-hover:text-lime">{g.name}</span>
-                <span className="text-base text-bone/60 md:max-w-xs md:text-right">{g.note}</span>
-                <span className="pointer-events-none absolute right-[22%] top-1/2 z-10 hidden aspect-[4/5] w-40 -translate-y-1/2 rotate-3 scale-75 overflow-hidden rounded-sm opacity-0 shadow-2xl transition duration-500 group-hover:scale-100 group-hover:opacity-100 md:block">
-                  <Image src={g.image.src} alt={g.image.alt} fill sizes="160px" className="object-cover" />
-                </span>
+            <li key={g.name} className="group w-[72vw] shrink-0 snap-start md:w-[22vw]">
+              <a href={g.href} target="_blank" rel="noreferrer" className="block">
+                <div className="relative aspect-[4/5] overflow-hidden rounded-sm">
+                  <Image src={g.image.src} alt={g.image.alt} fill sizes="(min-width:768px) 22vw, 72vw" className="object-cover transition duration-700 group-hover:scale-105" />
+                </div>
+                <h3 className="mt-5 font-sans text-[clamp(1.4rem,2vw,2rem)] font-semibold leading-none tracking-[-0.03em] transition-colors group-hover:text-lime">{g.name}</h3>
+                <p className="mt-2 text-sm leading-snug text-bone/60">{g.note}</p>
               </a>
             </li>
           ))}

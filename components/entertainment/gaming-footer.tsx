@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import { LogoMark } from "../logo-mark";
 import { instagramIcon, phoneIcon, locationIcon } from "../ui/footer-icons";
@@ -29,14 +28,6 @@ const spots = [
 ];
 
 export function GamingFooter({ photos }: { photos: Photo[] }) {
-  // Arcade "continue?" countdown: 9 down to 0, then around again.
-  const [n, setN] = useState(9);
-  useEffect(() => {
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const t = setInterval(() => setN((v) => (v === 0 ? 9 : v - 1)), 1000);
-    return () => clearInterval(t);
-  }, []);
-
   return (
     <footer className="relative overflow-hidden border-t border-bone/15 bg-teal-deep">
       <div aria-hidden className="pointer-events-none absolute inset-0 z-[2] bg-[repeating-linear-gradient(0deg,rgb(0_0_0/0.18)_0_1px,transparent_1px_3px)]" />
@@ -62,21 +53,7 @@ export function GamingFooter({ photos }: { photos: Photo[] }) {
 
         <div className="relative z-[1] flex flex-col items-center">
           <LogoMark className="size-[min(50vw,19rem)] text-bone drop-shadow-[0_0_50px_rgb(214_255_80/0.3)]" title="Farakchu" />
-          <p className="mt-6 font-azonix text-[clamp(2.4rem,9vw,8rem)] leading-none text-lime [text-shadow:0_0_40px_rgb(214_255_80/0.35)]">
-            Continue?
-          </p>
-          <p aria-hidden className="mt-1 font-azonix text-[clamp(4rem,16vw,13rem)] leading-none text-bone [-webkit-text-stroke:2px_var(--color-lime)] [text-shadow:none]">
-            <span className="text-transparent">{n}</span>
-          </p>
           <p className="mt-4 max-w-xs text-sm text-bone/95">Controllers are charged. Your squad is waiting.</p>
-          <a
-            href={site.contactHref}
-            target="_blank"
-            rel="noreferrer"
-            className="fc-blink mt-8 inline-flex min-h-12 items-center justify-center rounded-[50%] bg-lime px-12 py-4 font-wide text-[0.7rem] leading-none text-ink transition-colors hover:bg-bone"
-          >
-            Insert coin
-          </a>
         </div>
       </div>
 

@@ -56,13 +56,13 @@ export function RailHero() {
 
   return (
     <section ref={root} data-hero className="relative flex min-h-[44rem] flex-col overflow-hidden px-4 pb-10 pt-28 lg:px-6">
-      <div className="flex flex-wrap items-end justify-between gap-6">
+      <div className="flex flex-col items-center gap-6 text-center">
         <h1 className="ap-hero-title font-wide text-[clamp(2.6rem,6.4vw,7.2rem)] leading-[0.92]">
           Wear the <br />
           <span className="hl">difference.</span>
         </h1>
-        <p className="ap-hero-note max-w-[18rem] text-sm leading-snug text-bone/80">
-          Four hoodies, small runs, made in Kathmandu. Pick yours off the rail, add it to the bag, and send the order by DM.
+        <p className="ap-hero-note max-w-[26rem] text-sm leading-snug text-bone/80">
+          Four hoodies, small runs, made in Kathmandu. Pick yours off the rail, add it to the bag, and order online.
         </p>
       </div>
 

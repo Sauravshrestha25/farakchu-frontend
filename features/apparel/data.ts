@@ -53,7 +53,7 @@ export const apparelPage = {
   ],
   cta: {
     heading: "Find your chapter.",
-    body: "See something you want? Send a DM and we’ll sort the size, colour, and pickup details.",
+    body: "See something you want? Add it to your bag and order online.",
     href: apparelDrop.dm,
   },
   contact: site.instagram,
@@ -61,7 +61,7 @@ export const apparelPage = {
 
 
 // ---- Shop ----------------------------------------------------------------
-// No prices supplied by the client: pieces show "DM for price". Sizes are the standard run; availability is confirmed in DM.
+// No prices supplied by the client yet: pieces show "Price soon". Sizes are the standard run.
 // TODO(client): real prices, sizes in stock, colourways per piece.
 const ap = (n: string) => `/images/apparel/${n}.jpg`;
 
@@ -73,8 +73,11 @@ export type Piece = {
   hex: string; // scene colour
   tag: string;
   desc: string;
+  price: number | null; // NPR. TODO(client): real prices; null shows "Price soon".
   views: { src: string; alt: string; label: string }[];
 };
+
+export const price = (p: { price: number | null }) => (p.price == null ? "Price soon" : `NPR ${p.price.toLocaleString("en-US")}`);
 
 export const sizes = ["S", "M", "L", "XL"];
 
@@ -87,6 +90,7 @@ export const pieces: Piece[] = [
     hex: "#1b2b57",
     tag: "Limited",
     desc: "The diamond on the chest, the graffiti mark on the back. Chapter 01, the one that started it.",
+    price: null,
     views: [
       { src: ap("ch01-navy"), alt: "Model in the navy Farakchu diamond hoodie, front", label: "Front" },
       { src: ap("ch01-navy-alt"), alt: "Navy Farakchu hoodie from behind with the graffiti print", label: "Back" },
@@ -100,6 +104,7 @@ export const pieces: Piece[] = [
     hex: "#4a4c58",
     tag: "New",
     desc: "The hand-drawn Farak Chu mark, loud across the chest, in dark grey.",
+    price: null,
     views: [
       { src: ap("ch03-light-alt"), alt: "Model in the dark grey Farakchu graffiti hoodie, hood up", label: "On body" },
       { src: ap("ch02-grey-alt"), alt: "Close up of the graffiti print on a grey Farakchu hoodie", label: "Print" },
@@ -113,6 +118,7 @@ export const pieces: Piece[] = [
     hex: "#6b6c76",
     tag: "",
     desc: "Looped script on the front, the graffiti mark on the back. Grey that goes with everything.",
+    price: null,
     views: [
       { src: ap("ch02-grey"), alt: "Model in the grey Farakchu script hoodie, front", label: "Front" },
       { src: ap("ch03-light"), alt: "Grey Farakchu hoodie from behind with the graffiti print", label: "Back" },
@@ -126,6 +132,7 @@ export const pieces: Piece[] = [
     hex: "#2b2e3b",
     tag: "",
     desc: "Two colourways, one hoodie: the diamond in charcoal, the graffiti mark in grey.",
+    price: null,
     views: [
       { src: ap("ch03-grey-alt"), alt: "Model in the charcoal Farakchu diamond hoodie with jeans", label: "Charcoal" },
       { src: ap("ch03-grey"), alt: "Model in the grey Farakchu graffiti hoodie, hood up", label: "Grey" },
@@ -135,6 +142,6 @@ export const pieces: Piece[] = [
 
 export const steps = [
   { n: "01", title: "Pick your piece", body: "Choose a hoodie and a size. Add as many as you like to the bag." },
-  { n: "02", title: "Copy your order", body: "The bag writes the message for you. One tap copies it and opens the DM." },
-  { n: "03", title: "Send it to us", body: "Paste it into @farakchu.apparel. We confirm size, colour, price and pickup." },
+  { n: "02", title: "Review your bag", body: "Check sizes and quantities. Change anything before you order." },
+  { n: "03", title: "Place your order", body: "Checkout is coming soon. Your order goes straight to us, and we confirm pickup or delivery." },
 ];

@@ -108,7 +108,7 @@ export function ApparelPage() {
           {/* How ordering works */}
           <section className="px-4 py-20 lg:px-6 lg:py-28">
             <h2 data-heading className="max-w-[48rem] font-wide text-[clamp(2rem,4.6vw,4.6rem)] leading-[0.95]">
-              Ordering is <span className="hl">one DM.</span>
+              Ordering is <span className="hl">three steps.</span>
             </h2>
             <ol className="mt-14 grid gap-px bg-bone/20 lg:grid-cols-3">
               {steps.map((s) => (
@@ -122,21 +122,34 @@ export function ApparelPage() {
           </section>
 
           {/* The point */}
-          <section className="relative grid gap-10 overflow-hidden px-4 pb-24 lg:grid-cols-12 lg:px-6 lg:pb-32">
-            <div className="relative aspect-[4/5] w-full overflow-hidden bg-teal-soft lg:col-span-5">
-              <Image src={apparelPage.story.image} alt={apparelPage.story.alt} fill sizes="(min-width:1024px) 40vw, 100vw" className="object-cover" />
+          <section className="relative grid items-center gap-12 overflow-hidden px-4 py-20 lg:min-h-svh lg:grid-cols-12 lg:gap-8 lg:px-6 lg:py-28">
+            <div className="relative lg:col-span-6">
+              <div className="relative aspect-[4/5] w-[82%] overflow-hidden bg-teal-soft lg:max-h-[78svh] lg:w-[78%]">
+                <Image src={apparelPage.story.image} alt={apparelPage.story.alt} fill sizes="(min-width:1024px) 36vw, 80vw" className="object-cover" />
+              </div>
+              <div className="absolute -bottom-8 right-0 aspect-square w-[44%] overflow-hidden border-[6px] border-teal bg-teal-soft lg:-bottom-10 lg:w-[38%]">
+                <Image src={apparelPage.manifesto[1].image} alt={apparelPage.manifesto[1].alt} fill sizes="(min-width:1024px) 16vw, 40vw" className="object-cover" />
+              </div>
             </div>
-            <div className="lg:col-span-6 lg:col-start-7 lg:self-center">
-              <h2 data-heading className="font-wide text-[clamp(1.8rem,3.6vw,3.6rem)] leading-[0.98]">{apparelPage.story.heading}</h2>
+
+            <div className="lg:col-span-6 lg:pl-8">
+              <h2 data-heading className="font-wide text-[clamp(2rem,4.2vw,4.4rem)] leading-[0.95]">
+                {apparelPage.story.heading.split(", ")[0]},{" "}
+                <span className="hl">{apparelPage.story.heading.split(", ")[1]}</span>
+              </h2>
               <p data-body className="mt-6 max-w-[34rem] text-lg leading-snug text-bone/90">{apparelPage.story.body}</p>
-              <ul className="mt-10 grid gap-6 sm:grid-cols-3">
-                {apparelPage.principles.map((p) => (
-                  <li key={p.title} className="border-t border-bone/25 pt-4">
+              <ol className="mt-10 border-t border-bone/25">
+                {apparelPage.principles.map((p, i) => (
+                  <li key={p.title} className="grid grid-cols-[3.5rem_1fr] items-baseline gap-4 border-b border-bone/25 py-5 sm:grid-cols-[4.5rem_14rem_1fr]">
+                    <span className="font-wide text-2xl leading-none text-lime">{String(i + 1).padStart(2, "0")}</span>
                     <h3 className="font-wide text-sm leading-tight">{p.title}</h3>
-                    <p className="mt-2 text-sm leading-snug text-bone/75">{p.body}</p>
+                    <p className="col-start-2 text-sm leading-snug text-bone/75 sm:col-start-auto">{p.body}</p>
                   </li>
                 ))}
-              </ul>
+              </ol>
+              <a href="#catalogue" className="mt-10 inline-flex min-h-12 items-center rounded-[50%] bg-lime px-9 py-3 font-wide text-[0.625rem] leading-none text-ink transition-colors hover:bg-bone">
+                Shop the pieces
+              </a>
             </div>
           </section>
         </main>

@@ -30,7 +30,6 @@ export type DivisionPage = {
   nights: [string, string];
   cards: Card[];
   offers: { title: string; line: string; tag: string; img: { src: string; alt: string }; cls: string }[];
-  stats: { pre?: string; to: number; post?: string; label: string; bar: number }[];
   footerPhotos: { src: string; alt: string }[];
   cta: [string, string];
   ctaBody: string;
@@ -64,12 +63,6 @@ export const pages: Record<"gaming", DivisionPage> = {
       { title: "Prizes", line: "Win cash, win trophies, win bragging rights.", tag: "Win", img: { src: "/images/ig/gamezone/01.jpg", alt: "Friends holding prize cash in front of the Farakchu sign" }, cls: "lg:col-span-2" },
       { title: "Walk-ins welcome", line: "No booking, no stress. Just play.", tag: "Anytime", img: { src: "/images/ig/gamezone/17.jpg", alt: "Girl smiling with a PS5 controller" }, cls: "lg:row-span-2" },
       { title: "Games and drinks", line: "Matcha, coffee or cold beer between rounds.", tag: "Chill", img: { src: "/images/ig/gamezone/19.jpg", alt: "Friends gaming with drinks under the Farakchu sign" }, cls: "lg:col-span-2" },
-    ],
-    stats: [
-      { to: 48, label: "Players in every knockout bracket", bar: 100 },
-      { pre: "Rs ", to: 33, post: "K", label: "First prize, plus the trophy", bar: 82 },
-      { to: 3, post: " hrs", label: "From “ek game matrai” to closing time", bar: 60 },
-      { pre: "Rs ", to: 900, label: "Entry fee. Everyone gets a shot", bar: 35 },
     ],
     footerPhotos: [{ src: "/images/ig/gamezone/17.jpg", alt: "Girl smiling with a PS5 controller" }, { src: "/images/ig/gamezone/08.jpg", alt: "Player celebrating a goal" }, { src: "/images/ig/gamezone/16.jpg", alt: "Red neon gaming room" }, { src: "/images/ig/gamezone/01.jpg", alt: "Friends in front of the Farakchu sign" }],
     cta: ["Ready, ", "player one?"],

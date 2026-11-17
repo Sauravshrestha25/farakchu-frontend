@@ -53,7 +53,7 @@ export const divisions: Division[] = [
     line: "Nights people talk about the morning after.",
     body: "Live sessions, watch parties, premieres and the kind of crowd that makes a big fight feel bigger. From Road to UFC to the World Cup, if the city's watching, it's watching here.",
     tags: ["Live music", "Watch parties", "Private events"],
-    image: { src: img("live-singer"), alt: "Singer with arms raised on stage at a Farakchu live night" },
+    image: { src: img("domain-entertainment"), alt: "Guitarist playing a double-neck guitar under red stage light at Farakchu" },
     inset: { src: img("crowd-watch"), alt: "Crowd reacting during a watch party" },
   },
   {
@@ -67,7 +67,7 @@ export const divisions: Division[] = [
     line: "“Ek game matrai” turns into three hours.",
     body: "PS5s, big screens and brackets that get loud. We run knockouts like the FC 26 tournament: 48 players, no second chances, one champion.",
     tags: ["PS5", "Tournaments", "Squad nights"],
-    image: { src: img("gaming-neon"), alt: "Neon-lit gaming room with screens showing football" },
+    image: { src: img("domain-gaming"), alt: "Two players on a sofa in the neon-lit Farakchu gaming room, football on the big screen" },
     inset: { src: img("gaming-player"), alt: "Player mid-celebration with a controller" },
   },
   {
@@ -81,7 +81,7 @@ export const divisions: Division[] = [
     line: "Wear the difference.",
     body: "Limited drops, printed in small runs and gone when they're gone. Including the official Nepal merch we made to back Rabindra Dhant on his Road to UFC.",
     tags: ["Limited drops", "Merch", "Collabs"],
-    image: { src: img("apparel-storefront"), alt: "Two men outside Farakchu, one in the Rabindra Dhant tee" },
+    image: { src: img("domain-apparel"), alt: "Two models in grey Farakchu hoodies with the graffiti and script prints" },
     inset: { src: img("apparel-kid"), alt: "Kid in a Farakchu graphic tee at the bar" },
   },
   {
@@ -95,7 +95,7 @@ export const divisions: Division[] = [
     line: "Good coffee is an art. Sharing it is a lifestyle.",
     body: "Espresso, strawberry matcha, cold beer and long tables. The room where everything else at Farakchu starts and ends.",
     tags: ["Coffee", "Matcha", "Beer"],
-    image: { src: img("storefront-night"), alt: "Farakchu at night: a cafe, and a bar too" },
+    image: { src: img("domain-cafe"), alt: "Guest with a blue cocktail at the Farakchu bar, brick wall and diamond sign behind" },
     inset: { src: img("cafe-matcha"), alt: "Strawberry matcha held up to the camera" },
   },
 ];

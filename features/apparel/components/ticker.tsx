@@ -7,7 +7,7 @@ import { useGSAP } from "@gsap/react";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const words = ["Limited chapters", "Made in Kathmandu", "Small runs", "Order by DM", "Wear the difference"];
+const words = ["Limited chapters", "Made in Kathmandu", "Small runs", "Order online", "Wear the difference"];
 
 // Lime tape, tilted across the page. Speeds up and reverses with scroll.
 export function Ticker() {

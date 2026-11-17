@@ -256,13 +256,8 @@ export function Footer() {
           ))}
         </Col>
         <Col title="Shop">
-          <a
-            className={linkCls}
-            href={apparelDrop.dm}
-            target="_blank"
-            rel="noreferrer"
-          >
-            DM to order apparel
+          <a className={linkCls} href="/apparel">
+            Shop apparel
           </a>
           <a
             className={linkCls}
