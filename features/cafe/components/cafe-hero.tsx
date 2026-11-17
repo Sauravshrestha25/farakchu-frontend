@@ -75,13 +75,16 @@ export function CafeHero() {
             onUpdate: (self) => self.progress > 0.01 && resetTilt?.(),
           },
         });
+        // Every exit tween is fromTo with explicit rest values: invalidateOnRefresh re-reads start values on refresh,
+        // and a refresh while scrolled into the pin would otherwise record the hidden state as "rest" (letters/badge never come back).
         cards.forEach((el, i) => {
           if (i === MID) return;
-          handoff.to(el, { x: `${(i - MID) * 45}vw`, yPercent: -40 - Math.abs(i - MID) * 25, rotate: (i - MID) * 14, ease: "power2.in", duration: 0.45 }, 0);
+          handoff.fromTo(el, { x: 0, yPercent: 0, rotate: 0 }, { x: `${(i - MID) * 45}vw`, yPercent: -40 - Math.abs(i - MID) * 25, rotate: (i - MID) * 14, ease: "power2.in", duration: 0.45 }, 0);
         });
         handoff
-          .to(split.chars, { yPercent: 110, ease: "power2.in", duration: 0.35, stagger: 0.03 }, 0)
-          .to(q(".cf-badge, .cf-hero-meta"), { autoAlpha: 0, duration: 0.12 }, 0)
+          // Lines drop on exit; the entrance owns the chars, so the two never fight over the same transform.
+          .fromTo(split.lines, { yPercent: 0 }, { yPercent: 115, ease: "power2.in", duration: 0.35, stagger: 0.05 }, 0)
+          .fromTo(q(".cf-badge, .cf-hero-meta"), { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.12 }, 0)
           .fromTo(stage, { clipPath: cardInset, autoAlpha: 0 }, { autoAlpha: 1, duration: 0.01 }, 0)
           // Explicit from-value: browsers serialize equal left/right insets as 3 values, which GSAP would read as left = 0.
           .fromTo(stage, { clipPath: cardInset }, { clipPath: "inset(0px 0px 0px 0px)", ease: "power2.inOut", duration: 0.8, immediateRender: false }, 0.2)
@@ -144,9 +147,10 @@ export function CafeHero() {
         ))}
       </div>
 
-      <div className="relative z-10">
-        {/* ponytail: width ratios fit "Cafe" (one line) / "Ca|fe" (mobile, two lines) in font-wide edge to edge; retune if the word or font changes. */}
-        <h1 className="cf-word pointer-events-none font-wide text-[calc((100vw-2rem)*0.62)] leading-[0.8] tracking-[-0.05em] [margin-left:-0.04em] md:text-[calc((100vw-2rem)*0.343)] lg:text-[calc((100vw-3rem)*0.343)]">
+      <div className="@container relative z-10">
+        {/* ponytail: width ratios fit "Cafe" (one line) / "Ca|fe" (mobile, two lines) in font-wide edge to edge; retune if the word or font changes.
+            Sized off the container (cqw), not 100vw: vw includes a classic scrollbar, which overflowed and wrapped the split chars. nowrap guards the rest. */}
+        <h1 className="cf-word pointer-events-none font-wide text-[62cqw] leading-[0.8] tracking-[-0.05em] [margin-left:-0.04em] md:whitespace-nowrap md:text-[34cqw]">
           <span className="max-md:block">Ca</span>fe
         </h1>
 
