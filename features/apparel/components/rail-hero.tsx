@@ -55,9 +55,9 @@ export function RailHero() {
   );
 
   return (
-    <section ref={root} data-hero className="relative flex min-h-[44rem] flex-col overflow-hidden px-4 pb-10 pt-28 lg:px-6">
+    <section ref={root} data-hero className="relative flex min-h-[max(44rem,100svh)] flex-col overflow-hidden px-4 pb-10 pt-28 lg:px-6">
       <div className="flex flex-col items-center gap-6 text-center">
-        <h1 className="ap-hero-title font-wide text-[clamp(2.6rem,6.4vw,7.2rem)] leading-[0.92]">
+        <h1 className="ap-hero-title font-sans font-semibold tracking-[-0.02em] text-[clamp(2.25rem,4.5vw,4rem)] leading-[1.05]">
           Wear the <br />
           <span className="hl">difference.</span>
         </h1>

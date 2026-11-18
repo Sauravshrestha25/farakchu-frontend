@@ -1,6 +1,7 @@
 "use client";
 
 import "../apparel.css";
+import { PageTheme } from "@/components/page-theme";
 import { useRef } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
@@ -11,11 +12,10 @@ import { Reveals } from "@/components/reveals";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { Footer } from "@/components/home/footer";
 import { apparelPage, pieces, steps } from "@/features/apparel/data";
-import { BagProvider } from "./bag";
+import { BagButton, BagProvider } from "./bag";
 import { Catalogue } from "./catalogue";
 import { RailHero } from "./rail-hero";
 import { Scene } from "./scene";
-import { Ticker } from "./ticker";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -36,21 +36,14 @@ export function ApparelPage() {
       });
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // Scenes: giant outline names drift, photos wipe in.
-        q(".ap-scene").forEach((scene) => {
-          const s = gsap.utils.selector(scene);
-          gsap.fromTo(s(".ap-drift"), { xPercent: 10 }, { xPercent: -10, ease: "none", scrollTrigger: { trigger: scene, start: "top bottom", end: "bottom top", scrub: true } });
-          gsap.from(s(".ap-photo"), { clipPath: "inset(0 0 100% 0)", duration: 1.3, ease: "power3.inOut", scrollTrigger: { trigger: scene, start: "top 60%", once: true } });
-        });
-
-        // Desktop: scenes stack like cards, each one covering the last.
+        // Desktop: each scene pins and the next slides over it; the covered photo drifts up a touch.
         mm.add("(min-width: 1024px)", () => {
           const scenes = q(".ap-scene");
           scenes.forEach((scene, i) => {
             const next = scenes[i + 1];
             if (!next) return;
             ScrollTrigger.create({ trigger: scene, start: "top top", endTrigger: next, end: "top top", pin: true, pinSpacing: false });
-            gsap.to(gsap.utils.selector(scene)(".ap-scene-in"), { scale: 0.92, opacity: 0.35, ease: "none", scrollTrigger: { trigger: next, start: "top bottom", end: "top top", scrub: true } });
+            gsap.to(gsap.utils.selector(scene)(".ap-scene-in"), { yPercent: -12, ease: "none", scrollTrigger: { trigger: next, start: "top bottom", end: "top top", scrub: true } });
           });
         });
 
@@ -81,23 +74,24 @@ export function ApparelPage() {
 
       return () => {
         mm.revert();
-        document.querySelector("[data-nav]")?.classList.remove("nav-ink");
+        document.querySelector("[data-nav]")?.classList.remove("nav-ink", "nav-light");
       };
     },
     { scope: root },
   );
 
   return (
-    <BagProvider>
+    <div className="theme-studio">
+      <PageTheme name="studio" />
+      <BagProvider>
       <div className="ap-cursor" aria-hidden />
-      <Nav page="sub" />
+      <Nav page="sub" action={<BagButton />} />
       <SmoothScroll>
         <main ref={root}>
           <RailHero />
-          <Ticker />
 
           {/* The pieces, one room each */}
-          <div>
+          <div className="ap-scenes">
             {pieces.map((p, i) => (
               <Scene key={p.id} piece={p} index={i} total={pieces.length} />
             ))}
@@ -106,15 +100,15 @@ export function ApparelPage() {
           <Catalogue />
 
           {/* How ordering works */}
-          <section className="px-4 py-20 lg:px-6 lg:py-28">
-            <h2 data-heading className="max-w-[48rem] font-wide text-[clamp(2rem,4.6vw,4.6rem)] leading-[0.95]">
+          <section className="flex flex-col justify-center px-4 py-20 lg:min-h-svh lg:px-6 lg:py-28">
+            <h2 data-heading className="max-w-[48rem] font-sans font-semibold tracking-[-0.02em] text-[clamp(1.75rem,2.8vw,2.75rem)] leading-[1.15]">
               Ordering is <span className="hl">three steps.</span>
             </h2>
             <ol className="mt-14 grid gap-px bg-bone/20 lg:grid-cols-3">
               {steps.map((s) => (
                 <li key={s.n} className="ap-step bg-teal p-6 pb-10 lg:p-8 lg:pb-14">
-                  <span className="font-wide text-[clamp(4rem,9vw,9rem)] leading-[0.85] text-lime">{s.n}</span>
-                  <h3 className="mt-6 font-wide text-xl leading-tight">{s.title}</h3>
+                  <span className="font-mono text-sm text-lime">{s.n}</span>
+                  <h3 className="mt-4 font-sans font-semibold tracking-[-0.02em] text-lg leading-tight">{s.title}</h3>
                   <p className="mt-3 max-w-[22rem] text-base leading-snug text-bone/85">{s.body}</p>
                 </li>
               ))}
@@ -133,7 +127,7 @@ export function ApparelPage() {
             </div>
 
             <div className="lg:col-span-6 lg:pl-8">
-              <h2 data-heading className="font-wide text-[clamp(2rem,4.2vw,4.4rem)] leading-[0.95]">
+              <h2 data-heading className="font-sans font-semibold tracking-[-0.02em] text-[clamp(1.75rem,2.8vw,2.75rem)] leading-[1.15]">
                 {apparelPage.story.heading.split(", ")[0]},{" "}
                 <span className="hl">{apparelPage.story.heading.split(", ")[1]}</span>
               </h2>
@@ -141,7 +135,7 @@ export function ApparelPage() {
               <ol className="mt-10 border-t border-bone/25">
                 {apparelPage.principles.map((p, i) => (
                   <li key={p.title} className="grid grid-cols-[3.5rem_1fr] items-baseline gap-4 border-b border-bone/25 py-5 sm:grid-cols-[4.5rem_14rem_1fr]">
-                    <span className="font-wide text-2xl leading-none text-lime">{String(i + 1).padStart(2, "0")}</span>
+                    <span className="font-mono text-sm leading-none text-lime">{String(i + 1).padStart(2, "0")}</span>
                     <h3 className="font-wide text-sm leading-tight">{p.title}</h3>
                     <p className="col-start-2 text-sm leading-snug text-bone/75 sm:col-start-auto">{p.body}</p>
                   </li>
@@ -153,9 +147,10 @@ export function ApparelPage() {
             </div>
           </section>
         </main>
-        <Footer />
+        <Footer light />
         <Reveals />
       </SmoothScroll>
-    </BagProvider>
+      </BagProvider>
+    </div>
   );
 }

@@ -34,7 +34,7 @@ const films = [
     blurb:
       "Live sessions, watch parties and nights people talk about the morning after.",
     no: "01",
-    href: "https://www.instagram.com/farakchu.entertaiment/",
+    href: "/entertainment",
     logo: "/images/logo/logo-entertainment.jpg",
     focus: "50% 30%",
     image: {
@@ -49,7 +49,7 @@ const films = [
     blurb:
       "PS5s, big screens and brackets that get loud. One more game, always.",
     no: "02",
-    href: "https://www.instagram.com/farakchu.gamezone/",
+    href: "/gaming",
     logo: "/images/logo/logo-gamezone.jpg",
     focus: "50% 50%",
     image: {
@@ -64,7 +64,7 @@ const films = [
     blurb:
       "Limited drops in small runs, gone when they're gone. Including the official Nepal merch.",
     no: "03",
-    href: "https://www.instagram.com/farakchu.apparel/",
+    href: "/apparel",
     logo: "/images/logo/logo-apparel.jpg",
     focus: "50% 8%",
     image: {
@@ -79,7 +79,7 @@ const films = [
     blurb:
       "Espresso, strawberry matcha, cold beer and long tables. A cafe, and a bar too.",
     no: "04",
-    href: "https://www.instagram.com/farakchu.cafe/",
+    href: "/cafe",
     logo: "/images/logo/logo-cafe.jpg",
     focus: "50% 35%",
     image: {
@@ -535,11 +535,11 @@ export function HeroStack() {
         {[m1, m2].map((m, i) => (
           <div
             key={m.word}
-            className={`hs-vv flex w-[11.75rem] flex-col gap-4 lg:w-[17.625rem] ${i ? "max-lg:ml-auto" : "max-lg:mr-auto"}`}
+            className={`hs-vv flex w-[15rem] flex-col gap-4 lg:w-[20rem] ${i ? "max-lg:ml-auto" : "max-lg:mr-auto"}`}
           >
             <h2
               data-heading
-              className="font-azonix text-[3rem] leading-none lg:text-[5rem]"
+              className="font-azonix text-[3rem] leading-none tracking-[0.2em] lg:text-[4.25rem]"
             >
               {m.word}
             </h2>
@@ -619,7 +619,7 @@ export function HeroStack() {
           </div>
         </div>
 
-        <LogoMark className="hs-mark pointer-events-none absolute left-1/2 top-1/2 z-[3] text-bone opacity-0 will-change-transform" />
+        <LogoMark solid="#000" className="hs-mark pointer-events-none absolute left-1/2 top-1/2 z-[3] text-bone opacity-0 will-change-transform" />
 
         {/* data-hero lives on this wrapper, not the h1: the scroll timeline owns the h1's opacity and would overwrite the preloader's reveal on refresh. */}
         <div
@@ -649,8 +649,6 @@ export function HeroStack() {
             <a
               key={f.id}
               href={f.href}
-              target="_blank"
-              rel="noreferrer"
               aria-label={`${f.name}: ${f.blurb}`}
               onPointerEnter={(e) => e.pointerType === "mouse" && setHover(i)}
               onPointerLeave={() => setHover(null)}
@@ -667,7 +665,7 @@ export function HeroStack() {
                   fill
                   sizes="(min-width: 992px) 55vw, 100vw"
                   style={{ objectPosition: f.focus }}
-                  className={`hs-film-img origin-top object-cover transition-[filter,scale] duration-[900ms] ease-out-expo ${on ? "scale-[1.04]" : ""} ${off ? "grayscale brightness-[0.45]" : ""}`}
+                  className={`hs-film-img origin-top object-cover transition-[filter,scale] duration-[900ms] ease-out-expo ${on ? "scale-[1.04]" : ""} ${off ? "brightness-[0.45]" : ""}`}
                 />
               </div>
               <div

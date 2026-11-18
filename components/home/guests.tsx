@@ -104,6 +104,7 @@ export function Guests() {
                 return (
                   <li
                     key={g.name}
+                    data-hc
                     className="shrink-0"
                     style={{ width: `calc(var(--u) * ${s.w} + 1.1rem)` }}
                   >
@@ -137,13 +138,13 @@ export function Guests() {
                       </div>
                       {/* Calendar badge instead of a link. */}
                       <div
-                        className="w-11 shrink-0 overflow-hidden rounded-md border border-bone/50 text-center"
+                        className="w-11 shrink-0 overflow-hidden rounded-md border border-white/50 bg-[#003638] text-center"
                         aria-label={`${when(g.name).m} ${when(g.name).d}`}
                       >
-                        <span className="block bg-lime py-0.5 font-wide text-[0.5rem] leading-none text-ink">
+                        <span className="block bg-[#1d4d4a] py-0.5 font-wide text-[0.5rem] leading-none text-white">
                           {when(g.name).m}
                         </span>
-                        <span className="block py-1.5 font-wide text-base leading-none">
+                        <span className="block py-1.5 font-wide text-base leading-none text-white">
                           {when(g.name).d}
                         </span>
                       </div>

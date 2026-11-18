@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { PageTheme } from "@/components/page-theme";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -88,7 +89,8 @@ export function CafePage() {
   );
 
   return (
-    <>
+    <div className="theme-cafe bg-teal text-bone">
+      <PageTheme name="cafe" />
       <Nav page="sub" />
       <SmoothScroll>
         <main ref={root}>
@@ -240,9 +242,9 @@ export function CafePage() {
             </div>
           </section>
         </main>
-        <Footer />
+        <Footer light />
         <Reveals />
       </SmoothScroll>
-    </>
+    </div>
   );
 }

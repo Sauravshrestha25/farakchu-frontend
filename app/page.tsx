@@ -1,4 +1,5 @@
 import { readdirSync } from "node:fs";
+import { PageTheme } from "@/components/page-theme";
 import { join } from "node:path";
 import { Nav } from "@/components/nav";
 import { Preloader } from "@/components/preloader";
@@ -20,7 +21,8 @@ export default function Home() {
     .map((f) => `/images/people2/${f}`);
 
   return (
-    <>
+    <div className="theme-mono">
+      <PageTheme name="mono" />
       <Preloader />
       <Nav />
       <SmoothScroll>
@@ -35,6 +37,6 @@ export default function Home() {
         <Footer />
         <Reveals />
       </SmoothScroll>
-    </>
+    </div>
   );
 }

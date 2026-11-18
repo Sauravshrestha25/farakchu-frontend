@@ -19,7 +19,8 @@ const Rule = () => (
 // The cafe as a thermal receipt that feeds out of a printer slot as you scroll (scrubbed, no pin).
 export function Cafe() {
   const root = useRef<HTMLElement>(null);
-  const [peek, setPeek] = useState<number | null>(null);
+  // Last hovered/focused line stays selected (starts on the last item).
+  const [peek, setPeek] = useState(cafe.items.length - 1);
 
   useGSAP(
     () => {
@@ -117,7 +118,7 @@ export function Cafe() {
         <div className="relative mx-auto h-[46svh] max-h-[460px] w-full max-w-[420px] lg:col-span-4 lg:h-[56svh] lg:max-h-[520px] lg:self-center">
           {cafe.items.map((it, i) => {
             const n = cafe.items.length;
-            const front = peek ?? n - 1;
+            const front = peek;
             const depth = (i - front + n) % n; // 0 = front card
             const fan = [
               { x: 0, y: 0, r: -3 },
@@ -130,6 +131,7 @@ export function Cafe() {
             return (
               <figure
                 key={it.name}
+                data-hc
                 className="absolute left-[14%] top-0 aspect-[4/5] h-[86%] bg-bone p-2 pb-8 shadow-[0_18px_40px_-12px_rgb(0_0_0/0.65)] transition-[transform,filter] duration-700 ease-out-expo"
                 style={{
                   zIndex: n - depth,
@@ -162,7 +164,7 @@ export function Cafe() {
           />
           <div className="-mt-2.5 overflow-hidden px-3 pt-2.5">
             <div
-              className="rc-paper relative bg-[#f6f1e6] px-6 pb-10 pt-6 font-mono text-[0.75rem] uppercase leading-relaxed text-ink shadow-[0_30px_60px_-20px_rgb(0_0_0/0.7)]"
+              className="rc-paper relative bg-bone px-6 pb-10 pt-6 font-mono text-[0.75rem] uppercase leading-relaxed text-ink shadow-[0_30px_60px_-20px_rgb(0_0_0/0.7)]"
               style={{
                 // Zigzag tear along the bottom edge.
                 mask: "conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) 50% / 14px 100%",
@@ -189,21 +191,21 @@ export function Cafe() {
                 <span>Time: now</span>
               </div>
               <Rule />
-              <ul onPointerLeave={() => setPeek(null)}>
+              <ul>
                 {cafe.items.map((it, i) => (
                   <li key={it.name}>
                     <button
                       type="button"
                       onPointerEnter={() => setPeek(i)}
                       onFocus={() => setPeek(i)}
-                      onBlur={() => setPeek(null)}
-                      className={`flex w-full items-baseline gap-2 py-0.5 text-left uppercase transition-colors ${(peek ?? cafe.items.length - 1) === i ? "rounded-[0.16em] bg-lime" : ""}`}
+                      aria-pressed={peek === i}
+                      className={`-mx-1 flex w-[calc(100%+0.5rem)] items-baseline gap-2 rounded-[0.16em] px-1 py-0.5 text-left uppercase transition-colors ${peek === i ? "bg-ink text-bone" : "hover:bg-ink/10"}`}
                     >
                       <span>1x</span>
                       <span className="shrink-0">{it.name}</span>
                       <span
                         aria-hidden
-                        className="mx-1 flex-1 translate-y-[-0.2em] border-b border-dotted border-teal/50"
+                        className="mx-1 flex-1 translate-y-[-0.2em] border-b border-dotted border-current opacity-50"
                       />
                       <span className="font-bold">{it.price}</span>
                     </button>

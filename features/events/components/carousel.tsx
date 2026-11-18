@@ -85,12 +85,12 @@ export function Carousel({ items, variant }: { items: Item[]; variant: "case" | 
           >
             {isCase ? (
               <div className="ev-case relative aspect-[4/5] w-full">
-                <div className="relative h-full w-full overflow-hidden bg-[#00292b]">
+                <div className="relative h-full w-full overflow-hidden bg-[var(--color-teal-deep)]">
                   <Image src={it.image.src} alt={it.image.alt} fill sizes="30vw" className="object-cover" />
                 </div>
               </div>
             ) : (
-              <div className="relative aspect-video w-full overflow-hidden bg-[#00292b]">
+              <div className="relative aspect-video w-full overflow-hidden bg-[var(--color-teal-deep)]">
                 <Image src={it.image.src} alt={it.image.alt} fill sizes="50vw" className="ev-bw object-cover" />
               </div>
             )}
@@ -106,13 +106,13 @@ export function Carousel({ items, variant }: { items: Item[]; variant: "case" | 
       </button>
 
       {isCase ? (
-        <h3 data-cap className="ev-display ev-h3 mt-3 text-center text-[#d6ff50]">{items[active].title}</h3>
+        <h3 data-cap className="ev-display ev-h3 mt-3 text-center text-[#fff]">{items[active].title}</h3>
       ) : (
         <>
           <div className="pointer-events-none absolute left-1/2 top-0 w-[calc(var(--w)+64px)] -translate-x-1/2" style={{ height: "var(--h)" }}>
             <div className="ev-brackets"><i /><i /><i /><i /></div>
           </div>
-          <p data-cap className="absolute left-1/2 top-[calc(var(--h)-19px)] -translate-x-1/2 whitespace-nowrap text-[#d6ff50]">{items[active].title}</p>
+          <p data-cap className="absolute left-1/2 top-[calc(var(--h)-19px)] -translate-x-1/2 whitespace-nowrap text-[#fff]">{items[active].title}</p>
           <div className="relative mx-auto mt-10 h-20 w-[min(46rem,92vw)] overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_30%,#000_70%,transparent)]" aria-hidden>
             <div className="flex justify-center">
               {[-2, -1, 0, 1, 2].map((o) => (

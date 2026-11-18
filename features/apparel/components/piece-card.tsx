@@ -9,7 +9,7 @@ export function PieceCard({ piece: p, sizes = "(min-width:1024px) 26vw, 46vw" }:
       <div className="relative aspect-[4/5] overflow-hidden" style={{ background: p.hex }}>
         <Image src={p.views[0].src} alt={p.views[0].alt} fill sizes={sizes} className="object-cover transition-opacity duration-700 group-hover:opacity-0" />
         <Image src={p.views[1].src} alt="" fill sizes={sizes} className="object-cover opacity-0 transition-[opacity,transform] duration-700 group-hover:scale-105 group-hover:opacity-100" />
-        <span className="absolute right-3 top-3 font-wide text-3xl leading-none text-bone mix-blend-difference">{String(p.chapter).padStart(2, "0")}</span>
+        <span className="absolute right-3 top-3 font-mono text-xs leading-none text-ink mix-blend-difference">{String(p.chapter).padStart(2, "0")}</span>
         {p.tag && <span className="absolute left-3 top-3 rounded-full bg-lime px-3 py-1.5 font-wide text-[0.55rem] leading-none text-ink">{p.tag}</span>}
       </div>
       <div className="mt-4 flex items-baseline justify-between gap-3">

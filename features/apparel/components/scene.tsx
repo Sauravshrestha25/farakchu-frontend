@@ -5,46 +5,55 @@ import Image from "next/image";
 import { price, type Piece } from "@/features/apparel/data";
 import { AddControls } from "./add-controls";
 
-// One full-screen scene per piece. The colour of the garment becomes the colour of the room.
+// One full-screen photo per piece, details over a soft fade at the bottom, a Front/Back switch.
 export function Scene({ piece, index, total }: { piece: Piece; index: number; total: number }) {
   const [view, setView] = useState(0);
-  const no = String(piece.chapter).padStart(2, "0");
 
   return (
-    <section id={`piece-${piece.id}`} className="ap-scene relative min-h-svh overflow-hidden" style={{ background: piece.hex }}>
-      <div className="ap-scene-in relative flex min-h-svh flex-col justify-end px-4 pb-8 pt-24 lg:px-6 lg:pb-8">
+    <section id={`piece-${piece.id}`} className="ap-scene relative h-svh overflow-hidden bg-[#0d0e11]">
+      <div className="ap-scene-in absolute inset-0">
+        {piece.views.map((v, i) => (
+          <Image
+            key={v.src}
+            src={v.src}
+            alt={v.alt}
+            fill
+            priority={index === 0 && i === 0}
+            sizes="100vw"
+            className={`object-cover object-[center_12%] transition-opacity duration-700 ${view === i ? "opacity-100" : "opacity-0"}`}
+          />
+        ))}
+        <div className="absolute inset-x-0 bottom-0 h-[65%] bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+      </div>
 
-        <span className="ap-outline pointer-events-none absolute -right-[2vw] bottom-[2%] select-none font-wide text-[34vw] leading-[0.8]" aria-hidden>{no}</span>
-        <span className="ap-outline ap-drift pointer-events-none absolute inset-x-0 top-[14%] select-none whitespace-nowrap font-wide text-[clamp(5rem,15vw,17rem)] leading-[0.85]" aria-hidden>{piece.name}</span>
-
-        <div className="relative grid items-end gap-8 lg:grid-cols-12">
-          <div className="order-2 lg:order-1 lg:col-span-5">
-            <p className="font-mono text-xs">({String(index + 1).padStart(2, "0")}/{String(total).padStart(2, "0")})</p>
-            <h2 className="mt-4 font-wide text-[clamp(2rem,3.8vw,4rem)] leading-[0.92]">{piece.name}</h2>
-            <p className="mt-4 flex flex-wrap items-center gap-3 font-mono text-xs uppercase">
-              <span className="inline-block size-3 rounded-full border border-bone/60" style={{ background: piece.hex, boxShadow: "0 0 0 3px rgb(241 236 225 / 0.25)" }} />
-              Chapter {no} · {piece.colourway}
-              {piece.tag && <span className="rounded-full bg-lime px-2.5 py-1 font-wide text-[0.55rem] leading-none text-ink">{piece.tag}</span>}
+      <div className="relative flex h-full flex-col justify-end px-4 pb-8 lg:px-6 lg:pb-10">
+        <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-6">
+          <div className="max-w-[30rem]">
+            <p className="font-mono text-xs uppercase text-bone/70">
+              {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")} · Chapter {String(piece.chapter).padStart(2, "0")}
+              {piece.tag && <> · {piece.tag}</>}
             </p>
-            <p className="mt-4 max-w-[26rem] text-base leading-snug text-bone/90">{piece.desc}</p>
-            <p className="mt-3 font-mono text-xs uppercase text-bone/70">{price(piece)}</p>
-            <div className="mt-5"><AddControls piece={piece} /></div>
+            <h2 className="mt-3 font-sans font-semibold tracking-[-0.02em] text-[clamp(2rem,3.6vw,3.5rem)] leading-[1.05]">{piece.name}</h2>
+            <p className="mt-2 font-mono text-xs uppercase text-bone/80">{piece.colourway} · {price(piece)}</p>
+            <p className="mt-4 hidden text-base leading-snug text-bone/85 lg:block">{piece.desc}</p>
           </div>
 
-          <div className="order-1 flex items-end gap-3 lg:order-2 lg:col-span-7 lg:justify-end">
-            <div className="flex flex-col gap-2">
+          <div className="flex flex-col items-start gap-5 lg:items-end">
+            <div className="flex rounded-full border border-bone/40 p-1" role="tablist" aria-label="View">
               {piece.views.map((v, i) => (
-                <button key={v.src} type="button" onClick={() => setView(i)} aria-label={`Show ${v.label}`} className={`relative size-16 overflow-hidden border-2 transition-colors lg:size-20 ${view === i ? "border-lime" : "border-transparent opacity-70 hover:opacity-100"}`}>
-                  <Image src={v.src} alt="" fill sizes="80px" className="object-cover" />
+                <button
+                  key={v.src}
+                  type="button"
+                  role="tab"
+                  aria-selected={view === i}
+                  onClick={() => setView(i)}
+                  className={`rounded-full px-4 py-2 font-mono text-[0.65rem] uppercase leading-none transition-colors ${view === i ? "bg-bone text-[#16181d]" : "text-bone/80 hover:text-bone"}`}
+                >
+                  {v.label}
                 </button>
               ))}
             </div>
-            <div data-cursor="Flip" onClick={() => setView((v) => (v + 1) % piece.views.length)} className="ap-photo relative aspect-[4/5] w-full max-w-[34rem] cursor-pointer overflow-hidden bg-black/20 max-lg:max-w-none lg:h-[72svh] lg:w-auto">
-              {piece.views.map((v, i) => (
-                <Image key={v.src} src={v.src} alt={v.alt} fill sizes="(min-width:1024px) 40vw, 90vw" className={`object-cover transition-[opacity,transform] duration-700 ease-out-expo ${view === i ? "scale-100 opacity-100" : "scale-110 opacity-0"}`} />
-              ))}
-              <span className="absolute bottom-3 left-3 rounded-full bg-teal/80 px-3 py-1.5 font-mono text-[0.6rem] uppercase backdrop-blur">{piece.views[view].label}</span>
-            </div>
+            <AddControls piece={piece} />
           </div>
         </div>
       </div>

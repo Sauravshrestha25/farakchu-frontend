@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { PageTheme } from "@/components/page-theme";
 import Image from "next/image";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
@@ -50,6 +51,7 @@ export function AfterDark() {
 
   return (
     <div ref={root} className={`house font-sans`} id="top">
+      <PageTheme name="house" />
       <a className="skip" href="#night">Skip to the night</a>
       <header className="header">
         <a href="#top" className="brand" aria-label="Farakchu, back to top">

@@ -1,18 +1,30 @@
 .ev {
-  --ev-black: #003638;
-  --ev-red: #d6ff50;
-  --ev-red-hot: #d6ff50;
-  --ev-gray: #191a1a;
-  --ev-w20: rgb(241 236 225 / 0.2);
+  /* Entertainment theme: amber neon on warm black, from logo-entertainment.jpg. Re-points the site tokens like .theme-mono. */
+  --color-teal: #140904;
+  --color-teal-deep: #0c0502;
+  --color-teal-soft: #1f0e06;
+  --color-ink: #1a0b03;
+  --color-bone: #fbe9cf;
+  --color-bone-dim: #e8cfa8;
+  --color-lime: #ffb21a;
+  --ev-black: var(--color-teal);
+  --ev-red: #ffb21a;
+  --ev-red-hot: #ff7a1a;
+  --ev-gray: #1f0e06;
+  --ev-w20: rgb(251 233 207 / 0.2);
   background: var(--ev-black);
-  color: #f1ece1;
+  color: var(--color-bone);
   font-family: var(--font-sans);
   font-size: 1.05rem;
   line-height: 1.5;
   text-transform: uppercase;
   position: relative;
 }
-.ev ::selection { background: #d6ff50; color: #003638; }
+/* Smooth-scroll content outgrows .ev, so the page background shows through: match it. */
+html[data-page="events"], html[data-page="events"] body { background: #140904; }
+.ev ::selection { background: var(--color-lime); color: var(--color-ink); }
+/* Neon glow on highlights, like the logo. */
+.ev .hl { box-shadow: 0 0 28px rgb(255 160 30 / 0.45); }
 
 /* Page grain */
 .ev-noise {
@@ -22,11 +34,11 @@
 
 /* Site headline voice: wide, heavy Mona Sans. */
 .ev-display { font-family: var(--font-sans); font-weight: 900; font-stretch: 125%; letter-spacing: -0.035em; text-transform: uppercase; line-height: 1; }
-.ev-grad { background: linear-gradient(#f1ece1, #8fa89f); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
-.ev-red-grad { background: linear-gradient(#d6ff50 8%, #2f7a4c 100%); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+.ev-grad { background: linear-gradient(#fbe9cf, #d98a3a); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+.ev-red-grad { background: linear-gradient(#ffc24a 8%, rgb(255 122 26 / 0.5) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
 .ev-h2 { font-size: clamp(2.2rem, 5vw, 5rem); line-height: 1.02; }
 .ev-h3 { font-size: clamp(1.4rem, 2.2vw, 2.2rem); line-height: 1.05; }
-.ev-bw { filter: grayscale(1) contrast(1.12) brightness(0.9) sepia(0.4) hue-rotate(115deg) saturate(1.3); }
+.ev-bw { filter: grayscale(1) contrast(1.12) brightness(0.9) sepia(0.7) saturate(1.5); }
 
 /* Stepped "pixel" corners */
 .ev-notch {
@@ -73,6 +85,6 @@
 @media (prefers-reduced-motion: reduce) { .ev * { transition-duration: 0.01ms !important; } }
 
 /* Reference hides the page scrollbar. */
-html:has(.ev) { scrollbar-width: none; }
-html:has(.ev)::-webkit-scrollbar { display: none; }
+html[data-page="events"] { scrollbar-width: none; }
+html[data-page="events"]::-webkit-scrollbar { display: none; }
 .ev-statement .ev-h2 { font-size: clamp(3.2rem, 6.6vw, 6.3rem); }

@@ -8,6 +8,7 @@ import { useGSAP } from "@gsap/react";
 import Lenis from "lenis";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/home/footer";
+import { NeonSign } from "./neon-sign";
 import { divisions, gallery, guests, site, visit } from "@/content/site";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -112,14 +113,10 @@ export function AboutPage() {
           { xPercent: -14, ease: "none", scrollTrigger: { trigger: q(".ab-gallery")[0], start: "top bottom", end: "bottom top", scrub: true } },
         );
 
-        gsap.fromTo(
-          q(".ab-marq"),
-          { xPercent: 0 },
-          { xPercent: -25, ease: "none", scrollTrigger: { trigger: q(".ab-band")[0], start: "top bottom", end: "bottom top", scrub: true } },
-        );
-        gsap.from(q(".ab-dev"), {
-          autoAlpha: 0, scale: 0.92, filter: "blur(30px)", duration: 1.8, ease: "power3.out",
-          scrollTrigger: { trigger: q(".ab-dev")[0], start: "top 85%", once: true },
+        // Neon sign stutters on like a real tube warming up.
+        gsap.fromTo(q(".ab-neon"), { opacity: 0 }, {
+          keyframes: { opacity: [0, 0.9, 0.1, 0, 1, 0.3, 1, 0.75, 1] }, duration: 1.6, ease: "none",
+          scrollTrigger: { trigger: q(".ab-neon")[0], start: "top 75%", once: true },
         });
 
         // Steps: the progress line fills as the section passes.
@@ -152,12 +149,12 @@ export function AboutPage() {
           <div className="absolute inset-0 bg-gradient-to-t from-teal via-transparent to-teal/60" />
         </div>
 
-        <h1 className="ab-h1 relative z-10 font-sans text-[clamp(3.6rem,11.5vw,12rem)] font-bold leading-[0.92] tracking-[-0.045em]">
+        <h1 className="ab-h1 relative z-10 font-sans text-[clamp(2.5rem,5.5vw,5rem)] font-semibold leading-[1.05] tracking-[-0.03em]">
           <span className="block"><Words text="Farak Chu." cls={G} /></span>
-          <span className="block md:pl-[0.55em]"><Words text="I am [[different.]]" cls={G} /></span>
+          <span className="block"><Words text="I am [[different.]]" cls={G} /></span>
         </h1>
 
-        <p className="ab-hero-in relative z-10 mt-12 max-w-md text-lg leading-relaxed text-bone/70 md:text-xl">
+        <p className="ab-hero-in relative z-10 mt-8 max-w-md text-base leading-relaxed text-bone/70 md:text-lg">
           Farakchu is a concept before it is a place. You do not have to be like everyone. You are you because you are different. Ma farak chu: I am different.
         </p>
         <ul className="ab-hero-in relative z-10 mt-8 flex flex-wrap gap-x-8 gap-y-2 font-mono text-xs text-bone/60">
@@ -171,25 +168,23 @@ export function AboutPage() {
       </section>
 
       {/* Meaning */}
-      <section className="px-5 py-28 text-center md:px-[6.5vw] md:py-44">
-        <p className="ab-dev font-sans text-[clamp(5rem,19vw,19rem)] font-bold leading-[1.05] tracking-[-0.02em] text-lime">
-          म {site.devanagari}
-        </p>
+      <section className="px-5 py-24 text-center md:px-[6.5vw] md:py-32">
+        <NeonSign className="mx-auto w-[min(72vw,22rem)]" />
         <p className="ab-fade mt-6 font-mono text-sm text-bone/60">ma farak chu</p>
         <div className="mx-auto mt-16 grid max-w-4xl gap-14 text-left md:grid-cols-2 md:gap-20">
           <div className="ab-fade border-t border-bone/25 pt-6">
-            <h2 className="font-sans text-[clamp(2.6rem,5vw,5.5rem)] font-bold uppercase leading-[0.9] tracking-[-0.04em]">Ma</h2>
-            <p className="mt-6 max-w-xs text-lg leading-snug text-bone/75">Me. Not a copy of anyone, not a version of the person next to you.</p>
+            <h2 className="font-sans text-2xl font-semibold tracking-[-0.02em] md:text-3xl">Ma</h2>
+            <p className="mt-4 max-w-xs text-base leading-relaxed text-bone/75">Me. Not a copy of anyone, not a version of the person next to you.</p>
           </div>
           <div className="ab-fade border-t border-bone/25 pt-6">
-            <h2 className="font-sans text-[clamp(2.6rem,5vw,5.5rem)] font-bold uppercase leading-[0.9] tracking-[-0.04em]"><span className="hl">Farak chu</span></h2>
-            <p className="mt-6 max-w-xs text-lg leading-snug text-bone/75">Am different. Said with your chest, and meant as a compliment.</p>
+            <h2 className="font-sans text-2xl font-semibold tracking-[-0.02em] md:text-3xl"><span className="hl">Farak chu</span></h2>
+            <p className="mt-4 max-w-xs text-base leading-relaxed text-bone/75">Am different. Said with your chest, and meant as a compliment.</p>
           </div>
         </div>
       </section>
 
       {/* The window */}
-      <section className="px-5 pb-28 md:px-[6.5vw] md:pb-44">
+      <section className="px-5 pb-28 md:px-[6.5vw] md:pb-32">
         <div className="grid gap-14 md:grid-cols-12 md:gap-10">
           <div className="md:col-span-5">
             <div className="ab-fade relative aspect-[4/5] overflow-hidden rounded-sm shadow-[0_30px_60px_-20px_rgba(0,0,0,0.7)] md:sticky md:top-28">
@@ -197,16 +192,16 @@ export function AboutPage() {
             </div>
           </div>
           <div className="md:col-span-6 md:col-start-7">
-            <h2 className="ab-head font-sans text-[clamp(2rem,4vw,4.2rem)] font-semibold leading-[1.08] tracking-[-0.03em]">
+            <h2 className="ab-head font-sans text-[clamp(1.75rem,2.8vw,2.75rem)] font-semibold leading-[1.15] tracking-[-0.02em]">
               <Words text="Different is not a problem to fix. It is [[the whole point.]]" />
             </h2>
-            <p className="ab-fade mt-12 font-sans text-[clamp(1.5rem,2.4vw,2.4rem)] font-medium leading-[1.2] tracking-[-0.02em] text-bone">
+            <p className="ab-fade mt-10 font-sans text-xl font-medium leading-snug md:text-2xl text-bone">
               “There is no one way to be you.”
             </p>
-            <p className="ab-fade mt-4 font-sans text-[clamp(1.5rem,2.4vw,2.4rem)] font-medium leading-[1.2] tracking-[-0.02em] text-bone/60">
+            <p className="ab-fade mt-4 font-sans text-xl font-medium leading-snug md:text-2xl text-bone/60">
               “Please come in.” It is written on our window.
             </p>
-            <div className="mt-14 space-y-6 text-lg leading-relaxed text-bone/70 md:text-xl">
+            <div className="mt-10 space-y-5 text-base leading-relaxed text-bone/70 md:text-lg">
               <p className="ab-fade">Farakchu is for the person who never quite fit the mould, and stopped trying a while ago. It is a feeling first. The cafe, the screens, the stage and the hoodies are just where that feeling lives in Samakhusi.</p>
               <p className="ab-fade">The singer, the gamer, the one in the hoodie nobody else owns, the one who only came for a quiet matcha. Same door, and nobody is asked to be the same.</p>
               <p className="ab-fade">So we built four rooms, because one way of being you was never going to be enough.</p>
@@ -216,11 +211,11 @@ export function AboutPage() {
       </section>
 
       {/* Four divisions */}
-      <section className="px-5 pb-28 md:px-[6.5vw] md:pb-44">
-        <h2 className="ab-head font-sans text-[clamp(2rem,4.2vw,4.5rem)] font-semibold leading-[1.08] tracking-[-0.03em] text-center md:mx-auto md:max-w-[52rem]">
+      <section className="px-5 pb-28 md:px-[6.5vw] md:pb-32">
+        <h2 className="ab-head font-sans text-[clamp(1.75rem,2.8vw,2.75rem)] font-semibold leading-[1.15] tracking-[-0.02em] text-center md:mx-auto md:max-w-[52rem]">
           <Words text="One place, [[four ways to be different.]]" />
         </h2>
-        <div className="ab-cards mt-24 grid gap-x-6 gap-y-14 md:grid-cols-4 md:gap-x-8">
+        <div className="ab-cards mt-16 grid gap-x-6 gap-y-14 md:grid-cols-4 md:gap-x-8">
           {divisions.map((d, i) => (
             <a
               key={d.id}
@@ -238,7 +233,7 @@ export function AboutPage() {
                     <Image src={d.image.src} alt={d.image.alt} fill sizes="(min-width:768px) 22vw, 90vw" className="object-cover saturate-[0.85] transition duration-700 group-hover:scale-105 group-hover:saturate-100" />
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-teal/90 via-transparent to-transparent" />
-                  <h3 className="absolute inset-x-0 bottom-0 p-5 font-sans text-2xl font-semibold tracking-tight">{d.name}</h3>
+                  <h3 className="absolute inset-x-0 bottom-0 p-5 font-sans text-xl font-semibold tracking-tight">{d.name}</h3>
                 </div>
               </div>
               <p className="mt-8 max-w-[18rem] text-base leading-snug text-bone/80">{d.line}</p>
@@ -248,25 +243,9 @@ export function AboutPage() {
         </div>
       </section>
 
-      {/* Band */}
-      <section className="ab-band overflow-hidden py-6">
-        <div className="-rotate-2 bg-lime py-5 text-ink">
-          <div className="ab-marq flex w-max items-center gap-10 whitespace-nowrap font-sans text-[clamp(2.5rem,6vw,6rem)] font-bold uppercase leading-none tracking-[-0.03em]">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <span key={i} className="flex items-center gap-10">
-                {site.devanagari}
-                <span className="diamond size-[0.5em] bg-ink" />
-                Farak Chu
-                <span className="diamond size-[0.5em] bg-ink" />
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Philosophy */}
-      <section className="px-5 py-28 md:px-[6.5vw] md:py-44">
-        <p className="ab-statement font-sans text-[clamp(1.8rem,4.1vw,4.4rem)] leading-[1.15] tracking-[-0.03em]">
+      <section className="px-5 py-28 md:px-[6.5vw] md:py-32">
+        <p className="ab-statement max-w-5xl font-sans text-[clamp(1.4rem,2.4vw,2.25rem)] leading-[1.35] tracking-[-0.015em]">
           <Words text={statement} wc="ab-sw" />
         </p>
       </section>
@@ -283,8 +262,8 @@ export function AboutPage() {
       </section>
 
       {/* Who's been through */}
-      <section className="px-5 pb-28 md:px-[6.5vw] md:pb-44">
-        <h2 className="ab-head font-sans text-[clamp(2rem,4.2vw,4.5rem)] font-semibold leading-[1.08] tracking-[-0.03em]">
+      <section className="px-5 pb-28 md:px-[6.5vw] md:pb-32">
+        <h2 className="ab-head font-sans text-[clamp(1.75rem,2.8vw,2.75rem)] font-semibold leading-[1.15] tracking-[-0.02em]">
           <Words text="[[Different people,]] one room." />
         </h2>
         <div className="ab-fade mt-12 flex justify-end gap-2">
@@ -308,7 +287,7 @@ export function AboutPage() {
                 <div className="relative aspect-[4/5] overflow-hidden rounded-sm">
                   <Image src={g.image.src} alt={g.image.alt} fill sizes="(min-width:768px) 22vw, 72vw" className="object-cover transition duration-700 group-hover:scale-105" />
                 </div>
-                <h3 className="mt-5 font-sans text-[clamp(1.4rem,2vw,2rem)] font-semibold leading-none tracking-[-0.03em] transition-colors group-hover:text-lime">{g.name}</h3>
+                <h3 className="mt-5 font-sans text-xl font-semibold leading-tight tracking-[-0.01em] transition-colors group-hover:text-lime">{g.name}</h3>
                 <p className="mt-2 text-sm leading-snug text-bone/60">{g.note}</p>
               </a>
             </li>
@@ -336,10 +315,10 @@ export function AboutPage() {
 
       {/* CTA */}
       <section className="px-5 pb-32 text-center md:px-[6.5vw] md:pb-48">
-        <h2 className="ab-head mx-auto max-w-4xl font-sans text-[clamp(2.4rem,6vw,6.5rem)] font-semibold leading-[1.02] tracking-[-0.04em]">
+        <h2 className="ab-head mx-auto max-w-3xl font-sans text-[clamp(2rem,4vw,3.5rem)] font-semibold leading-[1.1] tracking-[-0.025em]">
           <Words text="Come as [[you are.]]" />
         </h2>
-        <p className="ab-fade mt-8 text-lg text-bone/70">{visit.lines.join(" · ")}</p>
+        <p className="ab-fade mt-6 text-base text-bone/70">{visit.lines.join(" · ")}</p>
         <div className="ab-fade mt-10 flex flex-wrap justify-center gap-3">
           <a href={visit.directions} target="_blank" rel="noreferrer" className="inline-flex items-center gap-3 rounded-full bg-lime px-8 py-4 font-mono text-sm text-ink transition-transform hover:-translate-y-0.5">
             Get directions <span aria-hidden>↗</span>

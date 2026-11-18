@@ -110,7 +110,7 @@ export function ApparelDrop() {
 
       <ul className="relative grid grid-cols-2 gap-x-4 gap-y-14 lg:grid-cols-4">
         {pieces.map((p) => (
-          <li key={p.id} className="ad-card group">
+          <li key={p.id} data-hc className="ad-card group">
             <PieceCard piece={p} />
           </li>
         ))}

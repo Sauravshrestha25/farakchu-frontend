@@ -20,6 +20,8 @@ export const site = {
   hours: "TODO(client): opening hours",
   phone: "976 878 6818", // from @farakchu event posts
   phoneHref: "tel:+9779768786818",
+  email: "hello@farakchu.com", // TODO(client): placeholder, confirm the real inbox
+  emailHref: "mailto:hello@farakchu.com",
   hero: { src: img("storefront-night"), alt: "Farakchu storefront in Samakhusi at night, neon diamond sign lit" },
   visit: { src: img("sign-night"), alt: "The Farakchu neon sign at night" },
 };
@@ -160,12 +162,11 @@ const cf = (n: string) => `/images/cafe/${n}.jpg`;
 export const cafe = {
   // Receipt lines. Thumbs pop up on hover. "price" is a joke column, not real pricing.
   items: [
-    { name: "Coffee & chill", price: "✓", image: { src: cf("coffee-chill"), alt: "Guest writing at a table inside Farakchu cafe" } },
-    { name: "Matcha latte", price: "✓", image: { src: cf("matcha-latte"), alt: "Guest with a matcha latte at the Farakchu bar" } },
-    { name: "Strawberry matcha", price: "✓", image: { src: cf("strawberry-matcha"), alt: "Strawberry matcha held up to the camera" } },
-    { name: "Cold beer", price: "✓", image: { src: "/images/home/cafe-crowd.jpg", alt: "Friends raising drinks at a packed Farakchu night" } },
-    { name: "Big screen, big game", price: "✓", image: { src: cf("beer-games"), alt: "Two friends in football shirts at a Farakchu watch night" } },
-    { name: "Good company", price: "FREE", image: { src: "/images/home/domain-cafe.jpg", alt: "Guest with a drink inside the Farakchu cafe" } },
+    { name: "Blue mojito", price: "✓", image: { src: cf("blue-mojito"), alt: "Blue mojito with ice, lime and mint" } },
+    { name: "Iced caramel", price: "✓", image: { src: cf("iced-caramel"), alt: "Iced caramel coffee with a black straw" } },
+    { name: "Iced matcha", price: "✓", image: { src: cf("iced-matcha"), alt: "Iced matcha latte on a felt coaster" } },
+    { name: "Iced tea", price: "✓", image: { src: cf("iced-tea"), alt: "Iced tea topped with foam and a lime wheel" } },
+    { name: "Affogato", price: "✓", image: { src: cf("affogato"), alt: "Affogato in a coupe glass on the Farakchu bar" } },
   ],
 };
 

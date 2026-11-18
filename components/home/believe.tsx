@@ -3,9 +3,10 @@
 import { useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SplitText } from "gsap/SplitText";
 import { useGSAP } from "@gsap/react";
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, SplitText);
 
 // All copy for this section lives here (not in content/site.ts).
 const believe = {
@@ -119,6 +120,57 @@ export function Believe({ featured = [] }: { featured?: string[] }) {
         .to(q(".bl-small"), { autoAlpha: 0, y: -50, duration: 1 })
         .to(q(".bl-sign"), { autoAlpha: 1, y: 0, duration: 1 }, 0.7);
 
+      // The beliefs. Spine draws down with scroll while the node spins along it; each belief then fires: the elbow draws out, the
+      // diamond spins in and pings, the tag wipes to an ink block, and the copy rises line by line out of
+      // a mask. Skipped with reduced motion.
+      if (!reduce) {
+        const list = q(".bl-beliefs")[0] as HTMLElement;
+        const span = { trigger: list, start: "top 65%", end: "bottom 60%", scrub: 0.6 };
+        gsap.fromTo(q(".bl-spine"), { scaleY: 0 }, { scaleY: 1, transformOrigin: "top", ease: "none", scrollTrigger: span });
+        gsap.fromTo(
+          q(".bl-node"),
+          { y: 0, rotation: 45 },
+          { y: () => list.offsetHeight, rotation: 405, ease: "none", scrollTrigger: { ...span, invalidateOnRefresh: true } },
+        );
+
+        (q(".bl-item") as HTMLElement[]).forEach((item) => {
+          const right = item.dataset.side === "r";
+          const label = item.querySelector<HTMLElement>(".bl-label")!;
+          const tl = gsap.timeline({
+            defaults: { ease: "power3.out" },
+            scrollTrigger: { trigger: item, start: "top 78%", toggleActions: "play none none reverse" },
+          });
+          tl.fromTo(
+            item.querySelector(".bl-elbow"),
+            { clipPath: right ? "inset(0 100% 0 0)" : "inset(0 0 0 100%)" },
+            { clipPath: "inset(0 0% 0 0%)", duration: 0.8, ease: "power2.inOut" },
+            0,
+          )
+            .fromTo(item.querySelector(".bl-dot"), { scale: 0, rotate: -135 }, { scale: 1, rotate: 45, duration: 0.7, ease: "power3.out" }, 0.35)
+            .fromTo(item.querySelector(".bl-ping"), { scale: 1, rotate: 45, autoAlpha: 0.7 }, { scale: 4, rotate: 45, autoAlpha: 0, duration: 1, ease: "power2.out" }, 0.5)
+            .fromTo(label, { backgroundSize: "0% 100%", color: "var(--color-ink)" }, { backgroundSize: "100% 100%", color: "var(--color-bone)", duration: 0.6, ease: "power3.inOut" }, 0.45);
+
+          // Copy: split into lines, each rises out of its own mask with a slight tilt.
+          SplitText.create(item.querySelector(".bl-body"), {
+            type: "lines",
+            mask: "lines",
+            autoSplit: true,
+            onSplit: (self) =>
+              gsap.from(self.lines, {
+                yPercent: 115,
+                rotate: right ? 5 : -5,
+                transformOrigin: right ? "0% 100%" : "100% 100%",
+                duration: 1,
+                stagger: 0.12,
+                delay: 0.65,
+                ease: "power4.out",
+                scrollTrigger: { trigger: item, start: "top 78%", toggleActions: "play none none reverse" },
+              }),
+          });
+
+        });
+      }
+
       // Dark nav ink while this light section is under the bar.
       const ink = ScrollTrigger.create({
         trigger: root.current,
@@ -231,39 +283,43 @@ export function Believe({ featured = [] }: { featured?: string[] }) {
         <div className="relative w-full text-left md:w-[min(94vw,1300px)]">
           <div
             aria-hidden
-            className="absolute bottom-0 left-3 top-0 w-px bg-ink/20 md:left-1/2"
+            className="bl-spine absolute bottom-0 left-3 top-0 w-px bg-ink/20 md:left-1/2"
           />
           <span
             aria-hidden
-            className="absolute left-3 top-0 size-3.5 -translate-x-1/2 -translate-y-1/2 rotate-45 bg-lime ring-1 ring-ink/40 md:left-1/2"
+            className="bl-node absolute left-3 top-0 size-3.5 -translate-x-1/2 -translate-y-1/2 rotate-45 bg-lime ring-1 ring-ink/40 md:left-1/2"
           />
-          <ol className="pt-14 md:grid md:grid-cols-2 md:gap-y-20 md:pt-20">
+          <ol className="bl-beliefs pt-14 md:grid md:grid-cols-2 md:gap-y-20 md:pt-20">
             {believe.stages.map((s, i) => {
               const right = i % 2 === 1;
               return (
                 <li
                   key={s.title}
-                  className={`relative mb-14 pl-10 md:mb-0 md:pl-0 ${right ? "md:col-start-2 md:mt-32 md:pl-28" : "md:col-start-1 md:pr-28 md:text-right"}`}
+                  data-side={right ? "r" : "l"}
+                  className={`bl-item relative mb-14 pl-10 md:mb-0 md:pl-0 ${right ? "md:col-start-2 md:mt-32 md:pl-28" : "md:col-start-1 md:pr-28 md:text-right"}`}
                 >
                   {/* Elbow: rises from the central line, curves, then runs out toward the text. */}
                   <span
                     aria-hidden
-                    className={`absolute top-3 hidden h-16 w-24 border-ink/30 md:block ${right ? "left-0 rounded-tl-[3rem] border-l border-t" : "right-0 rounded-tr-[3rem] border-r border-t"}`}
+                    className={`bl-elbow absolute top-3 hidden h-16 w-24 border-ink/30 md:block ${right ? "left-0 rounded-tl-[3rem] border-l border-t" : "right-0 rounded-tr-[3rem] border-r border-t"}`}
                   />
                   <div
                     className={`flex items-center gap-3 ${right ? "" : "md:flex-row-reverse"}`}
                   >
+                    <span aria-hidden className="relative grid shrink-0 place-items-center">
+                      <span className="bl-ping absolute size-2.5 rotate-45 border border-ink opacity-0" />
+                      <span className="bl-dot size-2.5 rotate-45 border border-ink bg-lime" />
+                    </span>
                     <span
-                      aria-hidden
-                      className="size-2.5 shrink-0 rotate-45 border border-ink bg-lime"
-                    />
-                    <span className="font-wide text-[clamp(0.75rem,1vw,1rem)] leading-tight">
+                      className="bl-label cursor-default bg-ink px-2.5 py-1.5 font-wide text-[clamp(0.75rem,1vw,1rem)] leading-tight text-bone"
+                      style={{ backgroundImage: "linear-gradient(var(--color-ink),var(--color-ink))", backgroundRepeat: "no-repeat", backgroundColor: "transparent" }}
+                    >
                       {String(i + 1).padStart(2, "0")} &nbsp;&nbsp; · &nbsp;{" "}
                       {s.title}
                     </span>
                   </div>
                   <p
-                    className={`mt-5 max-w-[34ch] font-serif text-[clamp(1.05rem,1.5vw,1.55rem)] leading-[1.35] ${right ? "" : "md:ml-auto"}`}
+                    className={`bl-body mt-5 max-w-[34ch] font-serif text-[clamp(1.05rem,1.5vw,1.55rem)] leading-[1.35] ${right ? "" : "md:ml-auto"}`}
                   >
                     {s.body}
                   </p>
@@ -320,6 +376,7 @@ export function Believe({ featured = [] }: { featured?: string[] }) {
               {(two ? [0, 1] : [0]).map((r) => (
                 <div
                   key={r}
+                  data-hc
                   className="bl-tile relative aspect-[7/9] overflow-hidden rounded-2xl bg-bone-dim"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}

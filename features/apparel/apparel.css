@@ -19,12 +19,6 @@
 }
 .ap-shake { animation: ap-shake 0.35s ease; }
 
-/* Outlined giant type */
-.ap-outline {
-  color: transparent;
-  -webkit-text-stroke: 1.5px rgb(241 236 225 / 0.3);
-}
-
 /* Receipt paper: zig-zag torn edge on top. */
 .ap-receipt {
   --z: 10px;

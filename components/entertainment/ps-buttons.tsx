@@ -3,11 +3,12 @@
 export type PSKind = "triangle" | "circle" | "cross" | "square";
 export const PS_KINDS: PSKind[] = ["triangle", "circle", "cross", "square"];
 
+// Colours are the page's tokens, so the buttons follow whatever theme they sit in.
 const tone: Record<PSKind, { bg: string; fg: string; ring: string }> = {
-  triangle: { bg: "#d6ff50", fg: "#1d4d4a", ring: "#003638" },
-  circle: { bg: "#f1ece1", fg: "#1d4d4a", ring: "#003638" },
-  cross: { bg: "#1d4d4a", fg: "#d6ff50", ring: "#d6ff50" },
-  square: { bg: "#003638", fg: "#f1ece1", ring: "#d6ff50" },
+  triangle: { bg: "var(--color-lime)", fg: "var(--color-ink)", ring: "var(--color-teal)" },
+  circle: { bg: "var(--color-bone)", fg: "var(--color-ink)", ring: "var(--color-teal)" },
+  cross: { bg: "var(--color-ink)", fg: "var(--color-lime)", ring: "var(--color-lime)" },
+  square: { bg: "var(--color-teal)", fg: "var(--color-bone)", ring: "var(--color-lime)" },
 };
 const symbol: Record<PSKind, string> = {
   triangle: `<path d="M12 5.8 18 16.2H6Z" />`,
@@ -18,21 +19,9 @@ const symbol: Record<PSKind, string> = {
 
 export const psSvg = (k: PSKind) =>
   `<svg viewBox="0 0 24 24" width="100%" height="100%" aria-hidden="true">` +
-  `<circle cx="12" cy="12" r="11" fill="${tone[k].bg}" stroke="${tone[k].ring}" stroke-width="1.4"/>` +
-  `<g fill="none" stroke="${tone[k].fg}" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">${symbol[k]}</g></svg>`;
+  `<circle cx="12" cy="12" r="11" style="fill:${tone[k].bg};stroke:${tone[k].ring}" stroke-width="1.4"/>` +
+  `<g fill="none" style="stroke:${tone[k].fg}" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">${symbol[k]}</g></svg>`;
 
 export function PSButton({ kind, className }: { kind: PSKind; className?: string }) {
   return <span aria-hidden className={`inline-block ${className ?? "size-10"}`} dangerouslySetInnerHTML={{ __html: psSvg(kind) }} />;
-}
-
-// The four buttons laid out like a controller's right-hand cluster.
-export function PSCluster({ className }: { className?: string }) {
-  const at = { triangle: "left-1/3 top-0", circle: "right-0 top-1/3", cross: "left-1/3 bottom-0", square: "left-0 top-1/3" } as const;
-  return (
-    <span aria-hidden className={`relative inline-block ${className ?? "size-24"}`}>
-      {PS_KINDS.map((k) => (
-        <PSButton key={k} kind={k} className={`absolute size-1/3 ${at[k]}`} />
-      ))}
-    </span>
-  );
 }

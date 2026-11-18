@@ -4,7 +4,11 @@ import { useSyncExternalStore } from "react";
 import { sound } from "./sound-engine";
 
 export function SoundToggle() {
-  const on = useSyncExternalStore(sound.subscribe, () => sound.on, () => false);
+  const on = useSyncExternalStore(
+    sound.subscribe,
+    () => sound.on,
+    () => false,
+  );
   const toggle = () => sound.toggle();
 
   return (
@@ -24,7 +28,7 @@ export function SoundToggle() {
           />
         ))}
       </span>
-      <span>Sound {on ? "on" : "off"}</span>
+      <span className="hidden sm:block">Sound {on ? "on" : "off"}</span>
     </button>
   );
 }

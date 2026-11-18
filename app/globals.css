@@ -11,8 +11,7 @@
   --color-ink: #1d4d4a;
   --color-bone: #f1ece1;
   --color-bone-dim: #d9d2c3;
-  /* --color-lime: #d6e0d5; highlight accent, from client-shared poster ref */
-  --color-lime: #d6ff50;
+  --color-lime: #d6e0d5;
 
   --font-sans: var(--font-mona), system-ui, sans-serif;
   /* No serif for now: font-serif utilities render in Mona Sans. */
@@ -158,26 +157,187 @@ html.lenis body {
 
 /* Endless right-to-left gallery. The track holds the photo list twice; sliding by half its width loops without a seam. */
 @keyframes fc-marquee {
-  to { transform: translateX(-50%); }
+  to {
+    transform: translateX(-50%);
+  }
 }
-.fc-marquee { animation: fc-marquee var(--marquee-dur, 120s) linear infinite; }
+.fc-marquee {
+  animation: fc-marquee var(--marquee-dur, 120s) linear infinite;
+}
 @media (prefers-reduced-motion: reduce) {
-  .fc-marquee { animation: none; }
+  .fc-marquee {
+    animation: none;
+  }
 }
 
 /* Floating props (console icons, diamond photos) on the Gaming Zone page. */
 @keyframes fc-float {
-  0%, 100% { translate: 0 0; }
-  50% { translate: 0 -14px; }
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -14px;
+  }
 }
-.fc-float { animation: fc-float 5s ease-in-out infinite; animation-delay: var(--d, 0s); }
+.fc-float {
+  animation: fc-float 5s ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
 @media (prefers-reduced-motion: reduce) {
-  .fc-float { animation: none; }
+  .fc-float {
+    animation: none;
+  }
 }
 
 /* Gaming Zone page: slow spin for the starburst sticker, blink for the "press start" prompt. */
-@keyframes fc-spin { to { rotate: 360deg; } }
-.fc-spin { animation: fc-spin 18s linear infinite; }
-@keyframes fc-blink { 0%, 55% { opacity: 1; } 56%, 100% { opacity: 0.15; } }
-.fc-blink { animation: fc-blink 1.1s steps(1) infinite; }
-@media (prefers-reduced-motion: reduce) { .fc-spin, .fc-blink { animation: none; } }
+@keyframes fc-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+.fc-spin {
+  animation: fc-spin 18s linear infinite;
+}
+@keyframes fc-blink {
+  0%,
+  55% {
+    opacity: 1;
+  }
+  56%,
+  100% {
+    opacity: 0.15;
+  }
+}
+.fc-blink {
+  animation: fc-blink 1.1s steps(1) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .fc-spin,
+  .fc-blink {
+    animation: none;
+  }
+}
+
+/* Homepage only: strict black and white. Colour tokens re-pointed to #000 / #fff; photos and video stay in full colour. */
+.theme-mono {
+  --color-teal: #000;
+  --color-teal-deep: #000;
+  --color-teal-soft: #000;
+  --color-ink: #000;
+  --color-bone: #fff;
+  --color-bone-dim: #fff;
+  --color-lime: #fff;
+}
+/* On the white sections the highlight flips to a black block with white text. */
+.theme-mono #believe .hl,
+.theme-mono #apparel .hl {
+  background: #000;
+  color: #fff;
+}
+.theme-mono .nav-sound,
+.theme-mono .nav-ink .nav-sound {
+  border-color: rgb(0 0 0 / 0.4);
+}
+/* Same nav inset on every page (was home-only); the menu sheet's content lines up with it. */
+.nav-bar,
+.nav-inset {
+  padding-inline: clamp(1.5rem, 4.5vw, 4.5rem);
+}
+html[data-page="mono"],
+html[data-page="mono"] body {
+  background: #000;
+}
+
+/* About page neon sign: faint irregular hum on the outer halo. */
+@keyframes neon-hum {
+  0%, 18%, 22%, 62%, 64%, 100% { opacity: 1; }
+  20% { opacity: 0.7; }
+  63% { opacity: 0.8; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .neon-hum { animation: neon-hum 5s steps(1, end) infinite; }
+}
+
+/* Gaming page: the neon room, toned down. Blue-black with a muted steel blue accent. From @farakchu.gamezone. */
+.theme-gaming {
+  --color-teal: #121729;
+  --color-teal-deep: #0a0d1a;
+  --color-teal-soft: #1a2036;
+  --color-ink: #0a0d1a;
+  --color-bone: #e4e7f0;
+  --color-bone-dim: #b9bfd0;
+  --color-lime: #7f93cf;
+}
+
+/* Cafe page: the one light page. Cream walls, espresso text, brick red accent and highlights. From @farakchu.cafe.
+   Tokens keep their roles (teal = page, bone = text, lime = accent, ink = text on accent), so the values flip light/dark. */
+.theme-cafe {
+  --color-teal: #f4ede1;
+  --color-teal-deep: #efe6d6;
+  --color-teal-soft: #e6d9c4;
+  --color-ink: #f4ede1;
+  --color-bone: #2a1a12;
+  --color-bone-dim: #4a3426;
+  --color-lime: #b4452f;
+}
+
+/* Page background behind smooth-scroll content and overscroll. */
+html[data-page="gaming"],
+html[data-page="gaming"] body {
+  background: #0a0d1a;
+}
+html[data-page="cafe"],
+html[data-page="cafe"] body {
+  background: #f4ede1;
+}
+
+/* Apparel pages: "Studio" theme lifted from @farakchu.apparel shoots (grey seamless backdrop,
+   ink type, the vermilion dot from the print). Tokens re-pointed like .theme-mono:
+   teal = page ground, bone = main text, lime = accent, ink = text on accent / dark panels. */
+.theme-studio {
+  --color-teal: #e6e6e3;
+  --color-teal-deep: #e6e6e3;
+  --color-teal-soft: #d6d6d2;
+  --color-bone: #16181d;
+  --color-bone-dim: #4a4c58;
+  --color-lime: #e0442a;
+  --color-ink: #f4f4f1;
+  /* body's colour was resolved from the root tokens (light), so text that only inherits needs the re-pointed one. */
+  color: var(--color-bone);
+}
+/* Hoodie scenes sit on the garment colour, so they flip back to light type. */
+.theme-studio .ap-scene {
+  --color-teal: #16181d;
+  --color-teal-soft: #16181d;
+  --color-bone: #f4f4f1;
+  color: var(--color-bone);
+}
+.theme-studio [data-nav-logo] {
+  filter: none;
+}
+.theme-studio .nav-sound {
+  border-color: rgb(22 24 29 / 0.35);
+}
+/* Nav over the dark hoodie scenes (nav-light) or the dark catalogue (nav-ink): light type and outlines. */
+/* Only the type flips: re-pointing --color-bone here would also flip the Menu button's hover fill (light on light). */
+.theme-studio .nav-light {
+  --color-teal-deep: #16181d;
+  color: #f4f4f1;
+}
+.theme-studio .nav-light .nav-sound,
+.theme-studio .nav-ink .nav-sound {
+  color: #f4f4f1;
+  border-color: rgb(244 244 241 / 0.4);
+}
+/* Bag drawer: a light paper receipt on the grey page. bone = paper, ink = print, teal = headings, lime = red buttons. */
+.theme-studio .ap-receipt {
+  --color-bone: #fbfaf7;
+  --color-ink: #16181d;
+  --color-teal: #16181d;
+  --color-teal-deep: #16181d;
+}
+html[data-page="studio"],
+html[data-page="studio"] body {
+  background: #e6e6e3;
+}

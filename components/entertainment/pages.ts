@@ -30,7 +30,6 @@ export type DivisionPage = {
   nights: [string, string];
   cards: Card[];
   offers: { title: string; line: string; tag: string; img: { src: string; alt: string }; cls: string }[];
-  footerPhotos: { src: string; alt: string }[];
   cta: [string, string];
   ctaBody: string;
   handle: { label: string; href: string };
@@ -64,7 +63,6 @@ export const pages: Record<"gaming", DivisionPage> = {
       { title: "Walk-ins welcome", line: "No booking, no stress. Just play.", tag: "Anytime", img: { src: "/images/ig/gamezone/17.jpg", alt: "Girl smiling with a PS5 controller" }, cls: "lg:row-span-2" },
       { title: "Games and drinks", line: "Matcha, coffee or cold beer between rounds.", tag: "Chill", img: { src: "/images/ig/gamezone/19.jpg", alt: "Friends gaming with drinks under the Farakchu sign" }, cls: "lg:col-span-2" },
     ],
-    footerPhotos: [{ src: "/images/ig/gamezone/17.jpg", alt: "Girl smiling with a PS5 controller" }, { src: "/images/ig/gamezone/08.jpg", alt: "Player celebrating a goal" }, { src: "/images/ig/gamezone/16.jpg", alt: "Red neon gaming room" }, { src: "/images/ig/gamezone/01.jpg", alt: "Friends in front of the Farakchu sign" }],
     cta: ["Ready, ", "player one?"],
     ctaBody: "Book a bracket, a squad night or the whole zone. Tell us the plan, we'll bring the controllers.",
     handle: { label: game.handle.replace(/^@/, ""), href: game.href },

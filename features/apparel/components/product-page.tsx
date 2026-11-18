@@ -1,6 +1,7 @@
 "use client";
 
 import "../apparel.css";
+import { PageTheme } from "@/components/page-theme";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,7 +12,7 @@ import { Footer } from "@/components/home/footer";
 import { price, pieces, type Piece } from "@/features/apparel/data";
 import { AddControls } from "./add-controls";
 import { PieceCard } from "./piece-card";
-import { BagProvider } from "./bag";
+import { BagButton, BagProvider } from "./bag";
 
 // Product detail: gallery on the left, buy box on the right. Orders go through the bag.
 export function ProductPage({ piece }: { piece: Piece }) {
@@ -20,8 +21,10 @@ export function ProductPage({ piece }: { piece: Piece }) {
   const more = pieces.filter((p) => p.id !== piece.id);
 
   return (
-    <BagProvider>
-      <Nav page="sub" />
+    <div className="theme-studio">
+      <PageTheme name="studio" />
+      <BagProvider>
+      <Nav page="sub" action={<BagButton />} />
       <SmoothScroll>
         <main>
           <section className="grid gap-10 px-4 pb-20 pt-28 lg:grid-cols-12 lg:px-6 lg:gap-y-6 lg:pb-28 lg:pt-32">
@@ -42,7 +45,7 @@ export function ProductPage({ piece }: { piece: Piece }) {
             </div>
 
             <div className="lg:col-span-5 lg:self-center">
-              <h1 className="font-wide text-[clamp(2.2rem,4.4vw,4.4rem)] leading-[0.92]">{piece.name}</h1>
+              <h1 className="font-sans font-semibold tracking-[-0.02em] text-[clamp(1.75rem,3vw,2.75rem)] leading-[1.1]">{piece.name}</h1>
               <p className="mt-4 flex flex-wrap items-center gap-3 font-mono text-xs uppercase">
                 <span className="inline-block size-3 rounded-full" style={{ background: piece.hex, boxShadow: "0 0 0 3px rgb(241 236 225 / 0.25)" }} />
                 Chapter {no} · {piece.colourway}
@@ -55,7 +58,7 @@ export function ProductPage({ piece }: { piece: Piece }) {
           </section>
 
           <section className="bg-bone px-4 py-16 text-ink lg:px-6 lg:py-24">
-            <h2 className="font-wide text-[clamp(1.6rem,3vw,3rem)] leading-[0.95] text-teal">More pieces</h2>
+            <h2 className="font-sans font-semibold tracking-[-0.02em] text-[clamp(1.5rem,2.2vw,2rem)] leading-[1.15] text-teal">More pieces</h2>
             <ul className="mt-10 grid grid-cols-2 gap-x-4 gap-y-14 lg:grid-cols-3">
               {more.map((p) => (
                 <li key={p.id}><PieceCard piece={p} sizes="(min-width:1024px) 30vw, 46vw" /></li>
@@ -63,9 +66,10 @@ export function ProductPage({ piece }: { piece: Piece }) {
             </ul>
           </section>
         </main>
-        <Footer />
+        <Footer light />
         <Reveals />
       </SmoothScroll>
-    </BagProvider>
+      </BagProvider>
+    </div>
   );
 }

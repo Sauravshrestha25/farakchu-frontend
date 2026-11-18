@@ -36,7 +36,7 @@ export const Scribble = () => (
     className="ev-scribble pointer-events-none absolute -bottom-[0.12em] left-[-2%] w-[104%]"
     viewBox="0 0 500 18"
     fill="none"
-    stroke="#d6ff50"
+    stroke="#fff"
     strokeWidth="2"
     strokeLinecap="round"
     preserveAspectRatio="none"
@@ -56,7 +56,7 @@ export const CircledMark = ({ label }: { label: string }) => (
       className="ev-circle block h-[1.05em] w-[1.9em]"
       viewBox="0 0 150 90"
       fill="none"
-      stroke="#d6ff50"
+      stroke="#fff"
       strokeWidth="3"
       strokeLinecap="round"
     >
@@ -66,7 +66,7 @@ export const CircledMark = ({ label }: { label: string }) => (
         d="M75 6C30 6 6 24 8 46c3 24 40 40 80 36 40-4 60-26 52-48C132 14 100 4 62 10"
       />
     </svg>
-    <span className="absolute inset-0 flex items-center justify-center text-[0.55em] widest text-[#d6ff50]">
+    <span className="absolute inset-0 flex items-center justify-center text-[0.55em] widest text-[#fff]">
       {label}
     </span>
   </span>

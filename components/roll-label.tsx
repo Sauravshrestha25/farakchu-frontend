@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 
@@ -10,8 +10,21 @@ const chars = (s: string) => Array.from(s).map((c) => (c === " " ? " " : c));
  * Character-roll swap (RotatingText-style, GSAP instead of motion):
  * `text` rolls up and out letter by letter, `alt` rolls in from below, and the
  * lime highlight springs to the new width. `on` drives it (hover/focus).
+ * `still`: apply changes instantly, no roll (e.g. while the menu sheet is closing).
  */
-export function RollLabel({ text, alt, on, className = "" }: { text: string; alt: string; on: boolean; className?: string }) {
+export function RollLabel({
+  text,
+  alt,
+  on,
+  still = false,
+  className = "",
+}: {
+  text: string;
+  alt: string;
+  on: boolean;
+  still?: boolean;
+  className?: string;
+}) {
   const root = useRef<HTMLSpanElement>(null);
   const clip = useRef<HTMLSpanElement>(null);
   const rowA = useRef<HTMLSpanElement>(null);
@@ -20,15 +33,16 @@ export function RollLabel({ text, alt, on, className = "" }: { text: string; alt
 
   useGSAP(
     () => {
-      gsap.set(rowB.current!.children, { yPercent: 110, rotateX: -80, opacity: 0 });
-      const fit = () => gsap.set(clip.current, { width: rowA.current!.offsetWidth });
+      // Start in whichever state `on` says (a label can mount already rolled, e.g. after a page switch).
+      gsap.set((on ? rowA : rowB).current!.children, { yPercent: on ? -110 : 110, rotateX: on ? 0 : -80, opacity: 0 });
+      const fit = () => gsap.set(clip.current, { width: (on ? rowB : rowA).current!.offsetWidth });
       fit();
       document.fonts?.ready.then(fit); // widths change once Mona Sans loads
     },
     { scope: root },
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (first.current) {
       first.current = false;
       return;
@@ -37,7 +51,8 @@ export function RollLabel({ text, alt, on, className = "" }: { text: string; alt
     const out = (on ? rowA : rowB).current!.children;
     const inn = (on ? rowB : rowA).current!.children;
     const target = (on ? rowB : rowA).current!.offsetWidth;
-    if (reduce) {
+    if (reduce || still) {
+      gsap.killTweensOf([out, inn, clip.current]);
       gsap.set(out, { yPercent: -110, opacity: 0 });
       gsap.set(inn, { yPercent: 0, rotateX: 0, opacity: 1 });
       gsap.set(clip.current, { width: target });

@@ -1,15 +1,16 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState, type RefObject } from "react";
 import Image from "next/image";
+import { gsap } from "gsap";
 import { getSmoother } from "@/components/smooth-scroll";
 import { price, type Piece } from "@/features/apparel/data";
 import { placeOrder, toItems } from "@/features/apparel/api";
 
 type Line = { key: string; piece: Piece; size: string; qty: number };
-type BagCtx = { count: number; add: (p: Piece, size: string) => void; open: () => void };
+type BagCtx = { count: number; bump: number; dot: RefObject<HTMLSpanElement | null> | null; add: (p: Piece, size: string, from?: Element | null) => void; open: () => void };
 
-const Ctx = createContext<BagCtx>({ count: 0, add: () => {}, open: () => {} });
+const Ctx = createContext<BagCtx>({ count: 0, bump: 0, dot: null, add: () => {}, open: () => {} });
 export const useBag = () => useContext(Ctx);
 
 // Bag drawer: bag -> your details -> done. Orders are posted to the backend (see api.ts).
@@ -24,7 +25,30 @@ export function BagProvider({ children }: { children: React.ReactNode }) {
 
   const count = lines.reduce((n, l) => n + l.qty, 0);
 
-  const add = (piece: Piece, size: string) => {
+  const dot = useRef<HTMLSpanElement>(null);
+
+  // `from` given: a thumbnail of the piece flies from there up to the Bag count, and the line lands when it does.
+  const add = (piece: Piece, size: string, from?: Element | null) => {
+    const to = dot.current;
+    if (!from || !to || !to.offsetParent || matchMedia("(prefers-reduced-motion: reduce)").matches) return commit(piece, size);
+    const a = from.getBoundingClientRect();
+    const b = to.getBoundingClientRect();
+    const s = 56;
+    const el = document.createElement("div");
+    el.setAttribute("aria-hidden", "true");
+    el.style.cssText = `position:fixed;left:0;top:0;width:${s}px;height:${s}px;border-radius:999px;z-index:70;pointer-events:none;background:${piece.hex} center/cover url("${piece.views[0].src}");box-shadow:0 10px 30px -6px rgb(0 0 0/.45)`;
+    document.body.appendChild(el);
+    const x0 = a.left + a.width / 2 - s / 2, y0 = a.top + a.height / 2 - s / 2;
+    const x1 = b.left + b.width / 2 - s / 2, y1 = b.top + b.height / 2 - s / 2;
+    // Separate x and y eases bend the path into an arc: it lifts off first, then swings across.
+    gsap.timeline({ onComplete: () => { el.remove(); commit(piece, size); } })
+      .fromTo(el, { x: x0, y: y0, scale: 0.4 }, { scale: 1, duration: 0.18, ease: "back.out(2)" })
+      .to(el, { x: x1, duration: 0.75, ease: "power1.in" }, ">")
+      .to(el, { y: y1, duration: 0.75, ease: "power3.out" }, "<")
+      .to(el, { scale: 0.3, duration: 0.75, ease: "power2.in" }, "<");
+  };
+
+  const commit = (piece: Piece, size: string) => {
     const key = `${piece.id}-${size}`;
     setLines((ls) => (ls.some((l) => l.key === key) ? ls.map((l) => (l.key === key ? { ...l, qty: l.qty + 1 } : l)) : [...ls, { key, piece, size, qty: 1 }]));
     setBump((b) => b + 1);
@@ -74,18 +98,8 @@ export function BagProvider({ children }: { children: React.ReactNode }) {
   const label = "block font-mono text-[0.65rem] uppercase text-ink/70";
 
   return (
-    <Ctx.Provider value={{ count, add, open: () => setOpen(true) }}>
+    <Ctx.Provider value={{ count, bump, dot, add, open: () => setOpen(true) }}>
       {children}
-
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        aria-label={`Open bag, ${count} items`}
-        className="fixed bottom-4 right-4 z-[60] flex min-h-12 items-center gap-3 rounded-[50%] bg-lime px-7 py-3 font-wide text-[0.625rem] leading-none text-ink shadow-[0_12px_40px_-8px_rgb(0_0_0/0.5)] transition-colors hover:bg-bone lg:bottom-6 lg:right-6"
-      >
-        Bag
-        <span key={bump} className={`grid size-6 place-items-center rounded-full bg-teal text-[0.625rem] text-lime ${bump ? "ap-pop" : ""}`}>{count}</span>
-      </button>
 
       <div className={`fixed inset-0 z-[80] transition-opacity duration-500 ${isOpen ? "opacity-100" : "pointer-events-none opacity-0"}`} aria-hidden={!isOpen}>
         <button type="button" aria-label="Close bag" tabIndex={isOpen ? 0 : -1} onClick={close} className="absolute inset-0 bg-teal-deep/70 backdrop-blur-sm" />
@@ -98,10 +112,10 @@ export function BagProvider({ children }: { children: React.ReactNode }) {
         >
           <div className="flex items-start justify-between px-6 pt-8">
             <div>
-              <h2 className="font-wide text-3xl leading-none text-teal">{stage === "bag" ? "Your bag" : stage === "details" ? "Your details" : "Order sent"}</h2>
+              <h2 className="font-sans font-semibold tracking-[-0.02em] text-2xl leading-none text-teal">{stage === "bag" ? "Your bag" : stage === "details" ? "Your details" : "Order sent"}</h2>
               <p className="mt-2 font-mono text-[0.65rem] uppercase text-ink/60">{count ? `${count} ${count === 1 ? "piece" : "pieces"}` : "Empty"} · order online</p>
             </div>
-            <button type="button" onClick={close} className="rounded-[50%] bg-teal px-6 py-2.5 font-wide text-[0.625rem] leading-none text-lime transition-colors hover:bg-lime hover:text-ink">Close</button>
+            <button type="button" onClick={close} className="rounded-[50%] bg-lime px-6 py-2.5 font-wide text-[0.625rem] leading-none text-bone transition-colors hover:bg-teal hover:text-bone">Close</button>
           </div>
 
           <div className="mt-6 flex-1 overflow-y-auto px-6">
@@ -114,7 +128,7 @@ export function BagProvider({ children }: { children: React.ReactNode }) {
                 <label className={label}>Email (optional)<input name="email" type="email" autoComplete="email" className={field} /></label>
                 <div role="radiogroup" aria-label="Delivery or pickup" className="flex gap-2">
                   {(["delivery", "pickup"] as const).map((m) => (
-                    <button key={m} type="button" role="radio" aria-checked={method === m} onClick={() => setMethod(m)} className={`flex-1 rounded-[50%] px-4 py-3 font-wide text-[0.625rem] leading-none transition-colors ${method === m ? "bg-teal text-lime" : "border border-ink/30 hover:border-teal hover:text-teal"}`}>
+                    <button key={m} type="button" role="radio" aria-checked={method === m} onClick={() => setMethod(m)} className={`flex-1 rounded-[50%] px-4 py-3 font-wide text-[0.625rem] leading-none transition-colors ${method === m ? "bg-teal text-bone" : "border border-ink/30 hover:border-lime hover:text-lime"}`}>
                       {m === "delivery" ? "Delivery" : "Pickup"}
                     </button>
                   ))}
@@ -158,13 +172,13 @@ export function BagProvider({ children }: { children: React.ReactNode }) {
                 <span>{lines.length === 0 ? "—" : priced ? `NPR ${subtotal.toLocaleString("en-US")}` : "Price soon"}</span>
               </div>
               {stage === "bag" ? (
-                <button type="button" disabled={!lines.length} onClick={() => setStage("details")} className="w-full rounded-[50%] bg-teal px-8 py-4 font-wide text-[0.7rem] leading-none text-lime transition-colors hover:bg-lime hover:text-ink disabled:opacity-40 disabled:hover:bg-teal disabled:hover:text-lime">
+                <button type="button" disabled={!lines.length} onClick={() => setStage("details")} className="w-full rounded-[50%] bg-lime px-8 py-4 font-wide text-[0.7rem] leading-none text-bone transition-colors hover:bg-teal hover:text-bone disabled:bg-ink/15 disabled:text-ink/45 disabled:hover:bg-ink/15 disabled:hover:text-ink/45">
                   Checkout
                 </button>
               ) : (
                 <div className="flex gap-2">
                   <button type="button" onClick={() => { setStage("bag"); setError(""); }} className="rounded-[50%] border border-ink/30 px-6 py-4 font-wide text-[0.7rem] leading-none transition-colors hover:border-teal hover:text-teal">Back</button>
-                  <button type="submit" form="order-form" disabled={sending} className="flex-1 rounded-[50%] bg-teal px-8 py-4 font-wide text-[0.7rem] leading-none text-lime transition-colors hover:bg-lime hover:text-ink disabled:opacity-60">
+                  <button type="submit" form="order-form" disabled={sending} className="flex-1 rounded-[50%] bg-lime px-8 py-4 font-wide text-[0.7rem] leading-none text-bone transition-colors hover:bg-teal hover:text-bone disabled:opacity-60">
                     {sending ? "Sending…" : "Place order"}
                   </button>
                 </div>
@@ -175,5 +189,21 @@ export function BagProvider({ children }: { children: React.ReactNode }) {
         </aside>
       </div>
     </Ctx.Provider>
+  );
+}
+
+// Bag pill for the nav bar, next to Menu. Outlined so it doesn't compete with the Menu pill.
+export function BagButton() {
+  const { count, bump, dot, open } = useBag();
+  return (
+    <button
+      type="button"
+      onClick={open}
+      aria-label={`Open bag, ${count} items`}
+      className="flex min-h-11 items-center gap-2.5 rounded-[50%] border border-current px-3 py-2 font-wide text-[0.625rem] leading-none transition-opacity hover:opacity-70 sm:px-6"
+    >
+      <span className="max-sm:sr-only">Bag</span>
+      <span ref={dot} key={bump} className={`grid size-5 place-items-center rounded-full bg-lime text-[0.6rem] text-ink ${bump ? "ap-pop" : ""}`}>{count}</span>
+    </button>
   );
 }

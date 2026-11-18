@@ -11,7 +11,7 @@ export function AddControls({ piece, tone = "light" }: { piece: Piece; tone?: "l
   const [shake, setShake] = useState(0);
   const [added, setAdded] = useState(0);
 
-  const chip = tone === "light" ? "border-bone/50 text-bone hover:border-lime hover:text-lime" : "border-ink/40 text-ink hover:border-teal hover:text-teal";
+  const chip = tone === "light" ? "border-bone/50 text-bone hover:border-bone hover:bg-bone/15" : "border-ink/40 text-ink hover:border-teal hover:text-teal";
   const on = tone === "light" ? "!border-lime !bg-lime !text-ink" : "!border-teal !bg-teal !text-lime";
 
   return (
@@ -25,12 +25,12 @@ export function AddControls({ piece, tone = "light" }: { piece: Piece; tone?: "l
       </div>
       <button
         type="button"
-        onClick={() => {
+        onClick={(e) => {
           if (!size) return setShake((n) => n + 1);
-          add(piece, size);
+          add(piece, size, e.currentTarget);
           setAdded((n) => n + 1);
         }}
-        className={`mt-4 inline-flex min-h-12 items-center justify-center rounded-[50%] px-9 py-3 font-wide text-[0.625rem] leading-none transition-colors ${tone === "light" ? "bg-lime text-ink hover:bg-bone" : "bg-teal text-lime hover:bg-lime hover:text-ink"}`}
+        className={`mt-4 inline-flex min-h-12 items-center justify-center rounded-[50%] px-9 py-3 font-wide text-[0.625rem] leading-none transition-colors ${tone === "light" ? "bg-lime text-ink hover:bg-bone hover:text-teal" : "bg-teal text-lime hover:bg-lime hover:text-ink"}`}
       >
         {size ? (added ? "Added. Add another" : "Add to bag") : "Pick a size"}
       </button>

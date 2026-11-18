@@ -44,7 +44,7 @@ export const WebxLogoSparkles = ({
           particleColor={particleColor}
           particleDensity={particleDensity}
           maxSize={1.2}
-          minSize={0.4}
+          minSize={0.8}
           speed={0.8}
         />
       </div>

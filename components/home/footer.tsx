@@ -1,10 +1,11 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Link from "next/link";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import { LogoMark } from "../logo-mark";
-import { instagramIcon, phoneIcon, locationIcon } from "../ui/footer-icons";
+import { phoneIcon, locationIcon } from "../ui/footer-icons";
 import { scrollToAnchor } from "../nav";
 import { WebxLogoSparkles } from "../ui/webx-logo-sparkles";
 import { apparelDrop, divisions, site, visit } from "@/content/site";
@@ -33,10 +34,11 @@ const Col = ({
 
 const linkCls = "w-fit transition-colors hover:text-lime";
 
-export function Footer() {
+// light: footer sits on a light page (cafe), so the WebX lockup switches to its dark version.
+export function Footer({ light = false }: { light?: boolean }) {
   const root = useRef<HTMLElement>(null);
   const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState("");
 
   useGSAP(
     () => {
@@ -114,15 +116,26 @@ export function Footer() {
     { scope: root },
   );
 
-  // ponytail: no form backend yet. Copies the message and opens Instagram DM. Swap for a real endpoint later.
+  // Posts to /api/contact (same endpoint as the contact page). It answers with an honest error until CONTACT_WEBHOOK_URL is set.
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
-    await navigator.clipboard
-      ?.writeText(`${data.get("message")}\n\n${data.get("email")}`)
-      .catch(() => {});
-    setSent(true);
-    window.open(site.contactHref, "_blank", "noopener");
+    setStatus("Sending…");
+    const res = await fetch("/api/contact", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        name: "Website footer",
+        email,
+        message: data.get("message") || "(no message)",
+      }),
+    }).catch(() => null);
+    const json = await res?.json().catch(() => null);
+    setStatus(
+      res?.ok
+        ? "Sent. We'll get back to you."
+        : (json?.error ?? "Could not send. Try the contact page."),
+    );
   };
 
   const go = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -196,7 +209,7 @@ export function Footer() {
               Send
             </button>
             <p aria-live="polite" className="text-xs text-bone/85">
-              {sent && "Copied. Paste it into the DM that just opened."}
+              {status}
             </p>
           </div>
         </form>
@@ -225,26 +238,14 @@ export function Footer() {
             Get directions ↗
           </a>
         </Col>
-        <Col title="Follow">
-          <a
-            className={`${linkCls} inline-flex items-center gap-2`}
-            href={site.instagram}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {instagramIcon}
-            farakchu
-          </a>
+        <Col title="Divisions">
           {divisions.map((d) => (
             <a
               key={d.id}
-              className={`${linkCls} inline-flex items-center gap-2`}
-              href={d.href}
-              target="_blank"
-              rel="noreferrer"
+              className={linkCls}
+              href={`/${d.id === "gamingzone" ? "gaming" : d.id}`}
             >
-              {instagramIcon}
-              {d.handle.replace(/^@/, "")}
+              {d.name}
             </a>
           ))}
         </Col>
@@ -256,9 +257,9 @@ export function Footer() {
           ))}
         </Col>
         <Col title="Shop">
-          <a className={linkCls} href="/apparel">
+          <Link className={linkCls} href="/apparel">
             Shop apparel
-          </a>
+          </Link>
           <a
             className={linkCls}
             href={apparelDrop.merch}
@@ -267,14 +268,12 @@ export function Footer() {
           >
             Official Nepal merch ↗
           </a>
-          <a
-            className={`${linkCls} mt-2 w-fit rounded-[50%] bg-lime px-6 py-2.5 font-wide text-[0.625rem] text-ink hover:bg-bone hover:text-ink`}
-            href={divisions[2].href}
-            target="_blank"
-            rel="noreferrer"
+          <Link
+            className="mt-2 w-fit rounded-[50%] bg-lime px-6 py-2.5 font-wide text-[0.625rem] text-ink transition-colors hover:bg-bone hover:text-teal"
+            href="/apparel"
           >
             Limited drop
-          </a>
+          </Link>
         </Col>
       </div>
 
@@ -336,7 +335,15 @@ export function Footer() {
             aria-label="WebX Nepal"
             className="block rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lime"
           >
-            <WebxLogoSparkles className="mb-1" width={96} particleDensity={420} />
+            <WebxLogoSparkles
+              className="mb-1"
+              width={96}
+              particleDensity={420}
+              {...(light && {
+                logoSrc: "/images/logo/webx-logo-black.svg",
+                particleColor: "#ffffff",
+              })}
+            />
           </a>
         </span>
       </div>
