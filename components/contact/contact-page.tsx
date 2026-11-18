@@ -5,6 +5,7 @@ import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import { Nav } from "../nav";
 import { LogoMark } from "../logo-mark";
+import { PageTheme } from "../page-theme";
 import { instagramIcon, phoneIcon, locationIcon } from "../ui/footer-icons";
 import { site, visit } from "@/content/site";
 
@@ -41,7 +42,8 @@ export function ContactPage() {
   };
 
   return (
-    <>
+    <div className="theme-mono">
+      <PageTheme name="mono" />
       <Nav page="sub" />
       <main ref={root} className="relative min-h-svh overflow-hidden bg-teal-deep text-bone">
         <LogoMark className="pointer-events-none absolute -right-[10vw] top-[30vh] size-[46vw] text-bone/[0.03]" title="" />
@@ -142,6 +144,6 @@ export function ContactPage() {
           </div>
         </div>
       </main>
-    </>
+    </div>
   );
 }

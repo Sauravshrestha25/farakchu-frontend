@@ -320,6 +320,18 @@ html[data-page="gaming"] body {
   color: #f4f4f1;
   border-color: rgb(244 244 241 / 0.4);
 }
+/* The catalogue is the light pause between the dark studio scenes. */
+.theme-studio .ap-catalogue {
+  --color-bone: #fff;
+  --color-ink: #16181d;
+  --color-teal: #16181d;
+  --color-lime: #e0442a;
+  color: var(--color-ink);
+}
+.theme-studio .nav-ink .nav-sound {
+  color: #16181d;
+  border-color: rgb(22 24 29 / 0.35);
+}
 /* Bag drawer: a light paper receipt on the grey page. bone = paper, ink = print, teal = headings, lime = red buttons. */
 .theme-studio .ap-receipt {
   --color-bone: #fbfaf7;

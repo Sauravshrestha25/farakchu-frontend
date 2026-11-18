@@ -54,13 +54,13 @@ export function Catalogue() {
         <h2 data-heading className="font-sans font-semibold tracking-[-0.02em] text-[clamp(1.75rem,2.8vw,2.75rem)] leading-[1.15] text-teal">All pieces</h2>
         <div className="flex flex-wrap items-center gap-2">
           {filters.map((f) => (
-            <button key={f.label} type="button" onClick={() => change(() => setChapter(f.chapter))} aria-pressed={chapter === f.chapter} className={`rounded-[50%] px-6 py-3 font-wide text-[0.625rem] leading-none transition-colors ${chapter === f.chapter ? "bg-teal text-lime" : "border border-ink/30 text-ink hover:border-teal hover:text-teal"}`}>
+            <button key={f.label} type="button" onClick={() => change(() => setChapter(f.chapter))} aria-pressed={chapter === f.chapter} className={`rounded-[50%] px-6 py-3 font-wide text-[0.625rem] leading-none transition-colors ${chapter === f.chapter ? "bg-lime text-ink" : "border border-ink/30 text-ink hover:border-lime hover:text-lime"}`}>
               {f.label}
             </button>
           ))}
           <span className="mx-2 hidden h-6 w-px bg-ink/20 sm:block" />
           {([2, 4] as const).map((n) => (
-            <button key={n} type="button" onClick={() => change(() => setCols(n))} aria-label={`${n} columns`} aria-pressed={cols === n} className={`grid size-11 place-items-center rounded-full font-mono text-xs transition-colors max-sm:hidden ${cols === n ? "bg-teal text-lime" : "border border-ink/30 hover:border-teal"}`}>
+            <button key={n} type="button" onClick={() => change(() => setCols(n))} aria-label={`${n} columns`} aria-pressed={cols === n} className={`grid size-11 place-items-center rounded-full font-mono text-xs transition-colors max-sm:hidden ${cols === n ? "bg-lime text-ink" : "border border-ink/30 hover:border-lime"}`}>
               {n}
             </button>
           ))}
