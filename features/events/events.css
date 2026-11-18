@@ -34,8 +34,9 @@ html[data-page="events"], html[data-page="events"] body { background: #140904; }
 
 /* Site headline voice: wide, heavy Mona Sans. */
 .ev-display { font-family: var(--font-sans); font-weight: 900; font-stretch: 125%; letter-spacing: -0.035em; text-transform: uppercase; line-height: 1; }
-.ev-grad { background: linear-gradient(#fbe9cf, #d98a3a); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
-.ev-red-grad { background: linear-gradient(#ffc24a 8%, rgb(255 122 26 / 0.5) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+/* Solid text, no gradients: headings in the site's text colour, the two split headlines in amber. */
+.ev-grad { color: var(--color-bone); }
+.ev-red-grad { color: #ffc24a; }
 .ev-h2 { font-size: clamp(2.2rem, 5vw, 5rem); line-height: 1.02; }
 .ev-h3 { font-size: clamp(1.4rem, 2.2vw, 2.2rem); line-height: 1.05; }
 .ev-bw { filter: grayscale(1) contrast(1.12) brightness(0.9) sepia(0.7) saturate(1.5); }

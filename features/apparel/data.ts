@@ -120,7 +120,7 @@ export const pieces: Piece[] = [
     desc: "Looped script on the front, the graffiti mark on the back. Grey that goes with everything.",
     price: null,
     views: [
-      { src: ap("ch02-grey"), alt: "Model in the grey Farakchu script hoodie, front", label: "Front" },
+      { src: ap("ch02-grey-script"), alt: "Model in a purple cap wearing the grey Farakchu script hoodie, front", label: "Front" },
       { src: ap("ch03-light"), alt: "Grey Farakchu hoodie from behind with the graffiti print", label: "Back" },
     ],
   },

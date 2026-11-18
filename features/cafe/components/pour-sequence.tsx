@@ -89,9 +89,9 @@ export function PourSequence() {
       <div className="absolute inset-0 bg-gradient-to-r from-teal/85 via-teal/30 to-transparent" />
       <div className="absolute inset-0 bg-gradient-to-t from-teal/70 via-transparent to-teal/30" />
       <div className="absolute inset-x-4 bottom-[12%] lg:inset-x-6">
-        <div className="relative h-[clamp(5rem,14vw,13rem)]">
+        <div className="relative h-[clamp(2.5rem,5.5vw,5rem)]">
           {d.pour.lines.map((l, i) => (
-            <p key={l} className={`cf-pour-line absolute inset-x-0 bottom-0 font-wide text-[clamp(3rem,11vw,10.5rem)] leading-[0.9] ${i === 0 ? "text-lime" : "text-bone"}`}>
+            <p key={l} className={`cf-pour-line absolute inset-x-0 bottom-0 font-sans font-semibold tracking-[-0.02em] text-[clamp(2rem,4.6vw,4.25rem)] leading-[1] ${i === 0 ? "text-lime" : "text-bone"}`}>
               {l}
             </p>
           ))}

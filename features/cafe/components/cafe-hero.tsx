@@ -39,10 +39,7 @@ export function CafeHero() {
           .timeline({ delay: 0.15, defaults: { ease: "power4.out" } })
           .from(faces, { x: (i) => toCentre[i], yPercent: 70, rotate: (i) => (i - MID) * -4, autoAlpha: 0, duration: 1.6, stagger: { each: 0.08, from: "center" } })
           .from(split.chars, { yPercent: 105, duration: 1.3, stagger: 0.06 }, 0.35)
-          .from(q(".cf-badge"), { scale: 0, rotate: -120, duration: 1.2, ease: "back.out(1.6)" }, 1)
           .from(q(".cf-hero-meta > *"), { y: 20, autoAlpha: 0, duration: 0.9, stagger: 0.1 }, 1.1);
-
-        gsap.to(q(".cf-badge-ring"), { rotate: 360, duration: 14, ease: "none", repeat: -1, transformOrigin: "50% 50%" });
 
         // Handoff (pinned): side cards scatter, letters drop, and the centre card's photo opens full-bleed.
         const centre = cards[MID];
@@ -84,7 +81,7 @@ export function CafeHero() {
         handoff
           // Lines drop on exit; the entrance owns the chars, so the two never fight over the same transform.
           .fromTo(split.lines, { yPercent: 0 }, { yPercent: 115, ease: "power2.in", duration: 0.35, stagger: 0.05 }, 0)
-          .fromTo(q(".cf-badge, .cf-hero-meta"), { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.12 }, 0)
+          .fromTo(q(".cf-hero-meta"), { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.12 }, 0)
           .fromTo(stage, { clipPath: cardInset, autoAlpha: 0 }, { autoAlpha: 1, duration: 0.01 }, 0)
           // Explicit from-value: browsers serialize equal left/right insets as 3 values, which GSAP would read as left = 0.
           .fromTo(stage, { clipPath: cardInset }, { clipPath: "inset(0px 0px 0px 0px)", ease: "power2.inOut", duration: 0.8, immediateRender: false }, 0.2)
@@ -106,8 +103,8 @@ export function CafeHero() {
           const nx = e.clientX / innerWidth - 0.5;
           const ny = e.clientY / innerHeight - 0.5;
           movers.forEach((m) => {
-            m.x(nx * 40 * m.depth);
-            m.y(ny * 24 * m.depth);
+            m.x(nx * 20 * m.depth);
+            m.y(ny * 12 * m.depth);
           });
         };
         root.current!.addEventListener("pointermove", onMove);
@@ -154,34 +151,15 @@ export function CafeHero() {
           <span className="max-md:block">Ca</span>fe
         </h1>
 
-        <button
-          type="button"
-          onClick={() => scrollToAnchor("#menu")}
-          aria-label="See the menu"
-          className="cf-badge group absolute right-[2%] top-0 z-30 grid size-24 max-md:bottom-[16%] max-md:right-[4%] max-md:top-auto md:-translate-y-[55%] cursor-pointer place-items-center rounded-full bg-lime text-ink shadow-[0_20px_40px_-15px_rgb(0_15_15/0.7)] lg:size-36"
-        >
-          <svg viewBox="0 0 100 100" className="cf-badge-ring absolute inset-0 size-full" aria-hidden>
-            <defs>
-              <path id="cf-ring" d="M50 50m-37 0a37 37 0 1 1 74 0a37 37 0 1 1-74 0" />
-            </defs>
-            <text className="fill-current font-wide text-[9.4px] uppercase">
-              <textPath href="#cf-ring">See the menu · See the menu ·</textPath>
-            </text>
-          </svg>
-          <span aria-hidden className="text-2xl transition-transform duration-500 ease-out-expo group-hover:translate-y-1 lg:text-4xl">↓</span>
-        </button>
-
         <div className="cf-hero-meta relative z-30 mt-4 flex items-end justify-between gap-6 text-sm">
           <p className="max-w-[16rem] leading-tight">
             Coffee. Culture.
             <br />
             <span className="hl">Conversation.</span>
           </p>
-          <p className="text-right leading-tight text-bone/80">
-            Samakhusi,
-            <br />
-            Kathmandu
-          </p>
+          <button type="button" onClick={() => scrollToAnchor("#menu")} className="font-mono text-xs uppercase underline-offset-4 hover:underline">
+            See the menu ↓
+          </button>
         </div>
       </div>
 

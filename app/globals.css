@@ -145,8 +145,14 @@ html.lenis body {
 .nav-ink {
   color: var(--color-ink);
 }
+/* Nav logo wears the page's accent (lime token: amber on events, steel blue on gaming, vermilion on apparel...). */
+[data-nav-logo] {
+  color: var(--color-lime);
+}
+/* Over a light section the accent can wash out: fall back to the bar's ink. */
 .nav-ink [data-nav-logo] {
   filter: none;
+  color: inherit;
 }
 .nav-ink .nav-sound {
   color: var(--color-ink);
@@ -270,26 +276,10 @@ html[data-page="mono"] body {
   --color-lime: #7f93cf;
 }
 
-/* Cafe page: the one light page. Cream walls, espresso text, brick red accent and highlights. From @farakchu.cafe.
-   Tokens keep their roles (teal = page, bone = text, lime = accent, ink = text on accent), so the values flip light/dark. */
-.theme-cafe {
-  --color-teal: #f4ede1;
-  --color-teal-deep: #efe6d6;
-  --color-teal-soft: #e6d9c4;
-  --color-ink: #f4ede1;
-  --color-bone: #2a1a12;
-  --color-bone-dim: #4a3426;
-  --color-lime: #b4452f;
-}
-
 /* Page background behind smooth-scroll content and overscroll. */
 html[data-page="gaming"],
 html[data-page="gaming"] body {
   background: #0a0d1a;
-}
-html[data-page="cafe"],
-html[data-page="cafe"] body {
-  background: #f4ede1;
 }
 
 /* Apparel pages: "Studio" theme lifted from @farakchu.apparel shoots (grey seamless backdrop,

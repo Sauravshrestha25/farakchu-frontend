@@ -66,7 +66,7 @@ export function Preloader() {
       }
 
       let entered = false;
-      // Brand colours are pinned on the root (class), so the page theme (.theme-mono on home) does not recolour the loader.
+      // Read from the preloader itself, so a page theme (e.g. .theme-mono) re-pointing the tokens is respected.
       const css = getComputedStyle(root.current!);
       const cover = css.getPropertyValue("--color-teal").trim(); // track starts as the cover colour, so the bar window is closed until it appears
       const trackColor = css.getPropertyValue("--color-ink").trim();
@@ -315,7 +315,7 @@ export function Preloader() {
       role="dialog"
       aria-modal="true"
       aria-label="Enter Farakchu"
-      className="[--color-teal:#003638] [--color-ink:#1d4d4a] [--color-bone:#f1ece1] [--color-lime:#d6e0d5] fixed inset-0 z-[100] flex items-center justify-center overflow-hidden"
+      className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden"
     >
       <div
         aria-hidden
@@ -337,8 +337,8 @@ export function Preloader() {
                 <p className="font-azonix text-[clamp(2.8rem,9vw,7rem)] leading-[1]">
                   Farak Chu
                 </p>
-                <p className="font-wide text-[clamp(1rem,1.8vw,1.4rem)] text-bone/80">
-                  I am different.
+                <p className="font-wide tracking-wide font-azonix text-[clamp(1rem,1.8vw,1.4rem)] text-bone/80">
+                  Come as you are
                 </p>
               </div>
             ) : (

@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { PageTheme } from "@/components/page-theme";
+import { useRef } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -15,9 +14,6 @@ import { PourSequence } from "./pour-sequence";
 import { cafePage as d, menuColumns } from "@/features/cafe/data";
 
 gsap.registerPlugin(ScrollTrigger);
-
-// Resting photo: the iced matcha, the sharpest of the set.
-const DEFAULT_FLAVOUR = 1;
 
 // Pills match the rest of the site: lime on teal, teal on bone.
 const pillLime = "inline-flex min-h-11 items-center justify-center rounded-[50%] bg-lime px-8 py-3 font-wide text-[0.625rem] leading-none text-ink transition-colors hover:bg-bone";
@@ -36,15 +32,15 @@ const Cup = ({ className = "" }: { className?: string }) => (
   </svg>
 );
 
-const Glass = ({ className = "" }: { className?: string }) => (
-  <svg className={`cf-doodle ${className}`} viewBox="0 0 80 90" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-    <path pathLength={1} strokeDasharray={1} d="M18 24h44l-6 56H24zM25 46h30M48 4l-8 42M34 30l2 2M46 38l2 2" />
-  </svg>
-);
-
 export function CafePage() {
   const root = useRef<HTMLElement>(null);
-  const [flavour, setFlavour] = useState(DEFAULT_FLAVOUR);
+  const track = useRef<HTMLUListElement>(null);
+  // Arrows step the matcha carousel by one card.
+  const step = (dir: number) => {
+    const t = track.current;
+    const card = t?.firstElementChild as HTMLElement | null;
+    if (t && card) t.scrollBy({ left: dir * (card.offsetWidth + parseFloat(getComputedStyle(t).columnGap || "0")), behavior: "smooth" });
+  };
 
   useGSAP(
     () => {
@@ -73,7 +69,7 @@ export function CafePage() {
 
         // Banner + split images drift against the scroll.
         gsap.fromTo(q(".cf-banner-img"), { yPercent: -8 }, { yPercent: 8, ease: "none", scrollTrigger: { trigger: q(".cf-banner")[0], start: "top bottom", end: "bottom top", scrub: true } });
-        gsap.from(q(".cf-split-photo"), { clipPath: "inset(0 100% 0 0)", duration: 1.4, ease: "power3.inOut", scrollTrigger: { trigger: q(".cf-split-photo")[0], start: "top 80%", once: true } });
+        gsap.from(q(".cf-mcard"), { y: 70, autoAlpha: 0, duration: 1, stagger: 0.1, ease: "power3.out", scrollTrigger: { trigger: q(".cf-matcha")[0], start: "top 80%", once: true } });
 
         // Pour cards + feed posts.
         gsap.from(q(".cf-pour"), { y: 70, autoAlpha: 0, duration: 1, stagger: 0.12, ease: "power3.out", scrollTrigger: { trigger: q(".cf-pours")[0], start: "top 80%", once: true } });
@@ -89,8 +85,7 @@ export function CafePage() {
   );
 
   return (
-    <div className="theme-cafe bg-teal text-bone">
-      <PageTheme name="cafe" />
+    <>
       <Nav page="sub" />
       <SmoothScroll>
         <main ref={root}>
@@ -99,11 +94,11 @@ export function CafePage() {
           {/* INTRO */}
           <section className="relative px-4 pb-16 pt-14 lg:px-6 lg:pb-24 lg:pt-20">
             <div className="grid gap-10 lg:grid-cols-2">
-              <h1 data-heading className="font-wide text-[clamp(2.4rem,5.6vw,5.5rem)] leading-[0.95]">
+              <h1 data-heading className="font-sans font-semibold tracking-[-0.02em] text-[clamp(2rem,3.6vw,3.25rem)] leading-[1.05]">
                 A cafe. And a <span className="hl">bar, too.</span>
               </h1>
               <div className="max-w-[34rem] lg:pt-3">
-                <p data-body className="text-lg leading-snug text-bone/90">{d.intro}</p>
+                <p data-body className="text-base leading-relaxed text-bone/85 md:text-lg">{d.intro}</p>
                 <div data-body className="mt-8 flex flex-wrap gap-3">
                   <button type="button" onClick={() => scrollToAnchor("#menu")} className={pillLime}>See the menu</button>
                   <a href={d.instagram} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center justify-center rounded-[50%] border border-bone/40 px-8 py-3 font-wide text-[0.625rem] leading-none text-bone transition-colors hover:border-lime hover:text-lime">
@@ -122,7 +117,7 @@ export function CafePage() {
           <section id="menu" className="cf-menu bg-bone px-4 py-20 text-ink lg:px-6 lg:py-28">
             <div className="grid gap-12 lg:grid-cols-[24%_1fr] lg:gap-10">
               <aside className="lg:sticky lg:top-28 lg:self-start">
-                <h2 data-heading className="font-wide text-[clamp(1.8rem,3.2vw,3rem)] leading-[0.95] text-teal">Explore our menu</h2>
+                <h2 data-heading className="font-sans font-semibold tracking-[-0.02em] text-[clamp(1.75rem,2.8vw,2.75rem)] leading-[1.1] text-teal">Explore our menu</h2>
                 <p data-body className="mt-5 max-w-[22rem] text-base leading-snug text-ink/80">{d.menuIntro}</p>
                 <div className="cf-menu-photo relative mt-8 hidden aspect-[3/4] w-full overflow-hidden bg-teal lg:block">
                   <Image src={d.menuImage.src} alt={d.menuImage.alt} fill sizes="24vw" className="object-cover" />
@@ -135,7 +130,7 @@ export function CafePage() {
                   <div key={i} className="cf-col flex flex-col gap-12">
                     {col.map((group) => (
                       <div key={group.title} className="cf-group">
-                        <h3 className="border-b-2 border-teal pb-2 font-wide text-lg leading-none text-teal">{group.title}</h3>
+                        <h3 className="border-b-2 border-teal pb-2 font-sans font-semibold tracking-[-0.02em] text-base leading-none text-teal">{group.title}</h3>
                         <ul className="mt-4">
                           {group.items.map((it) => (
                             <li key={it.name} className="flex items-baseline gap-3 border-b border-dotted border-ink/25 py-2">
@@ -163,43 +158,58 @@ export function CafePage() {
             </div>
             <div className="absolute inset-0 bg-gradient-to-t from-teal via-teal/50 to-teal/10" />
             <div className="relative max-w-[44rem] px-4 pb-12 lg:px-6 lg:pb-16">
-              <h2 data-heading className="font-wide text-[clamp(2.2rem,5vw,4.5rem)] leading-[0.95]">{d.banner.title}</h2>
-              <p data-body className="mt-6 text-lg leading-snug text-bone">{d.banner.kicker}</p>
+              <h2 data-heading className="font-sans font-semibold tracking-[-0.02em] text-[clamp(1.75rem,2.8vw,2.75rem)] leading-[1.1]">{d.banner.title}</h2>
+              <p data-body className="mt-5 text-base leading-relaxed text-bone md:text-lg">{d.banner.kicker}</p>
               <p data-body className="mt-3 max-w-[34rem] text-sm leading-snug text-bone/80">{d.banner.body}</p>
             </div>
           </section>
 
-          {/* MATCHA SPLIT */}
-          <section className="relative px-4 py-20 lg:px-6 lg:py-28">
-            <Wave className="mb-16 text-bone/35 lg:mb-24" />
-            <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-20">
-              <div className="cf-split-photo relative aspect-[4/5] w-full overflow-hidden bg-teal-soft">
-                {d.matcha.list.map((m, i) => (
-                  <Image key={m.name} src={m.image.src} alt={m.image.alt} fill sizes="(min-width:1024px) 55vw, 100vw" className={`object-cover transition-[opacity,transform] duration-700 ease-out-expo ${flavour === i ? "scale-100 opacity-100" : "scale-110 opacity-0"}`} />
-                ))}
-                <Glass className="pointer-events-none absolute bottom-6 right-6 size-24 text-lime" />
-              </div>
-              <div className="max-w-[30rem]">
-                <h2 data-heading className="font-wide text-[clamp(2rem,4vw,3.75rem)] leading-[0.95]">{d.matcha.title}</h2>
-                <p data-body className="mt-6 text-lg leading-snug text-bone/90">{d.matcha.body}</p>
-                <ul data-body className="mt-8 border-t border-bone/20" onMouseLeave={() => setFlavour(DEFAULT_FLAVOUR)}>
-                  {d.matcha.list.map((m, i) => (
-                    <li key={m.name}>
-                      <button
-                        type="button"
-                        onMouseEnter={() => setFlavour(i)}
-                        onFocus={() => setFlavour(i)}
-                        onClick={() => setFlavour(i)}
-                        className={`flex w-full items-center justify-between border-b border-bone/20 py-3 text-left text-sm uppercase transition-[color,padding] duration-300 ${flavour === i ? "pl-3 text-lime" : "text-bone"}`}
-                      >
-                        {m.name}
-                        <span aria-hidden className={`transition-opacity duration-300 ${flavour === i ? "opacity-100" : "opacity-0"}`}>→</span>
-                      </button>
-                    </li>
+          {/* MATCHA CAROUSEL: one card per flavour, swipe or use the arrows. */}
+          <section className="cf-matcha relative overflow-hidden py-20 lg:py-28">
+            <div className="px-4 lg:px-6">
+              <Wave className="mb-16 text-bone/35 lg:mb-20" />
+              <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
+                <div className="max-w-[34rem]">
+                  <h2 data-heading className="font-sans font-semibold tracking-[-0.02em] text-[clamp(1.75rem,2.8vw,2.75rem)] leading-[1.1]">{d.matcha.title}</h2>
+                  <p data-body className="mt-5 text-base leading-snug text-bone/85">{d.matcha.body}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  {([-1, 1] as const).map((dir) => (
+                    <button
+                      key={dir}
+                      type="button"
+                      onClick={() => step(dir)}
+                      aria-label={dir < 0 ? "Previous matcha" : "Next matcha"}
+                      className="grid size-12 cursor-pointer place-items-center rounded-full border border-bone/30 text-lg transition-colors hover:border-lime hover:bg-lime hover:text-ink"
+                    >
+                      {dir < 0 ? "←" : "→"}
+                    </button>
                   ))}
-                </ul>
-                <a data-body href={d.instagram} target="_blank" rel="noreferrer" className={`${pillLime} mt-8`}>Ask for matcha</a>
+                </div>
               </div>
+            </div>
+            {/* ponytail: native scroll-snap carousel, no library. */}
+            <ul
+              ref={track}
+              className="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth scroll-px-4 px-4 pb-4 [scrollbar-width:none] lg:scroll-px-6 lg:gap-5 lg:px-6 [&::-webkit-scrollbar]:hidden"
+            >
+              {d.matcha.list.map((m, i) => (
+                <li key={m.name} className="cf-mcard w-[72vw] shrink-0 snap-start sm:w-[44vw] lg:w-[27vw]">
+                  <button type="button" onClick={() => scrollToAnchor("#menu")} aria-label={`${m.name}: see the menu`} className="group block w-full cursor-pointer text-left">
+                    <div className="relative aspect-[4/5] overflow-hidden bg-teal-soft">
+                      <Image src={m.image.src} alt={m.image.alt} fill sizes="(min-width:1024px) 27vw, (min-width:640px) 44vw, 72vw" className="object-cover transition-transform duration-700 ease-out-expo group-hover:scale-105" />
+                      <span className="absolute left-3 top-3 rounded-full bg-teal/80 px-2.5 py-1 font-mono text-[0.625rem] text-bone backdrop-blur">{String(i + 1).padStart(2, "0")}</span>
+                    </div>
+                    <p className="mt-3 flex items-baseline justify-between gap-3 text-sm uppercase">
+                      <span className="font-semibold transition-colors group-hover:text-lime">{m.name}</span>
+                      <span aria-hidden className="text-bone/60 transition-transform duration-300 group-hover:translate-x-1">→</span>
+                    </p>
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <div className="px-4 lg:px-6">
+              <a data-body href={d.instagram} target="_blank" rel="noreferrer" className={`${pillLime} mt-8`}>Ask for matcha</a>
             </div>
           </section>
 
@@ -207,19 +217,21 @@ export function CafePage() {
           <section className="px-4 pb-20 lg:px-6 lg:pb-28">
             <Wave className="mb-16 text-bone/35 lg:mb-20" />
             <div className="mb-10 flex items-end justify-between gap-6">
-              <h2 data-heading className="font-wide text-[clamp(1.8rem,3.2vw,3rem)] leading-[0.95]">Signature pours</h2>
+              <h2 data-heading className="font-sans font-semibold tracking-[-0.02em] text-[clamp(1.75rem,2.8vw,2.75rem)] leading-[1.1]">Signature pours</h2>
               <button type="button" onClick={() => scrollToAnchor("#menu")} className={pillLime}>Full menu</button>
             </div>
             <ul className="cf-pours grid grid-cols-2 gap-x-3 gap-y-10 lg:grid-cols-4 lg:gap-x-5">
               {d.pours.map((p) => (
-                <li key={p.name} className="cf-pour group">
-                  <div className="relative aspect-[4/5] overflow-hidden bg-teal-soft">
-                    <Image src={p.image.src} alt={p.image.alt} fill sizes="(min-width:1024px) 24vw, 46vw" className="object-cover transition-transform duration-700 ease-out-expo group-hover:scale-105" />
-                  </div>
-                  <p className="mt-3 flex items-baseline justify-between gap-3 text-sm uppercase">
-                    <span className="font-semibold">{p.name}</span>
-                    <span className="font-mono text-bone/70">{p.price}</span>
-                  </p>
+                <li key={p.name} className="cf-pour">
+                  <button type="button" onClick={() => scrollToAnchor("#menu")} aria-label={`${p.name}, Rs ${p.price}: see the menu`} className="group block w-full cursor-pointer text-left">
+                    <div className="relative aspect-[4/5] overflow-hidden bg-teal-soft">
+                      <Image src={p.image.src} alt={p.image.alt} fill sizes="(min-width:1024px) 24vw, 46vw" className="object-cover transition-transform duration-700 ease-out-expo group-hover:scale-105" />
+                    </div>
+                    <p className="mt-3 flex items-baseline justify-between gap-3 text-sm uppercase">
+                      <span className="font-semibold transition-colors group-hover:text-lime">{p.name}</span>
+                      <span className="font-mono text-bone/70">{p.price}</span>
+                    </p>
+                  </button>
                 </li>
               ))}
             </ul>
@@ -230,7 +242,7 @@ export function CafePage() {
             <Wave className="mb-16 text-bone/35 lg:mb-20" />
             <div className="grid gap-10 lg:grid-cols-[1fr_1.2fr_1.2fr] lg:gap-6">
               <div className="max-w-[22rem]">
-                <h2 data-heading className="font-wide text-[clamp(1.8rem,3.2vw,3rem)] leading-[0.95]">{d.feed.title}</h2>
+                <h2 data-heading className="font-sans font-semibold tracking-[-0.02em] text-[clamp(1.75rem,2.8vw,2.75rem)] leading-[1.1]">{d.feed.title}</h2>
                 <p data-body className="mt-5 text-base leading-snug text-bone/85">{d.feed.body}</p>
                 <a data-body href={d.instagram} target="_blank" rel="noreferrer" className={`${pillLime} mt-8`}>Follow us</a>
               </div>
@@ -242,9 +254,9 @@ export function CafePage() {
             </div>
           </section>
         </main>
-        <Footer light />
+        <Footer />
         <Reveals />
       </SmoothScroll>
-    </div>
+    </>
   );
 }
