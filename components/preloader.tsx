@@ -5,7 +5,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Observer } from "gsap/Observer";
 import { useGSAP } from "@gsap/react";
-import { lenisReady } from "./smooth-scroll";
+import { lockScroll, getLenis } from "./smooth-scroll";
 import { sound } from "./sound-engine";
 import { LogoMark } from "./logo-mark";
 
@@ -90,11 +90,13 @@ export function Preloader() {
         if (onKey) removeEventListener("keydown", onKey);
       };
 
-      lenisReady.then((smoother) => {
-        smoother?.stop();
+      lockScroll(true);
+      {
         const release = () => {
           html.style.overflow = "";
-          smoother?.start();
+          getLenis()?.scrollTo(0, { immediate: true, force: true });
+          scrollTo(0, 0);
+          lockScroll(false);
           gsap.set(root.current, { display: "none" });
           ScrollTrigger.refresh();
           try {
@@ -296,7 +298,7 @@ export function Preloader() {
           ease: "power3.out",
           onComplete: () => primary.focus({ preventScroll: true }),
         });
-      });
+      }
 
       return () => {
         stopInput();
