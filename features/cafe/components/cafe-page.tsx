@@ -7,7 +7,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { Nav, scrollToAnchor } from "@/components/nav";
 import { Reveals } from "@/components/reveals";
-import { SmoothScroll } from "@/components/smooth-scroll";
 import { Footer } from "@/components/home/footer";
 import { CafeHero } from "./cafe-hero";
 import { PourSequence } from "./pour-sequence";
@@ -87,7 +86,6 @@ export function CafePage() {
   return (
     <>
       <Nav page="sub" />
-      <SmoothScroll>
         <main ref={root}>
           <CafeHero />
 
@@ -256,7 +254,6 @@ export function CafePage() {
         </main>
         <Footer />
         <Reveals />
-      </SmoothScroll>
     </>
   );
 }

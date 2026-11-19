@@ -1,6 +1,5 @@
 import { Nav } from "@/components/nav";
 import { Preloader } from "@/components/preloader";
-import { SmoothScroll } from "@/components/smooth-scroll";
 import { Footer } from "@/components/second/footer";
 import { Hero, IndexStrip, Columns } from "@/components/third/third";
 
@@ -10,14 +9,12 @@ export default function Third() {
     <>
       <Preloader />
       <Nav />
-      <SmoothScroll>
         <main>
           <Hero />
           <IndexStrip />
           <Columns />
         </main>
         <Footer />
-      </SmoothScroll>
     </>
   );
 }

@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useRef, useState, type RefObject } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
-import { getSmoother } from "@/components/smooth-scroll";
+import { getLenis } from "@/components/smooth-scroll";
 import { price, type Piece } from "@/features/apparel/data";
 import { placeOrder, toItems } from "@/features/apparel/api";
 
@@ -60,8 +60,9 @@ export function BagProvider({ children }: { children: React.ReactNode }) {
 
   // Lock page scroll while the drawer is open.
   useEffect(() => {
-    const s = getSmoother();
-    s?.paused(isOpen);
+    const s = getLenis();
+    if (isOpen) s?.stop();
+    else s?.start();
     if (!isOpen) return;
     const esc = (e: KeyboardEvent) => e.key === "Escape" && close();
     addEventListener("keydown", esc);

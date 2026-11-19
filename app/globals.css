@@ -227,19 +227,19 @@ html.lenis body {
 
 /* Homepage only: strict black and white. Colour tokens re-pointed to #000 / #fff; photos and video stay in full colour. */
 .theme-mono {
-  --color-teal: #000;
-  --color-teal-deep: #000;
-  --color-teal-soft: #000;
-  --color-ink: #000;
-  --color-bone: #fff;
-  --color-bone-dim: #fff;
-  --color-lime: #fff;
+  --color-teal: #161616;
+  --color-teal-deep: #161616;
+  --color-teal-soft: #161616;
+  --color-ink: #161616;
+  --color-bone: #f4f1ea;
+  --color-bone-dim: #f4f1ea;
+  --color-lime: #f4f1ea;
 }
 /* On the white sections the highlight flips to a black block with white text. */
 .theme-mono #believe .hl,
 .theme-mono #apparel .hl {
-  background: #000;
-  color: #fff;
+  background: #161616;
+  color: #f4f1ea;
 }
 .theme-mono .nav-sound,
 .theme-mono .nav-ink .nav-sound {
@@ -252,7 +252,7 @@ html.lenis body {
 }
 html[data-page="mono"],
 html[data-page="mono"] body {
-  background: #000;
+  background: #161616;
 }
 
 /* About page neon sign: faint irregular hum on the outer halo. */

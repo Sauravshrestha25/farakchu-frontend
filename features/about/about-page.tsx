@@ -5,7 +5,6 @@ import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import Lenis from "lenis";
 import { Nav } from "@/components/nav";
 import { PageTheme } from "@/components/page-theme";
 import { Footer } from "@/components/home/footer";
@@ -75,11 +74,6 @@ export function AboutPage() {
       const mm = gsap.matchMedia();
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const lenis = new Lenis({ lerp: 0.1 });
-        lenis.on("scroll", ScrollTrigger.update);
-        const tick = (t: number) => lenis.raf(t * 1000);
-        gsap.ticker.add(tick);
-        gsap.ticker.lagSmoothing(0);
 
         // Hero: the portrait pulls into focus, the headline rises out of blur.
         gsap
@@ -224,10 +218,6 @@ export function AboutPage() {
           },
         );
 
-        return () => {
-          gsap.ticker.remove(tick);
-          lenis.destroy();
-        };
       });
     },
     { scope: root },

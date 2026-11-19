@@ -9,7 +9,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { Nav } from "@/components/nav";
 import { Reveals } from "@/components/reveals";
-import { SmoothScroll } from "@/components/smooth-scroll";
 import { Footer } from "@/components/home/footer";
 import { apparelPage, pieces, steps } from "@/features/apparel/data";
 import { BagButton, BagProvider } from "./bag";
@@ -133,7 +132,6 @@ export function ApparelPage() {
       <BagProvider>
         <div className="ap-cursor" aria-hidden />
         <Nav page="sub" action={<BagButton />} />
-        <SmoothScroll>
           <main ref={root}>
             <RailHero />
 
@@ -240,7 +238,6 @@ export function ApparelPage() {
           </main>
           <Footer light />
           <Reveals />
-        </SmoothScroll>
       </BagProvider>
     </div>
   );

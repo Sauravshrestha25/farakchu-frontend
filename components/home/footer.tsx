@@ -341,7 +341,7 @@ export function Footer({ light = false }: { light?: boolean }) {
               particleDensity={420}
               {...(light && {
                 logoSrc: "/images/logo/webx-logo-black.svg",
-                particleColor: "#ffffff",
+                particleColor: "#f4f1ea",
               })}
             />
           </a>

@@ -1,6 +1,5 @@
 import { Nav } from "@/components/nav";
 import { Preloader } from "@/components/preloader";
-import { SmoothScroll } from "@/components/smooth-scroll";
 import { Reveals } from "@/components/reveals";
 import { HeroStack } from "@/components/home/hero-stack";
 import { WhatsOn } from "@/components/second/whats-on";
@@ -14,7 +13,6 @@ export default function Second() {
     <>
       <Preloader />
       <Nav />
-      <SmoothScroll>
         <main>
           <HeroStack />
           <WhatsOn />
@@ -24,7 +22,6 @@ export default function Second() {
         </main>
         <Footer />
         <Reveals />
-      </SmoothScroll>
     </>
   );
 }

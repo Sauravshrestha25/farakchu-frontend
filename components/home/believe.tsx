@@ -120,9 +120,8 @@ export function Believe({ featured = [] }: { featured?: string[] }) {
         .to(q(".bl-small"), { autoAlpha: 0, y: -50, duration: 1 })
         .to(q(".bl-sign"), { autoAlpha: 1, y: 0, duration: 1 }, 0.7);
 
-      // The beliefs. Spine draws down with scroll while the node spins along it; each belief then fires: the elbow draws out, the
-      // diamond spins in and pings, the tag wipes to an ink block, and the copy rises line by line out of
-      // a mask. Skipped with reduced motion.
+      // The beliefs. Spine draws down with scroll while the node spins along it; each belief's diamond spins in and pings.
+      // Skipped with reduced motion.
       if (!reduce) {
         const list = q(".bl-beliefs")[0] as HTMLElement;
         const span = { trigger: list, start: "top 65%", end: "bottom 60%", scrub: 0.6 };
@@ -133,41 +132,15 @@ export function Believe({ featured = [] }: { featured?: string[] }) {
           { y: () => list.offsetHeight, rotation: 405, ease: "none", scrollTrigger: { ...span, invalidateOnRefresh: true } },
         );
 
+        // Per belief: only the diamond animates (spins in and pings). Label, elbow and copy are static.
         (q(".bl-item") as HTMLElement[]).forEach((item) => {
-          const right = item.dataset.side === "r";
-          const label = item.querySelector<HTMLElement>(".bl-label")!;
-          const tl = gsap.timeline({
-            defaults: { ease: "power3.out" },
-            scrollTrigger: { trigger: item, start: "top 78%", toggleActions: "play none none reverse" },
-          });
-          tl.fromTo(
-            item.querySelector(".bl-elbow"),
-            { clipPath: right ? "inset(0 100% 0 0)" : "inset(0 0 0 100%)" },
-            { clipPath: "inset(0 0% 0 0%)", duration: 0.8, ease: "power2.inOut" },
-            0,
-          )
-            .fromTo(item.querySelector(".bl-dot"), { scale: 0, rotate: -135 }, { scale: 1, rotate: 45, duration: 0.7, ease: "power3.out" }, 0.35)
-            .fromTo(item.querySelector(".bl-ping"), { scale: 1, rotate: 45, autoAlpha: 0.7 }, { scale: 4, rotate: 45, autoAlpha: 0, duration: 1, ease: "power2.out" }, 0.5)
-            .fromTo(label, { backgroundSize: "0% 100%", color: "var(--color-ink)" }, { backgroundSize: "100% 100%", color: "var(--color-bone)", duration: 0.6, ease: "power3.inOut" }, 0.45);
-
-          // Copy: split into lines, each rises out of its own mask with a slight tilt.
-          SplitText.create(item.querySelector(".bl-body"), {
-            type: "lines",
-            mask: "lines",
-            autoSplit: true,
-            onSplit: (self) =>
-              gsap.from(self.lines, {
-                yPercent: 115,
-                rotate: right ? 5 : -5,
-                transformOrigin: right ? "0% 100%" : "100% 100%",
-                duration: 1,
-                stagger: 0.12,
-                delay: 0.65,
-                ease: "power4.out",
-                scrollTrigger: { trigger: item, start: "top 78%", toggleActions: "play none none reverse" },
-              }),
-          });
-
+          gsap
+            .timeline({
+              defaults: { ease: "power3.out" },
+              scrollTrigger: { trigger: item, start: "top 78%", toggleActions: "play none none reverse" },
+            })
+            .fromTo(item.querySelector(".bl-dot"), { scale: 0, rotate: -135 }, { scale: 1, rotate: 45, duration: 0.7 }, 0)
+            .fromTo(item.querySelector(".bl-ping"), { scale: 1, rotate: 45, autoAlpha: 0.7 }, { scale: 4, rotate: 45, autoAlpha: 0, duration: 1, ease: "power2.out" }, 0.15);
         });
       }
 
@@ -312,7 +285,6 @@ export function Believe({ featured = [] }: { featured?: string[] }) {
                     </span>
                     <span
                       className="bl-label cursor-default bg-ink px-2.5 py-1.5 font-wide text-[clamp(0.75rem,1vw,1rem)] leading-tight text-bone"
-                      style={{ backgroundImage: "linear-gradient(var(--color-ink),var(--color-ink))", backgroundRepeat: "no-repeat", backgroundColor: "transparent" }}
                     >
                       {String(i + 1).padStart(2, "0")} &nbsp;&nbsp; · &nbsp;{" "}
                       {s.title}

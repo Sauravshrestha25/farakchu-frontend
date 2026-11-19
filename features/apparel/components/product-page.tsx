@@ -7,7 +7,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Nav } from "@/components/nav";
 import { Reveals } from "@/components/reveals";
-import { SmoothScroll } from "@/components/smooth-scroll";
 import { Footer } from "@/components/home/footer";
 import { price, pieces, type Piece } from "@/features/apparel/data";
 import { AddControls } from "./add-controls";
@@ -25,7 +24,6 @@ export function ProductPage({ piece }: { piece: Piece }) {
       <PageTheme name="studio" />
       <BagProvider>
       <Nav page="sub" action={<BagButton />} />
-      <SmoothScroll>
         <main>
           <section className="grid gap-10 px-4 pb-20 pt-28 lg:grid-cols-12 lg:px-6 lg:gap-y-6 lg:pb-28 lg:pt-32">
             <Link href="/apparel#catalogue" className="justify-self-start font-mono text-xs uppercase text-bone/70 hover:text-lime lg:col-span-12">← All pieces</Link>
@@ -68,7 +66,6 @@ export function ProductPage({ piece }: { piece: Piece }) {
         </main>
         <Footer light />
         <Reveals />
-      </SmoothScroll>
       </BagProvider>
     </div>
   );

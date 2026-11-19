@@ -9,7 +9,7 @@ import { useGSAP } from "@gsap/react";
 import { LogoMark } from "./logo-mark";
 import { RollLabel } from "./roll-label";
 import { SoundToggle } from "./sound-toggle";
-import { getSmoother } from "./smooth-scroll";
+import { getLenis } from "./smooth-scroll";
 import { divisions, site } from "@/content/site";
 
 // Anchor -> scroll position. Pinned scenes need an offset into the pin.
@@ -18,10 +18,9 @@ const targets: Record<
   { el: string; vh: { desktop: number; mobile: number } }
 > = {
   "#top": { el: "body", vh: { desktop: 0, mobile: 0 } },
-  // Inside the HeroStack pin: 1 timeline unit = 1vh of scroll (see hero-stack.tsx).
-  "#about": { el: "#top", vh: { desktop: 4.5, mobile: 4.5 } },
-  "#films": { el: "#top", vh: { desktop: 8.6, mobile: 8.6 } },
-  "#entertainment": { el: "#top", vh: { desktop: 8.6, mobile: 8.6 } },
+  "#about": { el: "#about", vh: { desktop: 0, mobile: 0 } },
+  "#films": { el: "#films", vh: { desktop: 0, mobile: 0 } },
+  "#entertainment": { el: "#films", vh: { desktop: 0, mobile: 0 } },
   "#cafe": { el: "#cafe", vh: { desktop: 0, mobile: 0 } },
   "#contact": { el: "#contact", vh: { desktop: 0, mobile: 0 } },
 };
@@ -32,14 +31,9 @@ export function scrollToAnchor(hash: string) {
   if (!el) return;
   const extra =
     innerHeight * (t ? (innerWidth >= 992 ? t.vh.desktop : t.vh.mobile) : 0);
-  const s = getSmoother();
-  if (s)
-    gsap.to(s, {
-      scrollTop: s.offset(el, "top top") + extra,
-      duration: 2,
-      ease: "expo.inOut",
-      overwrite: true,
-    });
+  const l = getLenis();
+  if (l)
+    l.scrollTo(el, { offset: extra, duration: 2, easing: gsap.parseEase("expo.inOut"), force: true });
   else
     gsap.to(window, {
       scrollTo: el.getBoundingClientRect().top + scrollY + extra,
@@ -216,7 +210,7 @@ export function Nav({ page = "home", action }: { page?: "home" | "sub"; action?:
   );
 
   useEffect(() => {
-    const s = getSmoother();
+    const s = getLenis();
     if (open) {
       // Menu tapped while the sheet is still sliding up: stop it and keep the sheet down.
       if (rollUp.current?.isActive()) {
@@ -228,7 +222,7 @@ export function Nav({ page = "home", action }: { page?: "home" | "sub"; action?:
         tl.current?.progress(1);
       }
       tl.current?.timeScale(1).play();
-      s?.paused(true);
+      s?.stop();
       // Warm every page the menu links to, so a click switches with no wait.
       for (const h of [...links.map((l) => to(l.href)), "/contact", "/apparel"]) {
         if (!h.startsWith("#") && h.split("#")[0] !== pathname) router.prefetch(h);
@@ -237,7 +231,7 @@ export function Nav({ page = "home", action }: { page?: "home" | "sub"; action?:
     } else {
       // Skip while a handoff sheet is rolling up on its own (see useGSAP above).
       if (!carried.current && tl.current && tl.current.progress() > 0) slideUp();
-      s?.paused(false);
+      s?.start();
     }
     const esc = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     addEventListener("keydown", esc);

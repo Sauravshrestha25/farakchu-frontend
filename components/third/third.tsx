@@ -6,7 +6,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { LogoMark } from "../logo-mark";
-import { getSmoother } from "../smooth-scroll";
+import { getLenis } from "../smooth-scroll";
 import { divisions, events, guests, site } from "@/content/site";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -58,7 +58,7 @@ export function IndexStrip() {
 
   useGSAP(
     () => {
-      // ponytail: GSAP pin, not CSS sticky (ScrollSmoother's transform breaks sticky).
+      // ponytail: GSAP pin, not CSS sticky (kept from the ScrollSmoother days).
       ScrollTrigger.create({ trigger: root.current, start: "top top", end: "bottom bottom", pin: ".ix-frame", pinSpacing: false });
       const thumbs = gsap.utils.toArray<HTMLElement>(".ix-thumb", root.current);
       thumbs.forEach((t, i) =>
@@ -71,8 +71,8 @@ export function IndexStrip() {
   const go = (i: number) => {
     const el = root.current?.querySelectorAll<HTMLElement>(".ix-thumb")[i];
     if (!el) return;
-    const s = getSmoother();
-    if (s) s.scrollTo(el, true, "center center");
+    const s = getLenis();
+    if (s) s.scrollTo(el, { offset: -(innerHeight - el.offsetHeight) / 2 });
     else el.scrollIntoView({ behavior: "smooth", block: "center" });
   };
 

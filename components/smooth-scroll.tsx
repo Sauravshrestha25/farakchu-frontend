@@ -1,48 +1,40 @@
 "use client";
 
 import { useEffect } from "react";
+import Lenis from "lenis";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 
-gsap.registerPlugin(ScrollTrigger, ScrollSmoother, ScrollToPlugin);
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
-let smoother: ScrollSmoother | null = null;
-let resolveReady: (s: ScrollSmoother | null) => void;
-export const smootherReady = new Promise<ScrollSmoother | null>((r) => (resolveReady = r));
-export const getSmoother = () => smoother;
+let lenis: Lenis | null = null;
+let resolveReady: (l: Lenis | null) => void;
+export const lenisReady = new Promise<Lenis | null>((r) => (resolveReady = r));
+export const getLenis = () => lenis;
 
-// Fixed UI (nav, preloader) must live outside this wrapper: ScrollSmoother transforms the content.
+// One Lenis for the whole site, mounted in app/layout.tsx. Fixed UI (nav, preloader) is unaffected: Lenis scrolls the real window.
 export function SmoothScroll({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (history.scrollRestoration) history.scrollRestoration = "manual";
-    scrollTo(0, 0);
     gsap.defaults({ ease: "none" });
     gsap.config({ force3D: true });
-    // Two frames so every section has registered its triggers first.
-    const id = requestAnimationFrame(() =>
-      requestAnimationFrame(() => {
-        const desktop = matchMedia("(hover: hover) and (pointer: fine)").matches;
-        const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-        if (desktop && !reduce) {
-          // ponytail: no normalizeScroll. It swallows pointerdown page-wide and broke drag strips (What's on).
-          smoother = ScrollSmoother.create({ wrapper: "#smooth-wrapper", content: "#smooth-content", smooth: 1, effects: false });
-        }
-        ScrollTrigger.config({ ignoreMobileResize: true, limitCallbacks: true });
-        resolveReady(smoother);
-      }),
-    );
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reduce) {
+      lenis = new Lenis({ lerp: 0.1 });
+      lenis.on("scroll", ScrollTrigger.update);
+    }
+    const tick = (t: number) => lenis?.raf(t * 1000);
+    gsap.ticker.add(tick);
+    gsap.ticker.lagSmoothing(0);
+    ScrollTrigger.config({ ignoreMobileResize: true, limitCallbacks: true });
+    resolveReady(lenis);
     return () => {
-      cancelAnimationFrame(id);
-      smoother?.kill();
-      smoother = null;
+      gsap.ticker.remove(tick);
+      lenis?.destroy();
+      lenis = null;
     };
   }, []);
 
-  return (
-    <div id="smooth-wrapper">
-      <div id="smooth-content">{children}</div>
-    </div>
-  );
+  return <>{children}</>;
 }

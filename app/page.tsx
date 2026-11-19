@@ -3,7 +3,6 @@ import { PageTheme } from "@/components/page-theme";
 import { join } from "node:path";
 import { Nav } from "@/components/nav";
 import { Preloader } from "@/components/preloader";
-import { SmoothScroll } from "@/components/smooth-scroll";
 import { Reveals } from "@/components/reveals";
 import { HeroStack } from "@/components/home/hero-stack";
 // import { WhatsOn } from "@/components/home/whats-on";
@@ -25,7 +24,6 @@ export default function Home() {
       <PageTheme name="mono" />
       <Preloader />
       <Nav />
-      <SmoothScroll>
         <main>
           <HeroStack />
           <Believe featured={featured} />
@@ -36,7 +34,6 @@ export default function Home() {
         </main>
         <Footer />
         <Reveals />
-      </SmoothScroll>
     </div>
   );
 }

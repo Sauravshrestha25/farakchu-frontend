@@ -13,7 +13,6 @@ import { eventsPage as d } from "@/features/events/data";
 import { Carousel } from "./carousel";
 import { CircledMark, Crosshair, CornerArrow, Scribble } from "./icons";
 import { Nav } from "@/components/nav";
-import { SmoothScroll } from "@/components/smooth-scroll";
 import { LogoMark } from "@/components/logo-mark";
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
@@ -256,7 +255,6 @@ export function EventsPage() {
         View
       </div>
       <Nav page="sub" />
-      <SmoothScroll>
         {/* HERO */}
         <section
           data-hero
@@ -473,7 +471,6 @@ export function EventsPage() {
             © 2026 Farakchu all rights reserved
           </p>
         </footer>
-      </SmoothScroll>
     </main>
   );
 }

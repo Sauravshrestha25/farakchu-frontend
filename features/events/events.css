@@ -1,15 +1,15 @@
 .ev {
-  /* Entertainment theme: amber neon on warm black, from logo-entertainment.jpg. Re-points the site tokens like .theme-mono. */
+  /* Entertainment theme: logo-yellow neon on warm black, from logo-entertainment.jpg. Re-points the site tokens like .theme-mono. */
   --color-teal: #140904;
   --color-teal-deep: #0c0502;
   --color-teal-soft: #1f0e06;
   --color-ink: #1a0b03;
   --color-bone: #fbe9cf;
   --color-bone-dim: #e8cfa8;
-  --color-lime: #ffb21a;
+  --color-lime: #f8e048;
   --ev-black: var(--color-teal);
-  --ev-red: #ffb21a;
-  --ev-red-hot: #ff7a1a;
+  --ev-red: #f8e048;
+  --ev-red-hot: #e8841a;
   --ev-gray: #1f0e06;
   --ev-w20: rgb(251 233 207 / 0.2);
   background: var(--ev-black);
@@ -24,7 +24,7 @@
 html[data-page="events"], html[data-page="events"] body { background: #140904; }
 .ev ::selection { background: var(--color-lime); color: var(--color-ink); }
 /* Neon glow on highlights, like the logo. */
-.ev .hl { box-shadow: 0 0 28px rgb(255 160 30 / 0.45); }
+.ev .hl { box-shadow: 0 0 22px rgb(255 189 46 / 0.4), 0 0 44px rgb(232 132 26 / 0.25); }
 
 /* Page grain */
 .ev-noise {
@@ -34,9 +34,9 @@ html[data-page="events"], html[data-page="events"] body { background: #140904; }
 
 /* Site headline voice: wide, heavy Mona Sans. */
 .ev-display { font-family: var(--font-sans); font-weight: 900; font-stretch: 125%; letter-spacing: -0.035em; text-transform: uppercase; line-height: 1; }
-/* Solid text, no gradients: headings in the site's text colour, the two split headlines in amber. */
-.ev-grad { color: var(--color-bone); }
-.ev-red-grad { color: #ffc24a; }
+/* Solid text, no gradients: headings and split headlines in #ffe54f. */
+.ev-grad { color: #ffe54f; }
+.ev-red-grad { color: #ffe54f; text-shadow: 0 0 18px rgb(255 189 46 / 0.45), 0 0 48px rgb(232 132 26 / 0.3); }
 .ev-h2 { font-size: clamp(2.2rem, 5vw, 5rem); line-height: 1.02; }
 .ev-h3 { font-size: clamp(1.4rem, 2.2vw, 2.2rem); line-height: 1.05; }
 .ev-bw { filter: grayscale(1) contrast(1.12) brightness(0.9) sepia(0.7) saturate(1.5); }
@@ -53,11 +53,12 @@ html[data-page="events"], html[data-page="events"] body { background: #140904; }
   background: var(--color-lime); color: var(--color-ink);
   font-family: var(--font-sans); font-stretch: 125%; font-weight: 900; letter-spacing: -0.035em;
   font-size: 0.625rem; line-height: 1; text-transform: uppercase; white-space: nowrap;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, box-shadow 0.3s;
 }
-.ev-btn:hover { background: var(--color-bone); }
-.ev-sq { display: inline-grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: 50%; background: var(--color-lime); color: var(--color-ink); transition: background-color 0.3s; }
-.ev-sq:hover { background: var(--color-bone); }
+.ev-btn { box-shadow: 0 0 0 rgb(232 132 26 / 0); }
+.ev-btn:hover { background: var(--color-bone); box-shadow: 0 0 24px rgb(255 189 46 / 0.55); }
+.ev-sq { display: inline-grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: 50%; background: var(--color-lime); color: var(--color-ink); transition: background-color 0.3s, box-shadow 0.3s; }
+.ev-sq:hover { background: var(--color-bone); box-shadow: 0 0 22px rgb(255 189 46 / 0.55); }
 
 /* Stepped octagon mask (menu image) */
 .ev-step { clip-path: polygon(26% 0, 74% 0, 74% 15%, 85% 15%, 85% 29%, 95% 29%, 95% 43%, 100% 43%, 100% 57%, 95% 57%, 95% 71%, 85% 71%, 85% 85%, 74% 85%, 74% 100%, 26% 100%, 26% 85%, 15% 85%, 15% 71%, 5% 71%, 5% 57%, 0 57%, 0 43%, 5% 43%, 5% 29%, 15% 29%, 15% 15%, 26% 15%); }
@@ -89,3 +90,9 @@ html[data-page="events"], html[data-page="events"] body { background: #140904; }
 html[data-page="events"] { scrollbar-width: none; }
 html[data-page="events"]::-webkit-scrollbar { display: none; }
 .ev-statement .ev-h2 { font-size: clamp(3.2rem, 6.6vw, 6.3rem); }
+
+/* Navbar logo: yellow neon tube, like logo-entertainment.jpg. */
+.ev [data-nav-logo] {
+  color: #ffe54f;
+  filter: drop-shadow(0 0 1px #ffe54f) drop-shadow(0 0 5px rgb(232 132 26 / 0.7));
+}

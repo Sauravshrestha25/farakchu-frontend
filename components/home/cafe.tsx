@@ -159,7 +159,7 @@ export function Cafe() {
         {/* Printer + receipt */}
         <div className="rc-feed relative mx-auto w-full max-w-[400px] lg:col-span-4">
           <div
-            className="relative z-10 h-5 rounded-full bg-black shadow-[inset_0_-3px_0_rgb(255_255_255/0.08)]"
+            className="relative z-10 h-5 rounded-full bg-[#161616] shadow-[inset_0_-3px_0_rgb(255_255_255/0.08)]"
             aria-hidden
           />
           <div className="-mt-2.5 overflow-hidden px-3 pt-2.5">

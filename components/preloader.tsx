@@ -5,7 +5,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Observer } from "gsap/Observer";
 import { useGSAP } from "@gsap/react";
-import { smootherReady } from "./smooth-scroll";
+import { lenisReady } from "./smooth-scroll";
 import { sound } from "./sound-engine";
 import { LogoMark } from "./logo-mark";
 
@@ -81,7 +81,7 @@ export function Preloader() {
       gsap.set(q(".pl-fill"), { opacity: 0 }); // hidden until the bar appears
       gsap.set(q(".pl-intro"), { autoAlpha: 0, y: 20 });
       gsap.set([q(".pl-roll"), q(".pl-skip")], { autoAlpha: 0 });
-      html.style.overflow = "hidden"; // no scrolling behind the loader (ScrollSmoother is also paused below)
+      html.style.overflow = "hidden"; // no scrolling behind the loader (Lenis is also stopped below)
 
       let obs: Observer | undefined;
       let onKey: ((e: KeyboardEvent) => void) | undefined;
@@ -90,11 +90,11 @@ export function Preloader() {
         if (onKey) removeEventListener("keydown", onKey);
       };
 
-      smootherReady.then((smoother) => {
-        smoother?.paused(true);
+      lenisReady.then((smoother) => {
+        smoother?.stop();
         const release = () => {
           html.style.overflow = "";
-          smoother?.paused(false);
+          smoother?.start();
           gsap.set(root.current, { display: "none" });
           ScrollTrigger.refresh();
           try {
